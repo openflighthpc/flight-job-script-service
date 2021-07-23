@@ -116,6 +116,7 @@ module FlightJobScriptAPI
         opts = opts.dup
         includes = opts.key?(:include) ? ["--include", opts.delete(:include)] : []
         waits = opts.delete(:wait_desktop) ? ['--wait-desktop'] : []
+        opts.merge!(timeout: FlightJobScriptAPI.config.wait_timeout) unless waits.empty?
         new(*flight_job, 'info-job', id, '--json', *includes, *waits, **opts).run
       end
 
@@ -132,7 +133,8 @@ module FlightJobScriptAPI
       end
     end
 
-    def initialize(*cmd, user:, stdin: nil, env: {})
+    def initialize(*cmd, user:, stdin: nil, timeout: nil, env: {})
+      @timeout = timeout || FlightJobScriptAPI.config.command_timeout
       @cmd = cmd
       @user = user
       @stdin = stdin
@@ -151,7 +153,7 @@ module FlightJobScriptAPI
           sp = Subprocess.new(
             env: @env,
             logger: FlightJobScriptAPI.logger,
-            timeout: FlightJobScriptAPI.config.command_timeout,
+            timeout: @timeout,
             username: @user,
           )
           sp.run(@cmd, @stdin, &block)

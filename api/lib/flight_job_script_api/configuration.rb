@@ -71,6 +71,12 @@ module FlightJobScriptAPI
         transform: :to_f
       },
       {
+        name: 'wait_timeout',
+        env_var: true,
+        default: 60,
+        transform: :to_f
+      },
+      {
         name: 'log_level',
         env_var: true,
         default: 'info'
