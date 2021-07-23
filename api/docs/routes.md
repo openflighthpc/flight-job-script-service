@@ -615,7 +615,7 @@ Content-Type: application/vnd.api+json
 
 ## GET - /jobs/:id/desktop
 
-Return the related `desktop` for a `job`.
+Return the related `desktop` for a `job`. Supports the `wait-desktop` query argument as discussed below.
 
 ```
 GET /v0/jobs/:id/desktop
@@ -870,6 +870,25 @@ Content-Type: application/vnd.api+json
   "included": [
   ]
 }
+```
+
+The `wait-desktop=true` query parameter will cause the request to hang until:
+
+* The associated `flight-desktop` session has been created, or
+* The `job` otherwise terminates.
+
+The query argument is ignored by non-interactive `jobs`. The request MAY respond `503 - WaitTimeout` if the session is not created within the configured time period.
+
+```
+GET /v0/desktops/:id?wait-desktop=true
+Authorization: basic <base64 username:password>
+Accept: application/vnd.api+json
+
+# The request reached one of the above end conditions
+HTTP/2 200 OK
+
+# The desktop session was not created within the required time period
+HTTP/2 503 ServiceUnavailable
 ```
 
 ## POST - /render/:template_id

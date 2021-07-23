@@ -30,6 +30,7 @@ require 'pathname'
 
 module FlightJobScriptAPI
   class CommandError < Sinja::ServiceUnavailable; end
+  class WaitTimeout < Sinja::ServiceUnavailable; end
 
   class JobCLI
     class << self
@@ -114,7 +115,8 @@ module FlightJobScriptAPI
       def info_job(id, **opts)
         opts = opts.dup
         includes = opts.key?(:include) ? ["--include", opts.delete(:include)] : []
-        new(*flight_job, 'info-job', id, '--json', *includes, **opts).run
+        waits = opts.delete(:wait_desktop) ? ['--wait-desktop'] : []
+        new(*flight_job, 'info-job', id, '--json', *includes, *waits, **opts).run
       end
 
       def submit_job(script_id, **opts)
