@@ -140,7 +140,7 @@ class Job
     stdout_file = File.join dir, 'flight-desktop-stdout'
     match = /^Identity\s+(?<id>.*)$/.match File.read(stdout_file)
     return unless match
-    Desktop.new(job: self, desktop_id: match.named_captures['id'])
+    Desktop.new(job: self, id: match.named_captures['id'])
   end
 
   def cache_related_resources

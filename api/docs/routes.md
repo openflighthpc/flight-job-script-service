@@ -836,12 +836,12 @@ HTTP/2 200 OK
 }
 ```
 
-## GET - /desktops/:job_id
+## GET - /desktops/:id
 
 Return the related `desktop` resource for a `job`.
 
 ```
-GET /v0/desktops/:job_id
+GET /v0/desktops/:id
 Authorization: basic <base64 username:password>
 Accept: application/vnd.api+json
 
@@ -849,7 +849,7 @@ HTTP/2 200 OK
 Content-Type: application/vnd.api+json
 {
   "data": {                     # REQUIRED - The DesktopResource
-    "type": "desktops",         # REQUIRED - Specfies the resource is a desktop
+    "type": "desktops",         # REQUIRED - Specfies the ID of the desktop
     "id": STRING,               # REQUIRED - The related job's ID
     "attributes":{
     },

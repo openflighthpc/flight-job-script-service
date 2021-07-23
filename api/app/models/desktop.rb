@@ -29,13 +29,9 @@
 class Desktop
   attr_reader :job, :id
 
-  def initialize(job:, desktop_id:)
-    @desktop_id = desktop_id
+  def initialize(job:, id:)
+    @id = id
     @job = job
-  end
-
-  def id
-    job.id
   end
 end
 
