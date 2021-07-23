@@ -571,7 +571,8 @@ Content-Type: application/vnd.api+json
       "submitStdout": STRING,   # RECOMMENDED - The standard output of the underlining scheduler command
       "submitStderr": STRING,   # RECOMMENDED - The standard error of the underlining scheduler command
       "resultsDir": STRING,     # RECOMMENDED - The directory that will store the results files (excluding STDOUT/STDERR)
-      "mergedStderr": BOOLEAN   # RECOMMENDED - Flags if the job's STDERR has been merged with STDOUT
+      "mergedStderr": BOOLEAN,  # RECOMMENDED - Flags if the job's STDERR has been merged with STDOUT
+      "interactive": BOOLEAN    # REQUIRED - Flags if the job SHOULD have an associated desktop
     },
     "links": {
       "self": "/v0/jobs/:id"
