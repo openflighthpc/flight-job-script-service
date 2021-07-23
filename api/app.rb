@@ -246,6 +246,12 @@ class App < Sinatra::Base
       end
     end
 
+    has_one :desktop do
+      pluck do
+        next resource.find_desktop
+      end
+    end
+
     has_many :result_files do
       fetch do
         next resource.index_result_files
@@ -280,6 +286,17 @@ class App < Sinatra::Base
 
     show
   end
+
+  resource :desktops, pkre: /[\w-]+/ do
+    helpers do
+      def find(id)
+        Job.find!(id, user: current_user)&.find_desktop
+      end
+    end
+
+    show
+  end
+
 
   freeze_jsonapi
 end

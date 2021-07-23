@@ -131,6 +131,18 @@ class Job
     JobFile.find("#{id}.stderr", user: user)
   end
 
+  def find_desktop
+    dir = metadata['controls_dir']
+    return nil unless metadata['controls_dir']
+    status_file = File.join dir, 'flight-desktop-status'
+    return nil unless File.exists? status_file
+    return nil unless File.read(status_file).chomp == "0"
+    stdout_file = File.join dir, 'flight-desktop-stdout'
+    match = /^Identity\s+(?<id>.*)$/.match File.read(stdout_file)
+    return unless match
+    Desktop.new(job: self, desktop_id: match.named_captures['id'])
+  end
+
   def cache_related_resources
     if script_data = metadata['script']
       Script.cache(user: user, **script_data)

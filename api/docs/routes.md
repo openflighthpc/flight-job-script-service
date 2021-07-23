@@ -582,17 +582,49 @@ Content-Type: application/vnd.api+json
           "related": "/v0/jobs/:id/script"
         }
       },
+      "desktop": {               # OPTIONAL - The related desktop resource
+        "links": {
+          "related": "/v0/jobs/:id/script"
+        }
+      },
       "stdoutFile": {           # RECOMMENDED - The standard output of the job
-        "links": "/v0/jobs/:id/stdoutFile"
+        "links": {
+          "related": "/v0/jobs/:id/stdoutFile"
+        }
       },
       "stderrFile": {           # OPTIONAL - The standard error of the job
-        "links": "/v0/jobs/:id/stderrFile"
+        "links": {
+          "related": "/v0/jobs/:id/stderrFile"
+        }
       },
       "resultFiles": {          # RECOMMENDED - Additional result files
-        "links": "/v0/jobs/:id/resultFiles"
+        "links": {
+          "related": "/v0/jobs/:id/resultFiles"
+        }
       }
     }
   },
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "included": [
+  ]
+}
+```
+
+## GET - /jobs/:id/desktop
+
+Return the related `desktop` for a `job`.
+
+```
+GET /v0/jobs/:id/desktop
+Authorization: basic <base64 username:password>
+Accept: application/vnd.api+json
+
+HTTP/2 200 OK
+Content-Type: application/vnd.api+json
+{
+  "data": DesktopResource,
   "jsonapi": {
     "version": "1.0"
   },
@@ -793,6 +825,42 @@ HTTP/2 200 OK
     },
     "links": {
       "self": "/v0/files/:id"
+    }
+  },
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "included": [
+  ]
+}
+```
+
+## GET - /desktops/:job_id
+
+Return the related `desktop` resource for a `job`.
+
+```
+GET /v0/desktops/:job_id
+Authorization: basic <base64 username:password>
+Accept: application/vnd.api+json
+
+HTTP/2 200 OK
+Content-Type: application/vnd.api+json
+{
+  "data": {                     # REQUIRED - The DesktopResource
+    "type": "desktops",         # REQUIRED - Specfies the resource is a desktop
+    "id": STRING,               # REQUIRED - The related job's ID
+    "attributes":{
+    },
+    "links": {
+      "self": "/v0/desktop/:id"
+    }
+    "relationships": {
+      "job": {               # REQUIRED - The related job resource
+        "links": {
+          "related": "/v0/jobs/:id/script"
+        }
+      }
     }
   },
   "jsonapi": {

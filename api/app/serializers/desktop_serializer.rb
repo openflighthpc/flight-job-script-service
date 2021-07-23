@@ -26,22 +26,6 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-class JobSerializer < ApplicationSerializer
-  [
-    'created_at', 'stdout_path', 'stderr_path', 'state', 'reason',
-    'scheduler_id', 'submit_stdout', 'submit_stderr',
-    'estimated_start_time', 'estimated_end_time', 'results_dir', 'submit_status'
-  ].each do |field|
-    attribute(field) { object.metadata[field] }
-  end
-
-  attribute(:start_time) { object.metadata['actual_start_time'] }
-  attribute(:end_time) { object.metadata['actual_end_time'] }
-  attribute(:merged_stderr) { object.stderr_merged? }
-
-  has_one :script
-  has_one(:desktop) { object.find_desktop }
-  has_one(:stdout_file) { object.find_stdout_file }
-  has_one(:stderr_file) { object.find_stderr_file }
-  has_many(:result_files) { object.index_result_files }
+class DesktopSerializer < ApplicationSerializer
+  has_one :job
 end
