@@ -132,15 +132,9 @@ class Job
   end
 
   def find_desktop
-    dir = metadata['controls_dir']
-    return nil unless metadata['controls_dir']
-    status_file = File.join dir, 'flight-desktop-status'
-    return nil unless File.exists? status_file
-    return nil unless File.read(status_file).chomp == "0"
-    stdout_file = File.join dir, 'flight-desktop-stdout'
-    match = /^Identity\s+(?<id>.*)$/.match File.read(stdout_file)
-    return unless match
-    Desktop.new(job: self, id: match.named_captures['id'])
+    id = metadata['flight_desktop_id']
+    return false unless id
+    Desktop.new(job: self, id: id)
   end
 
   def cache_related_resources
