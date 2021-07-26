@@ -18,6 +18,7 @@ import {
   useFetchOutputFiles,
   useFetchResultFiles,
   useFetchFileContent,
+  useFetchJobInteractiveSession,
 } from './api';
 import { useInterval } from './utils';
 
@@ -36,6 +37,7 @@ function JobOutputsCard({ job }) {
     return selectedFile != null && selectedFile.id === file.id;
   }
 
+  const isInteractive = job.attributes.interactive;
   const hasFiles = true;
 
   return (
@@ -74,6 +76,19 @@ function JobOutputsCard({ job }) {
               <>
               <hr/>
               <FilePreview job={job} selectedFile={selectedFile} />
+              </>
+            ) :
+            null
+        }
+        {
+          isInteractive ?
+            (
+              <>
+              <hr/>
+              <InteractiveSessionAsync
+                className="ml-4 mb-3"
+                job={job}
+              />
               </>
             ) :
             null
@@ -327,6 +342,41 @@ function OpenDirectoryButtons({ dir }) {
         Open in console
       </Button>
     </ButtonToolbar>
+  );
+}
+
+function InteractiveSessionAsync({ className, job }) {
+  const { data, error, loading, get } = useFetchJobInteractiveSession(job.id);
+
+  if (error) {
+    // TODO: Handle 503 - WaitTimeout
+    <div className={className}>
+      The job did not report its interative session.
+    </div>
+  } else if (!data && loading) {
+    return (
+      <div className="mb-2">
+        <Spinner text="Loading interactive session..." />
+      </div>
+    );
+  } else {
+    return (
+      <React.Fragment>
+        { loading && <Loading text="Loading interactive session..." /> }
+        <InteractiveSession
+          className={className}
+          job={job}
+        />
+      </React.Fragment>
+    );
+  }
+}
+
+function InteractiveSession({ className, job }) {
+  return (
+    <div>
+      Foo interactive session
+    </div>
   );
 }
 

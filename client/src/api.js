@@ -197,6 +197,16 @@ export function useSaveScriptContent(contentResource) {
   );
 }
 
+export function useFetchJobInteractiveSession(job_id) {
+  const { currentUser } = useContext(CurrentUserContext);
+  return useFetch(
+    `/jobs/${job_id}/desktop?wait-desktop=true`,
+    {
+      headers: { Accept: 'application/vnd.api+json' },
+    },
+    [ currentUser.authToken ]);
+}
+
 function getResourceFromResponse(data) {
   if (!utils.isObject(data)) { return null; }
   return data.data;
