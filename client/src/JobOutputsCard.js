@@ -515,7 +515,7 @@ function OpenDesktopButton({ id }) {
       <Button
         color="primary"
         disabled={!id}
-        href={ id ? `/desktop/terminal/sessions/${id}` : '#' }
+        href={ id ? `/desktop/sessions/${id}` : '#' }
         size="sm"
       >
         <i className="fa fa-bolt mr-1"/>
