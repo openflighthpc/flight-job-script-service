@@ -354,7 +354,7 @@ function OpenDirectoryButtons({ dir }) {
 }
 
 function InteractiveSessionAsync({ className, job, isSelected, toggleFile }) {
-  const { data, error, loading } = useFetchJobInteractiveSession(job.id);
+  const { data, error, loading, response } = useFetchJobInteractiveSession(job.id);
 
   const header = function(id) {
     return <h6
@@ -370,9 +370,16 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleFile }) {
     </h6>
   }
 
-  if (error) {
-    // TODO: Handle 503 - WaitTimeout
-    <>
+  if (response.status === 503 && data.errors[0].title  === "Wait Timeout") {
+    // Resend the request if the server timeout
+    return  <InteractiveSessionAsync
+      className="ml-4 mb-3"
+      isSelected={isSelected}
+      job={job}
+      toggleFile={toggleFile}
+    />
+  } else if (error) {
+    return <>
       {header(null)}
       <div className={className}>
         The job did not report its interative session.
