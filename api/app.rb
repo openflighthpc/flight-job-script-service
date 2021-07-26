@@ -292,18 +292,6 @@ class App < Sinatra::Base
     show
   end
 
-  resource :desktops, pkre: /[\w-]+/ do
-    helpers do
-      def find(id)
-        wait = params['wait-desktop'] == 'true'
-        Job.find!(id, user: current_user, wait_desktop: wait)&.find_desktop
-      end
-    end
-
-    show
-  end
-
-
   freeze_jsonapi
 end
 
