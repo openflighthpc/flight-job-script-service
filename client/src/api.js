@@ -197,16 +197,6 @@ export function useSaveScriptContent(contentResource) {
   );
 }
 
-export function useFetchJobInteractiveSession(job_id) {
-  const { currentUser } = useContext(CurrentUserContext);
-  return useFetch(
-    `/jobs/${job_id}/desktop?wait-desktop=true`,
-    {
-      headers: { Accept: 'application/vnd.api+json' },
-    },
-    [ currentUser.authToken ]);
-}
-
 function getResourceFromResponse(data) {
   if (!utils.isObject(data)) { return null; }
   return data.data;
@@ -319,4 +309,25 @@ export function useFetchFileContent(file) {
       headers: { Accept: 'application/vnd.api+json' },
     },
     [ currentUser.authToken, file.id ]);
+}
+
+export function useFetchJobInteractiveSession(job_id) {
+  const { currentUser } = useContext(CurrentUserContext);
+  return useFetch(
+    `/jobs/${job_id}/desktop?wait-desktop=true`,
+    {
+      headers: { Accept: 'application/vnd.api+json' },
+    },
+    [ currentUser.authToken, job_id]);
+}
+
+export function useFetchDesktop(id) {
+  const { currentUser } = useContext(CurrentUserContext);
+  return useFetch(
+    `${window.location.origin}/desktop/api/v2/sessions/${id}`,
+    {
+      headers: { Accept: 'application/vnd.api+json' },
+    },
+    [currentUser.authToken, id]
+  );
 }

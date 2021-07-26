@@ -19,6 +19,7 @@ import {
   useFetchResultFiles,
   useFetchFileContent,
   useFetchJobInteractiveSession,
+  useFetchDesktop,
 } from './api';
 import { useInterval } from './utils';
 
@@ -400,6 +401,38 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleSelected })
         The job did not report its interative session.
       </div>
     </>
+  } else if (loading) {
+    return (
+      <div>
+        {header(null)}
+        <div className="mb-2">
+          <Spinner text="Loading interactive session..." />
+        </div>
+      </div>
+    );
+  } else {
+    return <InteractiveSessionChecker
+      className={className}
+      job={job}
+      id={data.data.id}
+      isSelected={isSelected}
+      toggleSelected={toggleSelected}
+      header={header}
+    />;
+  }
+}
+
+function InteractiveSessionChecker({ className, job, id, isSelected, toggleSelected, header }) {
+  const { data, error, loading } = useFetchDesktop(id);
+
+  if (error) {
+    // flight-desktop-restapi is probably down?
+    return <>
+      {header(null)}
+      <div className={className}>
+        The inteactive session is currently unavailable, please try again later!
+      </div>
+    </>
   } else if (!data && loading) {
     return (
       <div>
@@ -410,16 +443,14 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleSelected })
       </div>
     );
   } else {
-      console.log(data);
-      console.log(data.data);
     return (
       <React.Fragment>
-        {header(data.data.id)}
+        {header(id)}
         { loading && <Loading text="Loading interactive session..." /> }
         <InteractiveSession
           className={className}
           job={job}
-          id={data.data.id}
+          id={id}
           isSelected={isSelected}
           toggleSelected={toggleSelected}
         />
