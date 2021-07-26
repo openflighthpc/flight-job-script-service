@@ -424,16 +424,37 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleSelected })
 
 function InteractiveSessionChecker({ className, job, id, isSelected, toggleSelected, header }) {
   const { data, error, loading } = useFetchDesktop(id);
+  let state = null;
 
+  // Determine the state of the session
   if (error) {
     // flight-desktop-restapi is probably down?
-    return <>
-      {header(null)}
-      <div className={className}>
-        The inteactive session is currently unavailable, please try again later!
-      </div>
-    </>
+    state="Unavailable"
   } else if (!data && loading) {
+    // NOOP
+  } else if (data.state === "Remote") {
+    state = "Active";
+  } else {
+    state = data.state;
+  }
+
+  // Render the link or continue loading
+  if (state) {
+    return (
+      <React.Fragment>
+        {header(state === "Active" ? id : null)}
+        { loading && <Loading text="Loading interactive session..." /> }
+        <InteractiveSession
+          className={className}
+          job={job}
+          id={id}
+          isSelected={isSelected}
+          toggleSelected={toggleSelected}
+          state={state}
+        />
+      </React.Fragment>
+    );
+  } else {
     return (
       <div>
         {header(null)}
@@ -442,24 +463,10 @@ function InteractiveSessionChecker({ className, job, id, isSelected, toggleSelec
         </div>
       </div>
     );
-  } else {
-    return (
-      <React.Fragment>
-        {header(id)}
-        { loading && <Loading text="Loading interactive session..." /> }
-        <InteractiveSession
-          className={className}
-          job={job}
-          id={id}
-          isSelected={isSelected}
-          toggleSelected={toggleSelected}
-        />
-      </React.Fragment>
-    );
   }
 }
 
-function InteractiveSession({ className, job, id, isSelected, toggleSelected }) {
+function InteractiveSession({ className, job, id, isSelected, toggleSelected, state }) {
   const session_pseudo_file = {
     id: id,
     session: true
@@ -488,6 +495,13 @@ function InteractiveSession({ className, job, id, isSelected, toggleSelected }) 
             >
               VNC Session
             </span>
+          </span>
+          <span
+            className={classNames("text-small",
+              isActive ? styles.FileItemActiveColor : 'text-muted'
+            )}
+          >
+            {state}
           </span>
         </span>
       </ListGroupItem>
