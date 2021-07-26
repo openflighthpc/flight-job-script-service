@@ -28,19 +28,23 @@ export function getResourceFromResponse(data) {
 }
 
 function JobOutputsCard({ job }) {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selected, setSelected] = useState(null);
 
-  function toggleFile(file) {
-    selectedFile === file ? setSelectedFile(null) : setSelectedFile(file)
+  // Supports selecting files or the desktop session
+  function isSelected(item) {
+    if (!selected) {
+      return false;
+    } else if (selected.id !== item.id) {
+      return false;
+    } else if (selected.session !== item.session) {
+      return false;
+    } else {
+      return true
+    }
   }
 
-  // Supports selecting files and the desktop session
-  function isSelected(file) {
-    if (file.session && selectedFile != null && selectedFile.session) {
-      return true;
-    } else {
-      return selectedFile != null && selectedFile.id === file.id;
-    }
+  function toggleSelected(item) {
+    isSelected(item) ? setSelected(null) : setSelected(item)
   }
 
   const isInteractive = job.attributes.interactive;
@@ -57,7 +61,7 @@ function JobOutputsCard({ job }) {
           className="ml-4 mb-3"
           isSelected={isSelected}
           job={job}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
         <h6
           className="d-flex flex-row align-items-center justify-content-between"
@@ -74,7 +78,7 @@ function JobOutputsCard({ job }) {
           className="ml-4 mb-3"
           isSelected={isSelected}
           job={job}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
         {
           isInteractive ?
@@ -85,7 +89,7 @@ function JobOutputsCard({ job }) {
                 className="ml-4 mb-3"
                 isSelected={isSelected}
                 job={job}
-                toggleFile={toggleFile}
+                toggleSelected={toggleSelected}
               />
               </>
             ) :
@@ -96,7 +100,7 @@ function JobOutputsCard({ job }) {
             (
               <>
               <hr/>
-              <FilePreview job={job} selectedFile={selectedFile} />
+              <Preview job={job} selected={selected} />
               </>
             ) :
             null
@@ -106,7 +110,7 @@ function JobOutputsCard({ job }) {
   );
 }
 
-function FileItem({ file, isSelected, name, nameTag="span", toggleFile }) {
+function FileItem({ file, isSelected, name, nameTag="span", toggleSelected }) {
   const isViewable = file.attributes.mimeType.split('/')[0] === 'text';
   const isActive = isSelected(file);
   const NameTag = nameTag;
@@ -117,7 +121,7 @@ function FileItem({ file, isSelected, name, nameTag="span", toggleFile }) {
       key={file.attributes.filename}
       active={isActive}
       action={isViewable}
-      onClick={() => isViewable && toggleFile(file)}
+      onClick={() => isViewable && toggleSelected(file)}
       tag="a"
       href={isViewable ? '#' : null}
       title={isViewable ? null : 'Previewing files of this type is not supported.  To view the file, you can open the results directory in the File manager.'}
@@ -147,7 +151,7 @@ function FileItem({ file, isSelected, name, nameTag="span", toggleFile }) {
   );
 }
 
-function OutputListingAsync({ className, isSelected, job, toggleFile }) {
+function OutputListingAsync({ className, isSelected, job, toggleSelected }) {
   const { data, error, loading, get } = useFetchOutputFiles(job.id);
   useInterval(get, 1 * 60 * 1000);
 
@@ -175,14 +179,14 @@ function OutputListingAsync({ className, isSelected, job, toggleFile }) {
           isSelected={isSelected}
           job={job}
           files={files}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
       </React.Fragment>
     );
   }
 }
 
-function OutputListing({ className, isSelected, job, files, toggleFile }) {
+function OutputListing({ className, isSelected, job, files, toggleSelected }) {
   const mergedStderr = job.attributes.mergedStderr;
 
   if (files.length === 0) {
@@ -210,7 +214,7 @@ function OutputListing({ className, isSelected, job, files, toggleFile }) {
                 'Standard output and error' :
                 'Standard output'
             }
-            toggleFile={toggleFile}
+            toggleSelected={toggleSelected}
           />
         ))
       }
@@ -218,7 +222,7 @@ function OutputListing({ className, isSelected, job, files, toggleFile }) {
   );
 }
 
-function ResultsListingAsync({ className, isSelected, job, toggleFile }) {
+function ResultsListingAsync({ className, isSelected, job, toggleSelected }) {
   const { data, error, loading, get } = useFetchResultFiles(job.id);
   useInterval(get, 1 * 60 * 1000);
 
@@ -243,14 +247,14 @@ function ResultsListingAsync({ className, isSelected, job, toggleFile }) {
           isSelected={isSelected}
           job={job}
           files={files}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
       </React.Fragment>
     );
   }
 }
 
-function ResultsListing({ className, files, isSelected, job, toggleFile }) {
+function ResultsListing({ className, files, isSelected, job, toggleSelected }) {
   if (job.attributes.resultsDir == null) {
     <div className={className}>
       The job did not report its results directory.
@@ -273,7 +277,7 @@ function ResultsListing({ className, files, isSelected, job, toggleFile }) {
             isSelected={isSelected}
             name={file.attributes.relativePath}
             nameTag="code"
-            toggleFile={toggleFile}
+            toggleSelected={toggleSelected}
           />
         ))
       }
@@ -288,27 +292,38 @@ function getContentFromResponse(data) {
   return data.data.attributes.payload;
 }
 
-function FilePreview({selectedFile, job}) {
-  if (selectedFile == null) {
+function Preview({selected, job}) {
+  console.log(selected);
+  if (selected == null) {
     return (
       <div>
-        <em>Select a text file above to preview its output.</em>
+        <em>{ job.attributes.interactive ?
+          "Select a text file or the desktop above to view its preview." :
+          "Select a text file above to view its preview."
+        }
+        </em>
       </div>
     );
+  } else if (selected.session) {
+    return <></>
+  } else {
+    return <FilePreview selected={selected} job={job} />
   }
+}
 
-  const filename = selectedFile === job.stdoutFile ?
+function FilePreview({selected, job}) {
+  const filename = selected === job.stdoutFile ?
     'standard output' :
-    selectedFile === job.stderrFile ?
+    selected === job.stderrFile ?
     'standard error' :
-    selectedFile.attributes.relativePath;
+    selected.attributes.relativePath;
 
   return (
     <>
     <h6 className="card-title font-weight-bold">
       Preview for <code>{filename}</code>
     </h6>
-    <FileContent file={selectedFile} />
+    <FileContent file={selected} />
     </>
   );
 }
@@ -353,7 +368,7 @@ function OpenDirectoryButtons({ dir }) {
   );
 }
 
-function InteractiveSessionAsync({ className, job, isSelected, toggleFile }) {
+function InteractiveSessionAsync({ className, job, isSelected, toggleSelected }) {
   const { data, error, loading, response } = useFetchJobInteractiveSession(job.id);
 
   const header = function(id) {
@@ -376,7 +391,7 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleFile }) {
       className="ml-4 mb-3"
       isSelected={isSelected}
       job={job}
-      toggleFile={toggleFile}
+      toggleSelected={toggleSelected}
     />
   } else if (error) {
     return <>
@@ -406,16 +421,16 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleFile }) {
           job={job}
           id={data.data.id}
           isSelected={isSelected}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
       </React.Fragment>
     );
   }
 }
 
-function InteractiveSession({ className, job, id, isSelected, toggleFile }) {
+function InteractiveSession({ className, job, id, isSelected, toggleSelected }) {
   const session_pseudo_file = {
-    id: null,
+    id: id,
     session: true
   }
   const isActive = isSelected(session_pseudo_file)
@@ -426,7 +441,7 @@ function InteractiveSession({ className, job, id, isSelected, toggleFile }) {
         key="desktop-session"
         action={true}
         active={isActive}
-        onClick={() => toggleFile(null)}
+        onClick={() => toggleSelected(session_pseudo_file)}
         tag="a"
         href="#"
         // title={isViewable ? null : 'Previewing files of this type is not supported.  To view the file, you can open the results directory in the File manager.'}
