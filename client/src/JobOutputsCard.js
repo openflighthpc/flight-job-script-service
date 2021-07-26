@@ -33,8 +33,14 @@ function JobOutputsCard({ job }) {
   function toggleFile(file) {
     selectedFile === file ? setSelectedFile(null) : setSelectedFile(file)
   }
+
+  // Supports selecting files and the desktop session
   function isSelected(file) {
-    return selectedFile != null && selectedFile.id === file.id;
+    if (file.session && selectedFile != null && selectedFile.session) {
+      return true;
+    } else {
+      return selectedFile != null && selectedFile.id === file.id;
+    }
   }
 
   const isInteractive = job.attributes.interactive;
@@ -71,24 +77,26 @@ function JobOutputsCard({ job }) {
           toggleFile={toggleFile}
         />
         {
-          hasFiles ?
-            (
-              <>
-              <hr/>
-              <FilePreview job={job} selectedFile={selectedFile} />
-              </>
-            ) :
-            null
-        }
-        {
           isInteractive ?
             (
               <>
               <hr/>
               <InteractiveSessionAsync
                 className="ml-4 mb-3"
+                isSelected={isSelected}
                 job={job}
+                toggleFile={toggleFile}
               />
+              </>
+            ) :
+            null
+        }
+        {
+          hasFiles ?
+            (
+              <>
+              <hr/>
+              <FilePreview job={job} selectedFile={selectedFile} />
               </>
             ) :
             null
@@ -345,38 +353,108 @@ function OpenDirectoryButtons({ dir }) {
   );
 }
 
-function InteractiveSessionAsync({ className, job }) {
-  const { data, error, loading, get } = useFetchJobInteractiveSession(job.id);
+function InteractiveSessionAsync({ className, job, isSelected, toggleFile }) {
+  const { data, error, loading } = useFetchJobInteractiveSession(job.id);
+
+  const header = function(id) {
+    return <h6
+        className="d-flex flex-row align-items-center justify-content-between"
+      >
+      <span
+        className="font-weight-bold"
+        title="Desktop Session"
+      >
+        Interactive Session
+      </span>
+      <OpenDesktopButton id={id} />
+    </h6>
+  }
 
   if (error) {
     // TODO: Handle 503 - WaitTimeout
-    <div className={className}>
-      The job did not report its interative session.
-    </div>
+    <>
+      {header(null)}
+      <div className={className}>
+        The job did not report its interative session.
+      </div>
+    </>
   } else if (!data && loading) {
     return (
-      <div className="mb-2">
-        <Spinner text="Loading interactive session..." />
+      <div>
+        {header(null)}
+        <div className="mb-2">
+          <Spinner text="Loading interactive session..." />
+        </div>
       </div>
     );
   } else {
+      console.log(data);
+      console.log(data.data);
     return (
       <React.Fragment>
+        {header(data.data.id)}
         { loading && <Loading text="Loading interactive session..." /> }
         <InteractiveSession
           className={className}
           job={job}
+          id={data.data.id}
+          isSelected={isSelected}
+          toggleFile={toggleFile}
         />
       </React.Fragment>
     );
   }
 }
 
-function InteractiveSession({ className, job }) {
+function InteractiveSession({ className, job, id, isSelected, toggleFile }) {
+  const session_pseudo_file = {
+    id: null,
+    session: true
+  }
+  const isActive = isSelected(session_pseudo_file)
+
   return (
-    <div>
-      Foo interactive session
-    </div>
+    <ListGroup className={className}>
+      <ListGroupItem
+        key="desktop-session"
+        action={true}
+        active={isActive}
+        onClick={() => toggleFile(null)}
+        tag="a"
+        href="#"
+        // title={isViewable ? null : 'Previewing files of this type is not supported.  To view the file, you can open the results directory in the File manager.'}
+      >
+        <span className="d-flex flex-row align-items-center justify-content-between">
+          <span>
+            <i
+              className={classNames("mr-2 fa fa-desktop")}
+              title="VNC Session"
+            ></i>
+            <span
+              title={id}
+            >
+              VNC Session
+            </span>
+          </span>
+        </span>
+      </ListGroupItem>
+    </ListGroup>
+  );
+}
+
+function OpenDesktopButton({ id }) {
+  return (
+    <ButtonToolbar>
+      <Button
+        color="primary"
+        disabled={!id}
+        href={ id ? `/desktop/terminal/sessions/${id}` : '#' }
+        size="sm"
+      >
+        <i className="fa fa-bolt mr-1"/>
+        <span>Connect to Session</span>
+      </Button>
+    </ButtonToolbar>
   );
 }
 
