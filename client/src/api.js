@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import useFetch from 'use-http';
 
 import {
@@ -325,9 +325,42 @@ export function useFetchDesktop(id) {
   const { currentUser } = useContext(CurrentUserContext);
   return useFetch(
     `${window.location.origin}/desktop/api/v2/sessions/${id}`,
-    {
-      headers: { Accept: 'application/vnd.api+json' },
-    },
+    {},
     [currentUser.authToken, id]
   );
+}
+
+export function useFetchDesktopScreenshot(id) {
+  const { currentUser } = useContext(CurrentUserContext);
+  const [image, setImage] = useState();
+
+  const { response } = useFetch(
+    `${window.location.origin}/desktop/api/v2/sessions/${id}/screenshot.png`,
+    {
+      headers: { Accept: 'image/*' },
+    }, [currentUser.authToken, id]
+  );
+
+  if (response.ok) {
+    response.blob()
+      .then((blob) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      })
+      .then((base64Image) => {
+        if (image !== base64Image) {
+          setImage(base64Image);
+        }
+      })
+      .catch((e) => {
+        console.log('Error base64 encoding screenshot:', e);  // eslint-disable-line no-console
+        setImage(false);
+      });
+  }
+
+  return { image };
 }

@@ -20,6 +20,7 @@ import {
   useFetchFileContent,
   useFetchJobInteractiveSession,
   useFetchDesktop,
+  useFetchDesktopScreenshot,
 } from './api';
 import { useInterval } from './utils';
 
@@ -306,7 +307,7 @@ function Preview({selected, job}) {
       </div>
     );
   } else if (selected.session) {
-    return <></>
+    return <ScreenshotPreview id={selected.id}/>
   } else {
     return <FilePreview selected={selected} job={job} />
   }
@@ -423,7 +424,8 @@ function InteractiveSessionAsync({ className, job, isSelected, toggleSelected })
 }
 
 function InteractiveSessionChecker({ className, job, id, isSelected, toggleSelected, header }) {
-  const { data, error, loading } = useFetchDesktop(id);
+  const { data, error, loading, get } = useFetchDesktop(id);
+  useInterval(get, 1 * 60 * 1000);
   let state = null;
 
   // Determine the state of the session
@@ -507,6 +509,37 @@ function InteractiveSession({ className, job, id, isSelected, toggleSelected, st
       </ListGroupItem>
     </ListGroup>
   );
+}
+
+function ScreenshotPreview({ id }) {
+  const { image } = useFetchDesktopScreenshot(id);
+
+  if (image) {
+    return <div>
+      <h6 className="card-title font-weight-bold">
+        Preview <code>VNC Session</code>
+      </h6>
+      <img src={image} alt="Session screenshot"/>
+    </div>
+  } else if (image === false) {
+    return (
+      <div>
+        <h6 className="card-title font-weight-bold">
+          Preview <code>VNC Session</code>
+        </h6>
+        <em>The preview for the destop session is currently unavailable</em>
+      </div>
+    );
+  } else {
+    return <div>
+      <h6 className="card-title font-weight-bold">
+        Preview <code>VNC Session</code>
+      </h6>
+      <div className="mb-2">
+        <Spinner text="Loading preview..." />
+      </div>
+    </div>
+  }
 }
 
 function OpenDesktopButton({ id }) {
