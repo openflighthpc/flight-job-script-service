@@ -176,6 +176,18 @@ class JobFile
     @payload = File.read path
   end
 
+  def mime_type
+    # Protect against bad/missing paths, this shouldn't happen in practice
+    return nil unless exists?
+    cmd = ['file', '--mime-type', path]
+    results = FlightJobScriptAPI::Subprocess.default.run(cmd, '')
+    if results.exitstatus == 0
+      results.stdout.chomp.split(/\s/).last
+    else
+      'application/octet-stream'
+    end
+  end
+
   protected
 
   def <=>(other)

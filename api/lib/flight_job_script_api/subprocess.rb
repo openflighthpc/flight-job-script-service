@@ -32,6 +32,14 @@ module FlightJobScriptAPI
   class Subprocess
     class Result < Struct.new(:stdout, :stderr, :exitstatus, :pid); end
 
+    # Create a default sub-process
+    def self.default
+      new(env: ENV.to_h,
+          logger: FlightJobScriptAPI.logger,
+          timeout: FlightJobScriptAPI.config.command_timeout,
+          username: ENV['USER'])
+    end
+
     def initialize(dir:nil, env:, logger:, supplementary_groups:false, timeout:, username:)
       @env = env
       @logger = logger
@@ -94,7 +102,7 @@ module FlightJobScriptAPI
       block.call(@out_write, @err_write) if block
       if cmd.nil?
         @logger.debug("Nothing to exec")
-        return 
+        return
       end
 
       opts = {
