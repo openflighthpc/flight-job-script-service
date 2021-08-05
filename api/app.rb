@@ -46,6 +46,62 @@ module Sinja
   end
 end
 
+module BeforeSwitchWorkerUser
+  def self.extended(base)
+    base.instance_exec do
+      helpers do
+        def auth
+          @auth ||= FlightJobScriptAPI.config.auth_decoder.decode(
+            cookies[FlightJobScriptAPI.app.config.sso_cookie_name],
+            env['HTTP_AUTHORIZATION']
+          )
+        end
+
+        def role
+          if auth.valid?
+            :user
+          elsif auth.forbidden?
+            :forbidden
+          else
+            raise Sinja::UnauthorizedError, 'Could not authenticate your authorization credentials'
+          end
+        end
+      end
+
+      # Become the appropriate user if the "role" is user
+      # NOTE: This will trigger the unicorn worker terminator upon finishing the request
+      before do
+        # Only worry about authenticated requests
+        next unless role == :user
+        # NOOP if the user is already correct. This allows non-privileged user's to run
+        # their own instance without getting Errno::EPERM when resetting the groups
+        next if ENV['USER'] == auth.username
+
+        # Switch to the current user
+        if ENV['USER'] == 'root'
+          # Flag the worker to terminate after the request
+          env['rack.after_reply'] << ->() do
+            FlightJobScriptAPI.logger.info "Shutting down stale worker: #{Process.pid}"
+            exit 0
+          end
+
+          # Become the user/group
+          passwd = Etc.getpwnam(auth.username)
+          Process.groups = [] # Drop the existing groups
+          Process.gid = passwd.gid
+          Process.initgroups(auth.username, passwd.gid) # Pick up new groups
+          Process.uid = passwd.uid
+
+        else
+          # This shouldn't happen in practice, but it indicates someone is accessing
+          # the wrong service. 403 - Forbidden is probably the best response.
+          raise Sinja::ForbiddenError, "You do not have permission to access this instance"
+        end
+      end
+    end
+  end
+end
+
 # The base JSON:API for most interactions. Mounted in rack under
 # /:version
 class App < Sinatra::Base
@@ -53,25 +109,8 @@ class App < Sinatra::Base
   helpers Sinatra::Cookies
 
   helpers do
-    def auth
-      @auth ||= FlightJobScriptAPI.config.auth_decoder.decode(
-        cookies[FlightJobScriptAPI.app.config.sso_cookie_name],
-        env['HTTP_AUTHORIZATION']
-      )
-    end
-
     def current_user
       auth.username
-    end
-
-    def role
-      if auth.valid?
-        :user
-      elsif auth.forbidden?
-        :forbidden
-      else
-        raise Sinja::UnauthorizedError, 'Could not authenticate your authorization credentials'
-      end
     end
 
     def include_string
@@ -120,43 +159,14 @@ class App < Sinatra::Base
     }
   end
 
+  extend BeforeSwitchWorkerUser
+
   # Set the default sparse field to prevent the "payload" of files from being
   # sent with requests. This has significant speed improvements when indexing
   # "files" resources.
   before do
     params["fields"] ||= {}
     params["fields"]["files"] ||= JobFileSerializer::DEFAULT_SPARSE_FIELDSET
-  end
-
-  # Become the appropriate user if the "role" is user
-  # NOTE: This will trigger the unicorn worker terminator upon finishing the request
-  before do
-    # Only worry about authenticated requests
-    next unless role == :user
-    # NOOP if the user is already correct. This allows non-privileged user's to run
-    # their own instance without getting Errno::EPERM when resetting the groups
-    next if ENV['USER'] == auth.username
-
-    # Switch to the current user
-    if ENV['USER'] == 'root'
-      # Flag the worker to terminate after the request
-      env['rack.after_reply'] << ->() do
-        FlightJobScriptAPI.logger.info "Shutting down stale worker: #{Process.pid}"
-        exit 0
-      end
-
-      # Become the user/group
-      passwd = Etc.getpwnam(auth.username)
-      Process.groups = [] # Drop the existing groups
-      Process.gid = passwd.gid
-      Process.initgroups(auth.username, passwd.gid) # Pick up new groups
-      Process.uid = passwd.uid
-
-    else
-      # This shouldn't happen in practice, but it indicates someone is accessing
-      # the wrong service. 403 - Forbidden is probably the best response.
-      raise Sinja::ForbiddenError, "You do not have permission to access this instance"
-    end
   end
 
   resource :templates, pkre: /[\w.-]+/ do
@@ -325,12 +335,9 @@ end
 class RenderApp < Sinatra::Base
   helpers Sinatra::Cookies
 
-  before do
-    auth = FlightJobScriptAPI.config.auth_decoder.decode(
-      cookies[FlightJobScriptAPI.app.config.sso_cookie_name],
-      env['HTTP_AUTHORIZATION']
-    )
+  extend BeforeSwitchWorkerUser
 
+  before do
     if auth.valid?
       @current_user = auth.username
     elsif auth.forbidden?
