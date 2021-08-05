@@ -26,8 +26,26 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-require_relative 'boot.rb'
+# Ensure the working directory is correct, this is applied immediately
+working_directory File.dirname(__dir__)
 
-bind FlightJobScriptAPI.config.bind_address
-log_requests
-tag FlightJobScriptAPI.config.class.application_name
+# NOTE: boot.rb essentially "preloads" the app into memory. IIUC unicorn is
+# expecting the app to be loaded by the 'config.ru', not here.
+#
+# This doesn't make a big difference, as the app should be preloaded regardless
+require_relative 'boot.rb'
+preload_app true
+
+listen FlightJobScriptAPI.config.bind_address
+
+# NOTE: Unicorn does not have --redirect-std* flags like puma. They will need to
+# be specified here
+logger FlightJobScriptAPI.logger
+# stdout_path ...
+# stderr_path ...
+
+worker_processes 1
+
+# NOTE: Unicorn does not appear to have an equivalent config option to puma's tag
+# IIRC this isn't hard to implement manually
+# tag FlightJobScriptAPI.config.class.application_name

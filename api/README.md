@@ -23,7 +23,7 @@ See [configuration](etc/flight-job-script-api.yaml)
 Start the service via:
 
 ```
-bin/puma
+bin/start
 ```
 
 See for full [route documentation](docs/routes.md)

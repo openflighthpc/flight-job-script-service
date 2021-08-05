@@ -27,8 +27,7 @@
 
 #-------------------------------------------------------------------------------
 # API Bind Address
-# The address (including port) puma will bind to
-# See: https://github.com/puma/puma#binding-tcp--sockets
+# The address (including port) the service will bind onto
 # The environment variable flight_JOB_SCRIPT_API_bind_address takes precedence
 #-------------------------------------------------------------------------------
 # bind_address: tcp://127.0.0.1:921
