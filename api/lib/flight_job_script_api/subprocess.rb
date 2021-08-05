@@ -68,17 +68,6 @@ module FlightJobScriptAPI
         @out_read.close
         @err_read.close
         @in_write.close
-
-        # Jump through hoops to 1) drop the parent process's group permissions
-        # and 2) add all groups for user.
-        Process.groups = []
-        Process.gid = @passwd.gid
-        if @supplementary_groups
-          Process.initgroups(@username, @passwd.gid)
-        end
-        Process.uid = @passwd.uid
-        Process.setsid
-
         block.call if block
       end
       @logger.debug("Forked process #{@pid.inspect}")

@@ -128,6 +128,37 @@ class App < Sinatra::Base
     params["fields"]["files"] ||= JobFileSerializer::DEFAULT_SPARSE_FIELDSET
   end
 
+  # Become the appropriate user if the "role" is user
+  # NOTE: This will trigger the unicorn worker terminator upon finishing the request
+  before do
+    # Only worry about authenticated requests
+    next unless role == :user
+    # NOOP if the user is already correct. This allows non-privileged user's to run
+    # their own instance without getting Errno::EPERM when resetting the groups
+    next if ENV['USER'] == auth.username
+
+    # Switch to the current user
+    if ENV['USER'] == 'root'
+      # Flag the worker to terminate after the request
+      env['rack.after_reply'] << ->() do
+        FlightJobScriptAPI.logger.info "Shutting down stale worker: #{Process.pid}"
+        exit 0
+      end
+
+      # Become the user/group
+      passwd = Etc.getpwnam(auth.username)
+      Process.groups = [] # Drop the existing groups
+      Process.gid = passwd.gid
+      Process.initgroups(auth.username, passwd.gid) # Pick up new groups
+      Process.uid = passwd.uid
+
+    else
+      # This shouldn't happen in practice, but it indicates someone is accessing
+      # the wrong service. 403 - Forbidden is probably the best response.
+      raise Sinja::ForbiddenError, "You do not have permission to access this instance"
+    end
+  end
+
   resource :templates, pkre: /[\w.-]+/ do
     helpers do
       def find(id)
