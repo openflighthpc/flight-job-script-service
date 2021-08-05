@@ -58,12 +58,12 @@ module FlightJobScriptAPI
         default: 'etc/shared-secret.conf',
         transform: relative_to(root_path)
       },
-      {
-        name: 'flight_job',
-        env_var: true,
-        default: File.join(ENV.fetch('flight_ROOT', '/opt/flight'), 'bin/flight job'),
-        transform: ->(value) { value.split(' ') }
-      },
+      # {
+      #   name: 'flight_job',
+      #   env_var: true,
+      #   default: File.join(ENV.fetch('flight_ROOT', '/opt/flight'), 'bin/flight job'),
+      #   transform: ->(value) { value.split(' ') }
+      # },
       {
         name: 'command_path',
         env_var: true,
@@ -91,6 +91,10 @@ module FlightJobScriptAPI
         default: 'flight_login',
       },
     ].each { |opt| attribute(opt[:name], **opt) }
+
+    def flight_job
+      []
+    end
 
     def auth_decoder
       @auth_decoder ||= FlightAuth::Builder.new(shared_secret_path)

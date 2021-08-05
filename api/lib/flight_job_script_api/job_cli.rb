@@ -123,6 +123,7 @@ module FlightJobScriptAPI
 
     def initialize(*cmd, stdin: nil, env: {})
       @cmd = cmd
+      @flight_block = ->() { run_flight_job }
       @stdin = stdin
       @env = {
         'PATH' => FlightJobScriptAPI.app.config.command_path,
@@ -139,13 +140,24 @@ module FlightJobScriptAPI
         logger: FlightJobScriptAPI.logger,
         timeout: FlightJobScriptAPI.config.command_timeout
       )
-      result = sp.run(@cmd, @stdin, &block)
+      result = sp.run(nil, @stdin) do |out, err|
+        block.call() if block
+        # Redirect std* for flight-job sub process
+        $stdout = out
+        $stderr = err
+        @flight_block.call()
+      end
       parse_result(result)
       log_command(result)
       result
     end
 
     private
+
+    def run_flight_job
+      job_dir = File.expand_path('../../flight-job', __dir__)
+      Dir.chdir(job_dir) { FlightJob::CLI.run!(*@cmd) }
+    end
 
     def parse_result(result)
       if result.exitstatus == 0 && expect_json_response?

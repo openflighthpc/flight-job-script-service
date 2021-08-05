@@ -25,6 +25,14 @@
 # For more information on Flight Job Script Service, please visit:
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
+
+# Load flight-job Gemfile
+# NOTE: A gemspec isn't used as flight-job uses github sources, which isn't supported.
+# It is easier to load in the Gemfile directly. This may change once flight-job
+# is streamlined into a shared library
+job_gemspec = File.join(__dir__, 'flight-job', 'Gemfile')
+eval(File.read(job_gemspec), nil, job_gemspec)
+
 source 'https://rubygems.org'
 
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
@@ -32,7 +40,8 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gem 'activemodel', require: 'active_model'
 gem 'activesupport', require: 'active_support'
 gem 'flight_auth', github: "openflighthpc/flight_auth", branch: "297cb7241b820d334e5d593c4e237a81b83a9995"
-gem 'flight_configuration', github: 'openflighthpc/flight_configuration', branch: '24928260e542768f13cc513a3a08af69f690dfbc'
+# Disabled as it is used by flight-job
+# gem 'flight_configuration', github: 'openflighthpc/flight_configuration', branch: '24928260e542768f13cc513a3a08af69f690dfbc'
 gem 'concurrent-ruby'
 gem 'json_schemer'
 gem 'mime-types'

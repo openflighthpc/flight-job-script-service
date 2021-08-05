@@ -26,6 +26,12 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
+# Confirm flight-job has been symlinked in
+job_root = File.expand_path('../flight-job', __dir__)
+unless Dir.exists? job_root
+  raise "Can not locate flight-job! Please symlink it to: \n#{job_root}"
+end
+
 ENV['RACK_ENV'] ||= 'development'
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
@@ -53,6 +59,44 @@ require 'active_model/validations.rb'
 
 lib = File.expand_path('../lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+# Patch ActiveModel::Serializers::JSON to use the v6 version
+# NOTE: Sinja is versioned locked to v5 ActiveSupport, this
+#       should probably be updated
+module ActiveModel::Serializers::JSON
+  def as_json(options = nil)
+    root = if options && options.key?(:root)
+      options[:root]
+    else
+      include_root_in_json
+    end
+
+    hash = serializable_hash(options).as_json
+    if root
+      root = model_name.element if root == true
+      { root => hash }
+    else
+      hash
+    end
+  end
+end
+
+# Load flight-job
+# NOTE: The 'flight' stub belongs to FlighJob
+# Currently FlightJobScriptAPI does not use one
+job_lib = File.join(job_root, 'lib')
+$LOAD_PATH.unshift(job_lib) unless $LOAD_PATH.include?(job_lib)
+require 'flight'
+require 'flight_job'
+require 'flight_job/cli'
+
+# Eager load the entire library
+[FlightJob, FlightJob::Commands, FlightJob::Outputs].each do |klass|
+  klass.constants.each { |c| eval "::#{klass.to_s}::#{c.to_s}" }
+end
+
+# Reset flight-job config
+Flight.instance_variable_set(:@config, nil)
 
 require 'flight_job_script_api'
 
