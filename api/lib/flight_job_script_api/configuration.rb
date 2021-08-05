@@ -40,7 +40,12 @@ module FlightJobScriptAPI
       {
         name: 'bind_address',
         env_var: true,
-        default: 'tcp://127.0.0.1:921'
+        default: 'tcp://127.0.0.1:921',
+        transform: ->(addr) do
+          # Strip the 'tcp://' prefix because unicorn...
+          # This is intentionally being maintained for consistency with puma
+          addr.sub(/\Atcp:\/\//, '')
+        end
       },
       {
         name: 'base_url',
