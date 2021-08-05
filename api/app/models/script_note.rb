@@ -48,9 +48,7 @@ class ScriptNote
   end
 
   def save_payload(content)
-    FlightJobScriptAPI::JobCLI.edit_script_notes(
-      id, user: script.user, stdin: content
-    ).tap do |cmd|
+    FlightJobScriptAPI::JobCLI.edit_script_notes(id, stdin: content).tap do |cmd|
       next if cmd.exitstatus == 0
       raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to update the script's notes: #{id}"
     end

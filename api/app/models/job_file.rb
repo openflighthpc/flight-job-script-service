@@ -39,28 +39,28 @@ class JobFile
     # NOTE: There is a bit of back and forth between Job and JobFile here
     #       This is due to how the 'includes' was retrofitted over the original implementation
     #       Consider refactoring
-    def index_job_results!(job_id, user:)
+    def index_job_results!(job_id)
       # Attempt to load the cached version of Job
-      job = Job.find!(job_id, user: user)
+      job = Job.find!(job_id)
 
       # Fetch the files
       (job.metadata['result_files'] || []).map do |data|
         # NOTE: 'results_dir' must be set otherwise the files would be empty
         file_id = generate_file_id(job.metadata['results_dir'], data['file'])
         id = "#{job.id}.#{file_id}"
-        find!(id, user: user)
+        find!(id)
       end
     end
 
-    def index_job_results(job_id, user:)
-      index_job_results!(job_id, user: user)
+    def index_job_results(job_id)
+      index_job_results!(job_id)
     rescue FlightJobScriptAPI::CommandError
       nil
     end
 
     def find!(id, **opts)
       job_id, file_id = id.split('.', 2)
-      new(job_id, file_id, user: opts[:user]).tap do |job_file|
+      new(job_id, file_id).tap do |job_file|
         return nil unless job_file.exists?
       end
     end
@@ -79,10 +79,9 @@ class JobFile
   #
   # PS: The strings 'stdout'/'stderr' are invalid inputs to urlsafe_decode64 and thus
   # can be used as special case inputs.
-  def initialize(job_id, file_id, user:, size: nil)
+  def initialize(job_id, file_id, size: nil)
     @job_id = job_id
     @file_id = file_id
-    @user = user
     @size = size
   end
 
@@ -104,19 +103,15 @@ class JobFile
     @size ||= payload.length
   end
 
-  # Checks the file exists and the user has permission to access it
-  #
-  # NOTE: This method may raise CommandError.
+  # Checks the file exists and is readable
   def exists?
     return false unless path
     return false unless File.exists?(path)
-    # NOTE: The permission check prevents malicious user's querying the
-    # filesystem.
-    is_readable?
+    File.readable?(path)
   end
 
   def find_job
-    Job.find!(@job_id, user: @user)
+    Job.find!(@job_id)
   end
 
   def relative_path
@@ -180,34 +175,5 @@ class JobFile
 
   def <=>(other)
     filename <=> other.filename
-  end
-
-  # Confirm the user has permission to access the file.
-  #
-  # We directly check the file permissions here to avoid launching a new
-  # `flight job` command
-  def is_readable?
-    logger = FlightJobScriptAPI.logger
-    logger.debug("Checking file is readable: id:#{id.inspect} path:#{path.inspect} user:#{@user.inspect}")
-    sp = FlightJobScriptAPI::Subprocess.new(
-      env: {},
-      logger: logger,
-      timeout: FlightJobScriptAPI.config.command_timeout,
-      username: @user,
-    )
-    result = sp.run(nil, nil) do
-      exit(20) unless File.exists?(path)
-      File.stat(path).readable? ? exit(0) : exit(20)
-    end
-    logger.debug("Checked file is readable: id:#{id.inspect} path:#{path.inspect} user:#{@user.inspect} exitstatus:#{result.exitstatus}; pid=#{result.pid}")
-    case result.exitstatus
-    when 0
-      true
-    when 20
-      false
-    else
-      # We really shouldn't ever end up here.
-      raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to determine if the file exists: #{id}"
-    end
   end
 end

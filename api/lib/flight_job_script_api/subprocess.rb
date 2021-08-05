@@ -29,15 +29,12 @@ module FlightJobScriptAPI
   class Subprocess
     class Result < Struct.new(:stdout, :stderr, :exitstatus, :pid); end
 
-    def initialize(dir:nil, env:, logger:, supplementary_groups:false, timeout:, username:)
+    def initialize(dir:nil, env:, logger:, supplementary_groups:false, timeout:)
       @env = env
       @logger = logger
-      @passwd = Etc.getpwnam(username)
+      @dir = dir || ENV['HOME']
       @supplementary_groups = supplementary_groups
       @timeout = timeout
-      @username = username
-
-      @dir = dir || @passwd.dir
     end
 
     def run(cmd, stdin, &block)

@@ -92,6 +92,10 @@ module BeforeSwitchWorkerUser
           Process.initgroups(auth.username, passwd.gid) # Pick up new groups
           Process.uid = passwd.uid
 
+          # Update the environment variables
+          ENV['USER'] = auth.username
+          ENV['LOGNAME'] = auth.username
+          ENV['HOME'] = passwd.dir
         else
           # This shouldn't happen in practice, but it indicates someone is accessing
           # the wrong service. 403 - Forbidden is probably the best response.
@@ -109,10 +113,6 @@ class App < Sinatra::Base
   helpers Sinatra::Cookies
 
   helpers do
-    def current_user
-      auth.username
-    end
-
     def include_string
       case params.fetch('include', nil)
       when String
@@ -172,12 +172,12 @@ class App < Sinatra::Base
   resource :templates, pkre: /[\w.-]+/ do
     helpers do
       def find(id)
-        Template.find!(id, user: current_user)
+        Template.find!(id)
       end
     end
 
     index do
-      Template.index(user: current_user)
+      Template.index
     end
 
     show
@@ -190,12 +190,12 @@ class App < Sinatra::Base
   resource :scripts, pkre: /[\w-]+/ do
     helpers do
       def find(id)
-        Script.find!(id, user: current_user, include: include_string)
+        Script.find!(id, include: include_string)
       end
     end
 
     index do
-      Script.index(user: current_user, include: include_string)
+      Script.index(include: include_string)
     end
 
     show
@@ -214,7 +214,7 @@ class App < Sinatra::Base
   resource :notes, pkre: /[\w-]+/ do
     helpers do
       def find(id)
-        ScriptNote.find(id, user: current_user)
+        ScriptNote.find(id)
       end
     end
 
@@ -229,7 +229,7 @@ class App < Sinatra::Base
   resource :contents, pkre: /[\w-]+/ do
     helpers do
       def find(id)
-        ScriptContent.find(id, user: current_user)
+        ScriptContent.find(id)
       end
     end
 
@@ -244,7 +244,7 @@ class App < Sinatra::Base
   resource :jobs, pkre: /[\w-]+/ do
     helpers do
       def find(id)
-        Job.find!(id, user: current_user, include: include_string)
+        Job.find!(id, include: include_string)
       end
 
       def validate!
@@ -257,7 +257,7 @@ class App < Sinatra::Base
     end
 
     index do
-      Job.index(user: current_user, include: include_string)
+      Job.index(include: include_string)
     end
 
     show
@@ -267,7 +267,7 @@ class App < Sinatra::Base
       # Due to the how the internal Sinja routing works, the job needs an "ID"
       # However the actual ID won't be assigned until later, so a temporary ID
       # is used instead.
-      ['temporary', Job.new(user: current_user)]
+      ['temporary', Job.new]
     end
 
     has_one :script do
@@ -315,7 +315,7 @@ class App < Sinatra::Base
   resource :files, pkre: /[\w-]+\.[\w=-]+/ do
     helpers do
       def find(id)
-        JobFile.find!(id, user: current_user)
+        JobFile.find!(id)
       end
     end
 
@@ -338,9 +338,10 @@ class RenderApp < Sinatra::Base
   extend BeforeSwitchWorkerUser
 
   before do
-    if auth.valid?
-      @current_user = auth.username
-    elsif auth.forbidden?
+    case role
+    when :user
+      # NOOP
+    when :forbidden
       status 403
       halt
     else
@@ -378,14 +379,14 @@ class RenderApp < Sinatra::Base
     notes = nil if notes.empty?
     answers = params['answers'].dup.to_json
     cmd = FlightJobScriptAPI::JobCLI.create_script(
-      params[:id], name, notes: notes, answers: answers, user: @current_user
+      params[:id], name, notes: notes, answers: answers
     )
 
     # The job submitted correctly OR failed on submission,
     # Either way, the 'job' resource was created
     if [0, 2].include?(cmd.exitstatus)
       response.headers['Content-Type'] = 'application/vnd.api+json'
-      script = Script.new(user: @current_user, **cmd.stdout)
+      script = Script.new(**cmd.stdout)
       status 201
       next JSONAPI::Serializer.serialize(script).to_json
 

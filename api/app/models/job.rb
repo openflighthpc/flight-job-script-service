@@ -38,7 +38,7 @@ class Job
         raise FlightJobScriptAPI::CommandError, 'Unexpectedly failed to list jobs'
       end
       cmd.stdout.map do |metadata|
-        new(user: opts[:user], **metadata)
+        new(**metadata)
       end
     end
 
@@ -55,15 +55,14 @@ class Job
         raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to find job: #{id}"
       end
 
-      new(user: opts[:user], **cmd.stdout)
+      new(**cmd.stdout)
     end
   end
 
-  attr_reader :metadata, :user
+  attr_reader :metadata
 
-  def initialize(user:, **metadata)
+  def initialize(**metadata)
     @metadata = metadata
-    @user = user
 
     # Flag that the script has not been loaded
     @script = false
@@ -86,7 +85,7 @@ class Job
     if @script == false
       script_id = metadata['script_id']
       FlightJobScriptAPI.logger.info "Lazy loading related script: #{script_id} (script: #{id})"
-      @script = Script.find(script_id, user: user)
+      @script = Script.find(script_id)
     end
     @script
   end
@@ -96,7 +95,7 @@ class Job
       raise MissingScript, "Cannot create a job without a script"
     end
 
-    cmd = FlightJobScriptAPI::JobCLI.submit_job(script_id, user: user).tap do |cmd|
+    cmd = FlightJobScriptAPI::JobCLI.submit_job(script_id).tap do |cmd|
       next if cmd.exitstatus == 0
       if cmd.exitstatus == 22
         raise MissingScript, "Failed to locate script : #{script_id}"
@@ -109,7 +108,7 @@ class Job
   end
 
   def index_result_files
-    JobFile.index_job_results(self.id, user: user)
+    JobFile.index_job_results(self.id)
   end
 
   def index_output_files
@@ -123,17 +122,17 @@ class Job
   end
 
   def find_stdout_file
-    JobFile.find("#{id}.stdout", user: user)
+    JobFile.find("#{id}.stdout")
   end
 
   def find_stderr_file
     return nil if stderr_merged?
-    JobFile.find("#{id}.stderr", user: user)
+    JobFile.find("#{id}.stderr")
   end
 
   def cache_related_resources
     if script_data = metadata['script']
-      Script.cache(user: user, **script_data)
+      Script.cache(**script_data)
     end
 
     if files_data = metadata['result_files']
@@ -141,18 +140,18 @@ class Job
         file = opts['file']
         size = opts['size']
         file_id = JobFile.generate_file_id(metadata['results_dir'], file)
-        JobFile.cache(id, file_id, user: user, size: size)
+        JobFile.cache(id, file_id, size: size)
       end
     end
 
     # NOTE: This pre-populates the stdout/stderr files in the cache
     # and bypasses the existence check on 'find'
     if stdout_size = metadata['stdout_size']
-      JobFile.cache(id, 'stdout', user: user, size: stdout_size)
+      JobFile.cache(id, 'stdout', size: stdout_size)
     end
 
     if !stderr_merged? && stderr_size = metadata['stderr_size']
-      JobFile.cache(id, 'stderr', user: user, size: stderr_size)
+      JobFile.cache(id, 'stderr', size: stderr_size)
     end
   end
 end
