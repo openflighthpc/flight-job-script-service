@@ -33,14 +33,6 @@ module FlightJobScriptAPI
 
   class JobCLI
     class << self
-      # TODO: Remove the mutex
-      #
-      # Previously this prevented a user running multiple requests at the same
-      # time. However this is no longer possible to prevent in threads.
-      def mutexes
-        @mutexes ||= Hash.new { |h, k| h[k] = Mutex.new }
-      end
-
       def list_templates(**opts)
         opts = opts.dup
         includes = opts.key?(:include) ? ["--include", opts.delete(:include)] : []
@@ -141,17 +133,13 @@ module FlightJobScriptAPI
     end
 
     def run(&block)
-      result =
-        # TODO: Remove mutext
-        self.class.mutexes[:todo_remove_me].synchronize do
-          FlightJobScriptAPI.logger.debug("Running subprocess (#{ENV['USER']}): #{stringified_cmd}")
-          sp = Subprocess.new(
-            env: @env,
-            logger: FlightJobScriptAPI.logger,
-            timeout: FlightJobScriptAPI.config.command_timeout
-          )
-          sp.run(@cmd, @stdin, &block)
-        end
+      FlightJobScriptAPI.logger.debug("Running subprocess (#{ENV['USER']}): #{stringified_cmd}")
+      sp = Subprocess.new(
+        env: @env,
+        logger: FlightJobScriptAPI.logger,
+        timeout: FlightJobScriptAPI.config.command_timeout
+      )
+      result = sp.run(@cmd, @stdin, &block)
       parse_result(result)
       log_command(result)
       result
