@@ -5,6 +5,7 @@ import { useRef } from 'react';
 
 import {
   DefaultErrorMessage,
+  NotFound,
   Overlay,
   OverlayContainer,
   Spinner,
@@ -23,7 +24,11 @@ function JobPage() {
   useInterval(get, 1 * 60 * 1000);
 
   if (error) {
-    return <DefaultErrorMessage />;
+    if (error.name === "404") {
+      return <NotFound />;
+    } else {
+      return <DefaultErrorMessage />;
+    }
   } else {
     const job = data == null ? null : data.data;
     return (

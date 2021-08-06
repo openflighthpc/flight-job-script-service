@@ -4,6 +4,7 @@ import { useRef } from 'react';
 
 import {
   DefaultErrorMessage,
+  NotFound,
   Overlay,
   Spinner,
 } from 'flight-webapp-components';
@@ -21,7 +22,11 @@ function ScriptPage() {
   if (loading) {
     return <Loading id={ref.current} />;
   } else if (error) {
-    return <DefaultErrorMessage />;
+    if (error.name === "404") {
+      return <NotFound />;
+    } else {
+      return <DefaultErrorMessage />;
+    }
   } else {
     const script = data.data;
     if ( script == null) {

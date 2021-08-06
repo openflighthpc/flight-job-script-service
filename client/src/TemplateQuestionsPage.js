@@ -3,6 +3,7 @@ import { useRef } from 'react';
 
 import {
   DefaultErrorMessage,
+  NotFound,
   Overlay,
   Spinner,
   utils,
@@ -34,7 +35,11 @@ function TemplateQuestionsPage() {
   if (questionsLoading) {
     return <Loading />;
   } else if (questionsLoadingError) {
-    return <DefaultErrorMessage />;
+    if (questionsLoadingError.name === "404") {
+      return <NotFound />;
+    } else {
+      return <DefaultErrorMessage />;
+    }
   } else {
     const questions = utils.getResourcesFromResponse(data);
     if ( questions == null) {
