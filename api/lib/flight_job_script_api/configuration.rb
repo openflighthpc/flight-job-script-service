@@ -105,6 +105,12 @@ module FlightJobScriptAPI
         env_var: true,
         default: 'flight_login',
       },
+      {
+        name: 'pid_path',
+        env_var: true,
+        default: 'var/run/job-script-api.pid',
+        transform: relative_to(root_path)
+      }
     ].each { |opt| attribute(opt[:name], **opt) }
 
     def auth_decoder

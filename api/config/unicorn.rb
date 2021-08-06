@@ -44,6 +44,9 @@ logger FlightJobScriptAPI.logger
 # stdout_path ...
 # stderr_path ...
 
+FileUtils.mkdir_p File.dirname(FlightJobScriptAPI.config.pid_path)
+pid FlightJobScriptAPI.config.pid_path
+
 worker_processes 1
 timeout FlightJobScriptAPI.config.hard_timeout
 

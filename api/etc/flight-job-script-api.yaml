@@ -84,7 +84,7 @@
 #-------------------------------------------------------------------------------
 # sso_cookie_name: flight_login
 
-# ==============================================================================
+#-------------------------------------------------------------------------------
 # Log Path
 # When set, standard out, standard error, and the logger will all be redirected
 # to the file.
@@ -103,7 +103,7 @@
 # Relative paths are expanded from the install directory.
 #
 # The environment variable flight_JOB_SCRIPT_API_log_path takes precedence.
-# ==============================================================================
+#-------------------------------------------------------------------------------
 # log_path: var/log/job-script-api/unicorn.log
 
 #-------------------------------------------------------------------------------
@@ -113,3 +113,14 @@
 # Valid levels are: fatal, error, warn, info, debug
 #-------------------------------------------------------------------------------
 # log_level: info
+
+#-------------------------------------------------------------------------------
+# PID Path
+#
+# The path to the pid file.
+#
+# Relative paths are expanded from the install directory.
+#
+# The environment variable flight_JOB_SCRIPT_API_pid_path takes precedence.
+#-------------------------------------------------------------------------------
+# pid_path: var/run/job-script-api.pid
