@@ -47,6 +47,11 @@ logger FlightJobScriptAPI.logger
 worker_processes 1
 timeout FlightJobScriptAPI.config.hard_timeout
 
+if FlightJobScriptAPI.config.log_path
+  stdout_path FlightJobScriptAPI.config.log_path
+  stderr_path FlightJobScriptAPI.config.log_path
+end
+
 # NOTE: Unicorn does not appear to have an equivalent config option to puma's tag
 # IIRC this isn't hard to implement manually
 # tag FlightJobScriptAPI.config.class.application_name

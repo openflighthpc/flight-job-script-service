@@ -84,6 +84,28 @@
 #-------------------------------------------------------------------------------
 # sso_cookie_name: flight_login
 
+# ==============================================================================
+# Log Path
+# When set, standard out, standard error, and the logger will all be redirected
+# to the file.
+#
+# This config is optional and can be unset with null or empty string. The
+# behaviour then depends if the service is daemonized:
+#
+# 1. When ran as a daemon, the above files will be redirected to /dev/null.
+# 2. Otherwise, the logger will print to standard out and the shell controls
+#    the redirection.
+#
+# The log path should always be set within a production environment. Failure
+# to do so will prevent the server re-opening the logs after logrotate runs.
+# This can lead to either the logs being lost or the server crashing.
+#
+# Relative paths are expanded from the install directory.
+#
+# The environment variable flight_JOB_SCRIPT_API_log_path takes precedence.
+# ==============================================================================
+# log_path: var/log/job-script-api/unicorn.log
+
 #-------------------------------------------------------------------------------
 # Log Level
 # Specify the logging level

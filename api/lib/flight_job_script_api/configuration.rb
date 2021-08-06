@@ -86,6 +86,21 @@ module FlightJobScriptAPI
         default: 'info'
       },
       {
+        name: 'log_path',
+        env_var: true,
+        required: false,
+        default: 'var/log/job-script-api/unicorn.log',
+        transform: ->(path) do
+          if path.blank?
+            nil
+          else
+            relative_to(root_path).call(path).tap do |full_path|
+              FileUtils.mkdir_p File.dirname(full_path)
+            end
+          end
+        end
+      },
+      {
         name: 'sso_cookie_name',
         env_var: true,
         default: 'flight_login',
