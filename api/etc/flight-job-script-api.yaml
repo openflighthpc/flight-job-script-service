@@ -58,6 +58,15 @@
 # command_timeout: 5
 
 #-------------------------------------------------------------------------------
+# Hard Timeout
+# The maximum time a request can run for in seconds. Workers which exceed this
+# time will be terminated with SIGKILL.
+#
+# The environment variable flight_JOB_SCRIPT_API_hard_timeout takes precedence
+#-------------------------------------------------------------------------------
+# hard_timeout: 600
+
+#-------------------------------------------------------------------------------
 # Shared Secret Path
 # Specify the path to to shared secret config. The secret must exist before the
 # service can be started.
