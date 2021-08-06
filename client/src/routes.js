@@ -1,3 +1,5 @@
+import { NotFound } from 'flight-webapp-components';
+
 import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import JobsPage from './JobsPage';
@@ -64,6 +66,11 @@ const routes = [
     Component: Dashboard,
     sideNav: true,
   },
+  {
+    name: 'Not found',
+    Component: NotFound,
+    sideNav: true
+  }
 ]
 
 const unconfiguredRoutes = [

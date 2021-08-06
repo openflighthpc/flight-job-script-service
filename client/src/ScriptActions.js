@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import DeleteScriptButton from './DeleteScriptButton';
 import SubmitScriptButton from './SubmitScriptButton';
 
-function ScriptActions({ className, includeLink=true, reloadScripts, script }) {
+function ScriptActions({ className, includeLink=true, onDeleted, script }) {
   const link = (
     <Link
       className="btn btn-link btn-sm"
@@ -23,7 +23,7 @@ function ScriptActions({ className, includeLink=true, reloadScripts, script }) {
         script={script}
       />
       <DeleteScriptButton
-        onDeleted={reloadScripts}
+        onDeleted={onDeleted}
         script={script}
       />
     </ButtonToolbar>

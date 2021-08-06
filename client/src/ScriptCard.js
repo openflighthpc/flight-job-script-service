@@ -4,7 +4,7 @@ import MetadataEntry from './MetadataEntry';
 import ScriptActions from './ScriptActions';
 import TimeAgo from './TimeAgo';
 
-function ScriptMetadataCard({ reloadScripts, script }) {
+function ScriptMetadataCard({ onDeleted, script }) {
   return (
     <div className="card">
       <div className="card-header d-flex flex-row justify-content-between">
@@ -17,7 +17,7 @@ function ScriptMetadataCard({ reloadScripts, script }) {
         <ScriptActions
           className="h-100"
           includeLink={false}
-          reloadScripts={reloadScripts}
+          onDeleted={onDeleted}
           script={script}
         />
       </div>
