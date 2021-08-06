@@ -4550,9 +4550,9 @@ flatten@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/flatten/-/flatten-1.0.3.tgz#c1283ac9f27b368abc1e36d1ff7b04501a30356b"
 
-"flight-webapp-components@git+https://github.com/openflighthpc/flight-webapp-components#dev/not-found-v2":
-  version "0.1.5"
-  resolved "git+https://github.com/openflighthpc/flight-webapp-components#0fa3c98782615413fd2cbf8a7137667fb2e1c248"
+"flight-webapp-components@git+https://github.com/openflighthpc/flight-webapp-components#0.1.7":
+  version "0.1.7"
+  resolved "git+https://github.com/openflighthpc/flight-webapp-components#eb9d6d818c983f34a550fe8b80b14db738aedfc4"
   dependencies:
     classnames "^2.2.6"
     js-gravatar "^1.1.3"
