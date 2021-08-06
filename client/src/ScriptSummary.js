@@ -20,7 +20,7 @@ function ScriptSummary({ reloadScripts, script }) {
     <ScriptActions.Disabled className="h-100" /> :
     <ScriptActions
       className="h-100"
-      reloadScripts={reloadScripts}
+      onDeleted={reloadScripts}
       script={script}
     />;
 
