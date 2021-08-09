@@ -38,11 +38,11 @@ preload_app true
 
 listen FlightJobScriptAPI.config.bind_address
 
-# NOTE: Unicorn does not have --redirect-std* flags like puma. They will need to
-# be specified here
 logger FlightJobScriptAPI.logger
-# stdout_path ...
-# stderr_path ...
+if FlightJobScriptAPI.config.log_path
+  stdout_path FlightJobScriptAPI.config.log_path
+  stderr_path FlightJobScriptAPI.config.log_path
+end
 
 FileUtils.mkdir_p File.dirname(FlightJobScriptAPI.config.pid_path)
 pid FlightJobScriptAPI.config.pid_path
@@ -50,11 +50,17 @@ pid FlightJobScriptAPI.config.pid_path
 worker_processes 1
 timeout FlightJobScriptAPI.config.hard_timeout
 
-if FlightJobScriptAPI.config.log_path
-  stdout_path FlightJobScriptAPI.config.log_path
-  stderr_path FlightJobScriptAPI.config.log_path
+# PATCH unicorn to allow the process title to be set
+module UnicornTagPatch
+  def proc_name(tag)
+    $0 =  [
+      File.basename(self.class::START_CTX[0]),
+      tag,
+      "(#{FlightJobScriptAPI.config.bind_address})",
+      "[#{FlightJobScriptAPI.config.class.application_name}]",
+      '-',
+      ENV['RACK_ENV']
+    ].join(' ')
+  end
 end
-
-# NOTE: Unicorn does not appear to have an equivalent config option to puma's tag
-# IIRC this isn't hard to implement manually
-# tag FlightJobScriptAPI.config.class.application_name
+Unicorn::HttpServer.prepend UnicornTagPatch
