@@ -18,9 +18,6 @@ import {
   useFetchOutputFiles,
   useFetchResultFiles,
   useFetchFileContent,
-  useFetchJobInteractiveSession,
-  useFetchDesktop,
-  useFetchDesktopScreenshot,
 } from './api';
 import { useInterval } from './utils';
 
@@ -32,24 +29,13 @@ export function getResourceFromResponse(data) {
 function JobOutputsCard({ job }) {
   const [selected, setSelected] = useState(null);
 
-  // Supports selecting files or the desktop session
-  function isSelected(item) {
-    if (!selected) {
-      return false;
-    } else if (selected.id !== item.id) {
-      return false;
-    } else if (selected.session !== item.session) {
-      return false;
-    } else {
-      return true
-    }
+  function toggleSelected(file) {
+    selected === file ? setSelected(null) : setSelected(file)
+  }
+  function isSelected(file) {
+    return selected != null && selected.id === file.id;
   }
 
-  function toggleSelected(item) {
-    isSelected(item) ? setSelected(null) : setSelected(item)
-  }
-
-  const isInteractive = job.attributes.interactive;
   const hasFiles = true;
 
   return (
@@ -83,26 +69,11 @@ function JobOutputsCard({ job }) {
           toggleSelected={toggleSelected}
         />
         {
-          isInteractive ?
-            (
-              <>
-              <hr/>
-              <InteractiveSessionAsync
-                className="ml-4 mb-3"
-                isSelected={isSelected}
-                job={job}
-                toggleSelected={toggleSelected}
-              />
-              </>
-            ) :
-            null
-        }
-        {
           hasFiles ?
             (
               <>
               <hr/>
-              <Preview job={job} selected={selected} />
+              <FilePreview job={job} selected={selected} />
               </>
             ) :
             null
@@ -294,26 +265,15 @@ function getContentFromResponse(data) {
   return data.data.attributes.payload;
 }
 
-function Preview({selected, job}) {
-  console.log(selected);
+function FilePreview({selected, job}) {
   if (selected == null) {
     return (
       <div>
-        <em>{ job.attributes.interactive ?
-          "Select a text file or the desktop above to view its preview." :
-          "Select a text file above to view its preview."
-        }
-        </em>
+        <em>Select a text file above to preview its output.</em>
       </div>
     );
-  } else if (selected.session) {
-    return <ScreenshotPreview id={selected.id}/>
-  } else {
-    return <FilePreview selected={selected} job={job} />
   }
-}
 
-function FilePreview({selected, job}) {
   const filename = selected === job.stdoutFile ?
     'standard output' :
     selected === job.stderrFile ?
@@ -365,194 +325,6 @@ function OpenDirectoryButtons({ dir }) {
         size="sm"
       >
         Open in console
-      </Button>
-    </ButtonToolbar>
-  );
-}
-
-function InteractiveSessionAsync({ className, job, isSelected, toggleSelected }) {
-  const { data, error, loading, response } = useFetchJobInteractiveSession(job.id);
-
-  const header = function(id) {
-    return <h6
-        className="d-flex flex-row align-items-center justify-content-between"
-      >
-      <span
-        className="font-weight-bold"
-        title="Desktop Session"
-      >
-        Interactive Session
-      </span>
-      <OpenDesktopButton id={id} />
-    </h6>
-  }
-
-  if (response.status === 503 && data.errors[0].title  === "Wait Timeout") {
-    // Resend the request if the server timeout
-    return  <InteractiveSessionAsync
-      className="ml-4 mb-3"
-      isSelected={isSelected}
-      job={job}
-      toggleSelected={toggleSelected}
-    />
-  } else if (error) {
-    return <>
-      {header(null)}
-      <div className={className}>
-        The job did not report its interative session.
-      </div>
-    </>
-  } else if (loading) {
-    return (
-      <div>
-        {header(null)}
-        <div className="mb-2">
-          <Spinner text="Loading interactive session..." />
-        </div>
-      </div>
-    );
-  } else {
-    return <InteractiveSessionChecker
-      className={className}
-      job={job}
-      id={data.data.id}
-      isSelected={isSelected}
-      toggleSelected={toggleSelected}
-      header={header}
-    />;
-  }
-}
-
-function InteractiveSessionChecker({ className, job, id, isSelected, toggleSelected, header }) {
-  const { data, error, loading, get } = useFetchDesktop(id);
-  useInterval(get, 1 * 60 * 1000);
-  let state = null;
-
-  // Determine the state of the session
-  if (error) {
-    // flight-desktop-restapi is probably down?
-    state="Unavailable"
-  } else if (!data && loading) {
-    // NOOP
-  } else if (data.state === "Remote") {
-    state = "Active";
-  } else {
-    state = data.state;
-  }
-
-  // Render the link or continue loading
-  if (state) {
-    return (
-      <React.Fragment>
-        {header(state === "Active" ? id : null)}
-        { loading && <Loading text="Loading interactive session..." /> }
-        <InteractiveSession
-          className={className}
-          job={job}
-          id={id}
-          isSelected={isSelected}
-          toggleSelected={toggleSelected}
-          state={state}
-        />
-      </React.Fragment>
-    );
-  } else {
-    return (
-      <div>
-        {header(null)}
-        <div className="mb-2">
-          <Spinner text="Loading interactive session..." />
-        </div>
-      </div>
-    );
-  }
-}
-
-function InteractiveSession({ className, job, id, isSelected, toggleSelected, state }) {
-  const session_pseudo_file = {
-    id: id,
-    session: true
-  }
-  const isActive = isSelected(session_pseudo_file)
-
-  return (
-    <ListGroup className={className}>
-      <ListGroupItem
-        key="desktop-session"
-        action={true}
-        active={isActive}
-        onClick={() => toggleSelected(session_pseudo_file)}
-        tag="a"
-        href="#"
-        // title={isViewable ? null : 'Previewing files of this type is not supported.  To view the file, you can open the results directory in the File manager.'}
-      >
-        <span className="d-flex flex-row align-items-center justify-content-between">
-          <span>
-            <i
-              className={classNames("mr-2 fa fa-desktop")}
-              title="VNC Session"
-            ></i>
-            <span
-              title={id}
-            >
-              VNC Session
-            </span>
-          </span>
-          <span
-            className={classNames("text-small",
-              isActive ? styles.FileItemActiveColor : 'text-muted'
-            )}
-          >
-            {state}
-          </span>
-        </span>
-      </ListGroupItem>
-    </ListGroup>
-  );
-}
-
-function ScreenshotPreview({ id }) {
-  const { image } = useFetchDesktopScreenshot(id);
-
-  if (image) {
-    return <div>
-      <h6 className="card-title font-weight-bold">
-        Preview <code>VNC Session</code>
-      </h6>
-      <img src={image} alt="Session screenshot"/>
-    </div>
-  } else if (image === false) {
-    return (
-      <div>
-        <h6 className="card-title font-weight-bold">
-          Preview <code>VNC Session</code>
-        </h6>
-        <em>The preview for the destop session is currently unavailable</em>
-      </div>
-    );
-  } else {
-    return <div>
-      <h6 className="card-title font-weight-bold">
-        Preview <code>VNC Session</code>
-      </h6>
-      <div className="mb-2">
-        <Spinner text="Loading preview..." />
-      </div>
-    </div>
-  }
-}
-
-function OpenDesktopButton({ id }) {
-  return (
-    <ButtonToolbar>
-      <Button
-        color="primary"
-        disabled={!id}
-        href={ id ? `/desktop/sessions/${id}` : '#' }
-        size="sm"
-      >
-        <i className="fa fa-bolt mr-1"/>
-        <span>Connect to Session</span>
       </Button>
     </ButtonToolbar>
   );

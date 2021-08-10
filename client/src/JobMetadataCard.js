@@ -16,13 +16,13 @@ function endTimeNameFromState(state) {
   }
 }
 
-function JobMetadataCard({ job }) {
+function JobMetadataCard({ className, job }) {
   const jobState = job.attributes.state;
   const colour = stateColourMap[jobState];
 
   return (
     <div
-      className={classNames("card", `border-${colour}`)}
+      className={classNames("card", `border-${colour}`, className)}
     >
       <h4
         className="card-header text-truncate justify-content-between d-flex align-items-end"

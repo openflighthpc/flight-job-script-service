@@ -1,10 +1,13 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import useFetch from 'use-http';
 
 import {
+  ConfigContext,
   CurrentUserContext,
   utils,
 } from 'flight-webapp-components';
+
+import { useInterval } from './utils';
 
 export function useFetchTemplates() {
   const { currentUser } = useContext(CurrentUserContext);
@@ -321,25 +324,107 @@ export function useFetchJobInteractiveSession(job_id) {
     [ currentUser.authToken, job_id]);
 }
 
-export function useFetchDesktop(id) {
+const desktopApiUrl = new URL(
+  process.env.REACT_APP_DESKTOP_API_BASE_URL,
+  window.location.origin,
+).toString();
+
+function useBookKeeping(promise) {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [response, setResponse] = useState(null);
+
+  useEffect(() => {
+    async function runEffect() {
+      try {
+        const response = await promise();
+        setResponse(response);
+        if (response.ok) {
+          setData(await response.json());
+          setError(null);
+          setLoading(false);
+        } else {
+          setData(null);
+          setLoading(false);
+          try {
+            // XXX Perhaps we need more intelligence here.  Perhaps we set the
+            // error according to the response status?
+            const err = await response.json();
+            setError(err);
+          } catch(e) {
+            setError(e);
+          }
+        }
+      } catch (e) {
+        setData(null);
+        setError(e);
+        setLoading(false);
+      }
+    }
+    runEffect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return { data, error, loading, response };
+}
+
+export class SessionNotFound extends Error {}
+export class SessionUnknown extends Error {}
+
+export function useFetchDesktop(jobId) {
+  const { apiRootUrl } = useContext(ConfigContext);
   const { currentUser } = useContext(CurrentUserContext);
-  return useFetch(
-    `${window.location.origin}/desktop/api/v2/sessions/${id}`,
-    {},
-    [currentUser.authToken, id]
+
+  return useBookKeeping(
+    async function() {
+      const waitResponse = await fetch(
+        `${apiRootUrl}/jobs/${jobId}/desktop?wait-desktop=true`, {
+          headers: {
+            Accept: 'application/vnd.api+json',
+            Authorization: currentUser == null ? null : currentUser.authToken,
+          },
+        },
+      );
+      if (waitResponse.ok) {
+        const sessionId = (await waitResponse.json())?.data?.id;
+        if (sessionId) {
+          const sessionResponse = await fetch(`${desktopApiUrl}/sessions/${sessionId}`);
+          if (sessionResponse.ok) {
+            return sessionResponse;
+          } else {
+            throw new SessionNotFound();
+          }
+        } else {
+          throw new SessionUnknown();
+        }
+      } else {
+        return waitResponse;
+      }
+    }
   );
 }
 
-export function useFetchDesktopScreenshot(id) {
+export function useFetchDesktopScreenshot(id, { reloadInterval=1*60*1000 }={}) {
   const { currentUser } = useContext(CurrentUserContext);
+  const lastLoadedAt = useRef(null);
   const [image, setImage] = useState();
 
-  const { response } = useFetch(
-    `${window.location.origin}/desktop/api/v2/sessions/${id}/screenshot.png`,
+  const now = new Date();
+  const reloadDue = lastLoadedAt.current == null ||
+    now - lastLoadedAt.current < reloadInterval;
+  if (reloadDue) {
+    lastLoadedAt.current = now;
+  }
+
+  const { get, response } = useFetch(
+    `${desktopApiUrl}/sessions/${id}/screenshot.png`,
     {
       headers: { Accept: 'image/*' },
-    }, [currentUser.authToken, id]
+    }, [currentUser.authToken, id, lastLoadedAt]
   );
+
+  useInterval(get, reloadInterval, { immediate: false });
 
   if (response.ok) {
     response.blob()
@@ -358,7 +443,6 @@ export function useFetchDesktopScreenshot(id) {
       })
       .catch((e) => {
         console.log('Error base64 encoding screenshot:', e);  // eslint-disable-line no-console
-        setImage(false);
       });
   }
 

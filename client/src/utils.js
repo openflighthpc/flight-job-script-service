@@ -31,3 +31,12 @@ export function useInterval(fn, interval, { immediate=false }={}) {
     }
   }, [immediate, interval]);
 }
+
+export const prettyDesktopName = {
+  chrome: "Google Chrome browser session",
+  gnome: "GNOME v3",
+  kde: "KDE Plasma Desktop",
+  terminal: "Terminal",
+  xfce: "Xfce desktop",
+  xterm: "xterm",
+};
