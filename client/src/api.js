@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import useFetch from 'use-http';
 
 import {
@@ -8,6 +8,7 @@ import {
 } from 'flight-webapp-components';
 
 import { useInterval } from './utils';
+import useFetchBookKeeping from './useFetchBookKeeping';
 
 export function useFetchTemplates() {
   const { currentUser } = useContext(CurrentUserContext);
@@ -314,75 +315,23 @@ export function useFetchFileContent(file) {
     [ currentUser.authToken, file.id ]);
 }
 
-export function useFetchJobInteractiveSession(job_id) {
-  const { currentUser } = useContext(CurrentUserContext);
-  return useFetch(
-    `/jobs/${job_id}/desktop?wait-desktop=true`,
-    {
-      headers: { Accept: 'application/vnd.api+json' },
-    },
-    [ currentUser.authToken, job_id]);
-}
-
 const desktopApiUrl = new URL(
   process.env.REACT_APP_DESKTOP_API_BASE_URL,
   window.location.origin,
 ).toString();
-
-function useBookKeeping(promise) {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [response, setResponse] = useState(null);
-
-  useEffect(() => {
-    async function runEffect() {
-      try {
-        const response = await promise();
-        setResponse(response);
-        if (response.ok) {
-          setData(await response.json());
-          setError(null);
-          setLoading(false);
-        } else {
-          setData(null);
-          setLoading(false);
-          try {
-            // XXX Perhaps we need more intelligence here.  Perhaps we set the
-            // error according to the response status?
-            const err = await response.json();
-            setError(err);
-          } catch(e) {
-            setError(e);
-          }
-        }
-      } catch (e) {
-        setData(null);
-        setError(e);
-        setLoading(false);
-      }
-    }
-    runEffect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return { data, error, loading, response };
-}
 
 export class SessionNotFound extends Error {}
 export class SessionUnknown extends Error {}
 
 export function useFetchDesktop(jobId) {
   const { apiRootUrl } = useContext(ConfigContext);
-  const { currentUser } = useContext(CurrentUserContext);
 
-  return useBookKeeping(
+  return useFetchBookKeeping(
     async function() {
       const waitResponse = await fetch(
         `${apiRootUrl}/jobs/${jobId}/desktop?wait-desktop=true`, {
           headers: {
             Accept: 'application/vnd.api+json',
-            Authorization: currentUser == null ? null : currentUser.authToken,
           },
         },
       );
