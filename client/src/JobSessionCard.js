@@ -19,7 +19,7 @@ function JobSessionCard({ className, job }) {
   }
   switch (job.attributes.state) {
     case 'PENDING':
-      return <SessionPending className={className} job={job} />;
+      return <SessionPending className={className} />;
     case 'RUNNING':
       return <SessionPreview className={className} job={job} />;
     default:
@@ -46,7 +46,7 @@ function Layout({ button, children, className, session }) {
   );
 }
 
-function SessionPending({ className, job }) {
+function SessionPending({ className }) {
   return (
     <Layout
       button={<ConnectButton disabled />}
@@ -59,12 +59,12 @@ function SessionPending({ className, job }) {
 }
 
 function SessionComplete({ className, job }) {
-  const { data, loading } = useFetchDesktop(job.id);
+  const { data: session, loading } = useFetchDesktop(job.id);
 
   let content;
   if (loading) {
     content = <Spinner text="Loading session preview..."/>;
-  } else if (data?.id) {
+  } else if (session?.id) {
     content = <span>Your interactive session has completed.</span>
   } else {
     content = <span>Your interactive session appears to have failed to launch.</span>
@@ -74,7 +74,7 @@ function SessionComplete({ className, job }) {
     <Layout
       button={<ConnectButton disabled />}
       className={className}
-      session={data}
+      session={session}
     >
       {content}
     </Layout>
@@ -82,61 +82,61 @@ function SessionComplete({ className, job }) {
 }
 
 function SessionPreview({ className, job }) {
-  const { data, error, loading, response } = useFetchDesktop(job.id);
-
-  console.log('-- loading:', loading);  // eslint-disable-line no-console
-  console.log(' - data:', data);  // eslint-disable-line no-console
-  console.log(' - error:', error);  // eslint-disable-line no-console
-  console.log(' - response:', response);  // eslint-disable-line no-console
-  console.log(' - response?.status:', response?.status);  // eslint-disable-line no-console
-
-  let content;
-  if (loading) {
-    content = <Spinner text="Loading session preview..."/>;
-  } else if (error) {
-    if (error instanceof SessionNotFound) {
-    content = (
-      <div>
-        Your interactive session is no longer available.
-      </div>
-    );
-    } else if (error instanceof SessionUnknown) {
-      content = (
-        <div>
-          Unfortunately, it has not been possible to determine your
-          interactive session.
-        </div>
-      );
-    } else {
-      content = <DefaultErrorMessage />;
-    }
-  } else {
-    // content = <LinkedScreenshot session={data} />;
-    content = <SessionThing session={data} />;
-  }
+  const { data: session, error, loading } = useFetchDesktop(job.id);
 
   return (
     <Layout
       button={
         <ConnectButton
           disabled={loading || error}
-          sessionId={data?.id}
+          sessionId={session?.id}
         />
       }
       className={className}
-      session={data}
+      session={session}
     >
-      {content}
+      <SessionPreviewContent
+        error={error}
+        loading={loading}
+        session={session}
+      />
     </Layout>
   );
 }
 
-function SessionThing({ session }) {
-  console.log('session:', session);  // eslint-disable-line no-console
+function SessionPreviewContent({ error, loading, session }) {
+  if (loading) {
+    return <Spinner text="Loading session preview..."/>;
+  }
+
+  if (session) {
+    return <SessionDetails session={session} />;
+  }
+
+  if (error instanceof SessionNotFound) {
+    return (
+      <div>
+        Your interactive session is no longer available.
+      </div>
+    );
+  }
+
+  if (error instanceof SessionUnknown) {
+    return (
+      <div>
+        Unfortunately, it has not been possible to determine your
+        interactive session.
+      </div>
+    );
+
+  }
+
+  return <DefaultErrorMessage />;
+}
+
+function SessionDetails({ session }) {
   return (
-    <div className={
-      classNames({ 'text-muted': !activeStates.includes(session.state) })
-    }>
+    <div>
       <div className="row mb-2">
         <div className="col">
           <LinkedScreenshot session={session} />
