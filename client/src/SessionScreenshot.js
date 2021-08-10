@@ -9,8 +9,8 @@ function Screenshot({ className, session }) {
   let currentScreenshot;
   if (latestScreenshot != null) {
     currentScreenshot = latestScreenshot;
-  // } else if (session.screenshot != null) {
-  //   currentScreenshot = `data:image/png;base64,${session.screenshot}`;
+  } else if (session.screenshot != null) {
+    currentScreenshot = `data:image/png;base64,${session.screenshot}`;
   } else {
     currentScreenshot = placeholderImage;
   }
