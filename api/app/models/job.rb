@@ -138,7 +138,7 @@ class Job
 
   def find_desktop
     id = metadata['flight_desktop_id']
-    return false unless id
+    return nil unless id
     Desktop.new(job: self, id: id)
   end
 
