@@ -12,12 +12,16 @@ import MetadataEntry from './MetadataEntry';
 import Screenshot from './SessionScreenshot';
 import { SessionNotFound, SessionUnknown, useFetchDesktop } from './api';
 import { prettyDesktopName } from './utils';
-import { useInterval } from './utils';
+import { getTagValue, useInterval } from './utils';
 
 const activeStates = ['Active', 'Remote'];
 
+function isInteractive(script) {
+  return getTagValue(script.attributes.tags, 'script:type') === 'interactive';
+}
+
 function JobSessionCard({ className, job }) {
-  if (job.attributes.interactive !== true) {
+  if (!isInteractive(job.script)) {
     return null;
   }
   switch (job.attributes.state) {

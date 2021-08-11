@@ -38,7 +38,6 @@ class JobSerializer < ApplicationSerializer
   attribute(:start_time) { object.metadata['actual_start_time'] }
   attribute(:end_time) { object.metadata['actual_end_time'] }
   attribute(:merged_stderr) { object.stderr_merged? }
-  attribute(:interactive) { object.metadata['interactive'] ? true : false }
 
   has_one :script
   has_one(:desktop) { object.find_desktop }

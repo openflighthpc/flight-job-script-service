@@ -40,3 +40,12 @@ export const prettyDesktopName = {
   xfce: "Xfce desktop",
   xterm: "xterm",
 };
+
+export function getTagValue(tags, name) {
+  const tag = ( tags || [] ).find(tag => tag.split('=')[0] === name);
+  if (tag == null) {
+    return undefined;
+  }
+  return tag.split('=')[1];
+}
+

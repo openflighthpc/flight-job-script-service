@@ -1,19 +1,38 @@
 import { Badge } from 'reactstrap';
 
-import { stateColourMap } from './utils';
+import { getTagValue, stateColourMap } from './utils';
+
+function prettyScriptType(script) {
+  if (script == null) {
+    return undefined;
+  }
+  const scriptType = getTagValue(script.attributes.tags, 'script:type');
+  if (scriptType === 'interactive') {
+    const sessionType = getTagValue(script.attributes.tags, 'session:type');
+    if (sessionType === 'desktop') {
+      return 'Desktop session';
+    }
+  }
+  return "Batch job";
+}
+
+export function ScriptTypeBadge({ color, script }) {
+  const scriptType = prettyScriptType(script);
+
+  return scriptType == null ?
+    null:
+    <Badge color={color}>{scriptType}</Badge>;
+}
 
 function JobStateBadges({ job }) {
   const jobState = job.attributes.state;
-  const colour = stateColourMap[jobState];
-  let scriptType = "Batch job";
-  if (job.attributes.interactive) {
-    scriptType = "Desktop session";
-  }
+  const color = stateColourMap[jobState];
 
   return (
     <>
-    <Badge className="mr-2" color={colour}>{jobState}</Badge>
-    <Badge color={colour}>{scriptType}</Badge>
+    <Badge color={color}>{jobState}</Badge>
+    <span className="ml-1 mr-1">/</span>
+    <ScriptTypeBadge color={color} script={job.script} />
     </>
   );
 }
