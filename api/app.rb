@@ -94,10 +94,6 @@ class App < Sinatra::Base
       ]
     end
 
-    # White-list the wait-desktop query parameter
-    # Only supported by specified routes
-    c.query_params[:'wait-desktop'] = nil
-
     # Resource roles
     c.default_roles = {
       index: :user,
@@ -207,8 +203,7 @@ class App < Sinatra::Base
   resource :jobs, pkre: /[\w-]+/ do
     helpers do
       def find(id)
-        wait = params['wait-desktop'] == 'true'
-        Job.find!(id, user: current_user, include: include_string, wait_desktop: wait)
+        Job.find!(id, user: current_user, include: include_string)
       end
 
       def validate!

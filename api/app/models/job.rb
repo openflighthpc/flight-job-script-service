@@ -52,12 +52,7 @@ class Job
       cmd = FlightJobScriptAPI::JobCLI.info_job(id, **opts).tap do |cmd|
         next if cmd.exitstatus == 0
         return nil if cmd.exitstatus == 23
-        if opts[:wait_desktop] && cmd.exitstatus == 143
-          # This is an expected error condition
-          raise FlightJobScriptAPI::WaitTimeout, "The timeout expired when fetching job: #{id}"
-        else
-          raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to find job: #{id}"
-        end
+        raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to find job: #{id}"
       end
 
       new(user: opts[:user], **cmd.stdout)

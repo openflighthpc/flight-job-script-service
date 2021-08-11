@@ -115,9 +115,7 @@ module FlightJobScriptAPI
       def info_job(id, **opts)
         opts = opts.dup
         includes = opts.key?(:include) ? ["--include", opts.delete(:include)] : []
-        waits = opts.delete(:wait_desktop) ? ['--wait-desktop'] : []
-        opts.merge!(timeout: FlightJobScriptAPI.config.wait_timeout) unless waits.empty?
-        new(*flight_job, 'info-job', id, '--json', *includes, *waits, **opts).run
+        new(*flight_job, 'info-job', id, '--json', *includes, **opts).run
       end
 
       def submit_job(script_id, **opts)

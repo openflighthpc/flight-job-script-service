@@ -649,15 +649,8 @@ Content-Type: application/vnd.api+json
 }
 ```
 
-The `wait-desktop=true` query parameter will cause the request to hang until:
-
-* The associated `flight-desktop` session has been created, or
-* The `job` otherwise terminates.
-
-The query argument is ignored by non-interactive `jobs`. The request MAY respond `503 - WaitTimeout` if the session is not created within the configured time period.
-
 ```
-GET /v0/jobs/:job_id/desktop?wait-desktop=true
+GET /v0/jobs/:job_id/desktop
 Authorization: basic <base64 username:password>
 Accept: application/vnd.api+json
 
