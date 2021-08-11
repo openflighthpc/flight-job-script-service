@@ -50,10 +50,7 @@ function Layout({ button, children, className, session }) {
 
 function SessionPending({ className }) {
   return (
-    <Layout
-      button={<ConnectButton disabled />}
-      className={className}
-    >
+    <Layout className={className}>
       Your interactive session is not yet ready.  It will be available shortly
       after your job runs.
     </Layout>
@@ -73,11 +70,7 @@ function SessionComplete({ className, job }) {
   }
 
   return (
-    <Layout
-      button={<ConnectButton disabled />}
-      className={className}
-      session={session}
-    >
+    <Layout className={className} session={session}>
       {content}
     </Layout>
   );
@@ -105,14 +98,13 @@ function SessionPreview({ className, job }) {
     }
   }, 1 * 60 * 1000);
 
+  const button = stateRef.current !== 'available' ?
+    <RefreshButton onRefresh={get} refreshing={loading} /> :
+    <ConnectButton sessionId={session.id} />;
+
   return (
     <Layout
-      button={
-        <ConnectButton
-          disabled={loading === true || error != null}
-          sessionId={session?.id}
-        />
-      }
+      button={button}
       className={className}
       session={session}
     >
@@ -144,7 +136,8 @@ function SessionPreviewContent({ session, state }) {
         <div>
           Unfortunately, it has not been possible to determine your
           interactive session.  It may still be in the process of starting or it
-          may have failed to start.
+          may have failed to start.  Your job's output may provide more
+          details.
         </div>
       );
 
@@ -194,15 +187,54 @@ function SessionDetails({ session }) {
   );
 }
 
-function ConnectButton({ disabled, sessionId }) {
-  const href = sessionId ?
-    `${process.env.REACT_APP_DESKTOP_CLIENT_BASE_URL}/sessions/${sessionId}` :
-    '#';
+function RefreshButton({ onRefresh, refreshing }) {
+  return (
+    <ActionButton
+      act={onRefresh}
+      acting={refreshing}
+      actingButtonText="Refreshing..."
+      buttonText="Refresh"
+      color="primary"
+      icon="fa-refresh"
+      size="sm"
+    />
+  );
+}
+
+function ActionButton({
+  act,
+  acting,
+  actingButtonText,
+  buttonText,
+  className,
+  color,
+  icon,
+  size,
+}) {
+  return (
+    <Button
+      className={classNames("btn", className, { [acting]: 'disabled' })}
+      color={color}
+      disabled={acting}
+      onClick={act}
+      size={size}
+    >
+      {
+        acting ?
+          <i className="fa fa-spinner fa-spin mr-1"></i> :
+          <i className={`fa ${icon} mr-1`}></i>
+      }
+      <span>{ acting ? actingButtonText : buttonText }</span>
+    </Button>
+  );
+}
+
+function ConnectButton({ sessionId }) {
+  const href = `${process.env.REACT_APP_DESKTOP_CLIENT_BASE_URL}/sessions/${sessionId}`;
 
   return (
     <Button
       color="primary"
-      disabled={disabled}
       href={href}
       size="sm"
     >

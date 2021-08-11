@@ -20,11 +20,12 @@ import { useEffect, useState } from 'react';
 export default function useFetchBookKeeping(promise) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
 
   async function makeRequest() {
     try {
+      setLoading(true);
       const response = await promise();
       setResponse(response);
       if (response.ok) {
