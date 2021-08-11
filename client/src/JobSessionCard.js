@@ -59,19 +59,19 @@ function SessionPending({ className }) {
 }
 
 function SessionComplete({ className, job }) {
-  const { data: session, loading } = useFetchDesktop(job.id);
+  const { error, loading } = useFetchDesktop(job.id);
 
   let content;
   if (loading) {
     content = <Spinner text="Loading session preview..."/>;
-  } else if (session?.id) {
-    content = <span>Your interactive session has completed.</span>
-  } else {
+  } else if (error instanceof SessionUnknown) {
     content = <span>Your interactive session appears to have failed to launch.</span>
+  } else {
+    content = <span>Your interactive session has completed.</span>
   }
 
   return (
-    <Layout className={className} session={session}>
+    <Layout className={className}>
       {content}
     </Layout>
   );
