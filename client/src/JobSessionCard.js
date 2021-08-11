@@ -1,5 +1,6 @@
-import { Button } from 'reactstrap';
 import classNames from 'classnames';
+import { Button } from 'reactstrap';
+import { useRef } from 'react';
 
 import {
   DefaultErrorMessage,
@@ -10,6 +11,7 @@ import MetadataEntry from './MetadataEntry';
 import Screenshot from './SessionScreenshot';
 import { SessionNotFound, SessionUnknown, useFetchDesktop } from './api';
 import { prettyDesktopName } from './utils';
+import { useInterval } from './utils';
 
 const activeStates = ['Active', 'Remote'];
 
@@ -82,13 +84,32 @@ function SessionComplete({ className, job }) {
 }
 
 function SessionPreview({ className, job }) {
-  const { data: session, error, loading } = useFetchDesktop(job.id);
+  const stateRef = useRef(null);
+  const { data: session, error, get, loading } = useFetchDesktop(job.id);
+
+  if (loading) {
+    stateRef.current = 'loading';
+  } else if (session) {
+    stateRef.current = 'available';
+  } else if (error instanceof SessionNotFound) {
+    stateRef.current = 'notfound';
+  } else if (error instanceof SessionUnknown) {
+    stateRef.current = 'unknown';
+  } else {
+    stateRef.current = 'error';
+  }
+
+  useInterval(() => {
+    if (['notfound', 'unknown', 'error'].includes(stateRef.current)) {
+      get();
+    }
+  }, 1 * 60 * 1000);
 
   return (
     <Layout
       button={
         <ConnectButton
-          disabled={loading || error}
+          disabled={loading === true || error != null}
           sessionId={session?.id}
         />
       }
@@ -96,42 +117,41 @@ function SessionPreview({ className, job }) {
       session={session}
     >
       <SessionPreviewContent
-        error={error}
-        loading={loading}
         session={session}
+        state={stateRef.current}
       />
     </Layout>
   );
 }
 
-function SessionPreviewContent({ error, loading, session }) {
-  if (loading) {
-    return <Spinner text="Loading session preview..."/>;
+function SessionPreviewContent({ session, state }) {
+  switch (state) {
+    case 'loading':
+      return <Spinner text="Loading session preview..."/>;
+
+    case 'available':
+      return <SessionDetails session={session} />;
+
+    case 'notfound':
+      return (
+        <div>
+          Your interactive session is no longer available.
+        </div>
+      );
+
+    case 'unknown':
+      return (
+        <div>
+          Unfortunately, it has not been possible to determine your
+          interactive session.  It may still be in the process of starting or it
+          may have failed to start.
+        </div>
+      );
+
+    case 'error':
+    default:
+      return <DefaultErrorMessage />;
   }
-
-  if (session) {
-    return <SessionDetails session={session} />;
-  }
-
-  if (error instanceof SessionNotFound) {
-    return (
-      <div>
-        Your interactive session is no longer available.
-      </div>
-    );
-  }
-
-  if (error instanceof SessionUnknown) {
-    return (
-      <div>
-        Unfortunately, it has not been possible to determine your
-        interactive session.
-      </div>
-    );
-
-  }
-
-  return <DefaultErrorMessage />;
 }
 
 function SessionDetails({ session }) {

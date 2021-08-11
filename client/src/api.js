@@ -329,7 +329,7 @@ export function useFetchDesktop(jobId) {
   return useFetchBookKeeping(
     async function() {
       const waitResponse = await fetch(
-        `${apiRootUrl}/jobs/${jobId}/desktop?wait-desktop=true`, {
+        `${apiRootUrl}/jobs/${jobId}/desktop`, {
           headers: {
             Accept: 'application/vnd.api+json',
           },

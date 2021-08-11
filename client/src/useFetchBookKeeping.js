@@ -23,36 +23,37 @@ export default function useFetchBookKeeping(promise) {
   const [loading, setLoading] = useState(true);
   const [response, setResponse] = useState(null);
 
-  useEffect(() => {
-    async function runEffect() {
-      try {
-        const response = await promise();
-        setResponse(response);
-        if (response.ok) {
-          setData(await response.json());
-          setError(null);
-          setLoading(false);
-        } else {
-          setData(null);
-          setLoading(false);
-          try {
-            // XXX Perhaps we need more intelligence here.  Perhaps we set the
-            // error according to the response status?
-            const err = await response.json();
-            setError(err);
-          } catch(e) {
-            setError(e);
-          }
-        }
-      } catch (e) {
-        setData(null);
-        setError(e);
+  async function makeRequest() {
+    try {
+      const response = await promise();
+      setResponse(response);
+      if (response.ok) {
+        setData(await response.json());
+        setError(null);
         setLoading(false);
+      } else {
+        setData(null);
+        setLoading(false);
+        try {
+          // XXX Perhaps we need more intelligence here.  Perhaps we set the
+          // error according to the response status?
+          const err = await response.json();
+          setError(err);
+        } catch(e) {
+          setError(e);
+        }
       }
+    } catch (e) {
+      setData(null);
+      setError(e);
+      setLoading(false);
     }
-    runEffect();
+  }
+
+  useEffect(() => {
+    makeRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { data, error, loading, response };
+  return { data, error, loading, response, get: makeRequest };
 }
