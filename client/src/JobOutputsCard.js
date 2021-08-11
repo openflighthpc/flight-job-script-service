@@ -200,9 +200,11 @@ function ResultsListingAsync({ className, isSelected, job, toggleSelected }) {
   useInterval(get, 1 * 60 * 1000);
 
   if (error) {
-    <div className={className}>
-      The job did not report its results directory.
-    </div>
+    return (
+      <div className={className}>
+        The job did not report its results directory.
+      </div>
+    );
   } else if (!data && loading) {
     return (
       <div className="mb-2">
@@ -229,9 +231,11 @@ function ResultsListingAsync({ className, isSelected, job, toggleSelected }) {
 
 function ResultsListing({ className, files, isSelected, job, toggleSelected }) {
   if (job.attributes.resultsDir == null) {
-    <div className={className}>
-      The job did not report its results directory.
-    </div>
+    return (
+      <div className={className}>
+        The job did not report its results directory.
+      </div>
+    );
   }
   if (files.length === 0){
     return (
