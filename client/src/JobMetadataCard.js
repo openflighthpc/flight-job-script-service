@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import MetadataEntry from './MetadataEntry';
 import TimeAgo from './TimeAgo';
 import { stateColourMap } from './utils';
+import JobStateBadges from './JobStateBadges';
 
 function endTimeNameFromState(state) {
   if (state === 'CANCELLED') {
@@ -50,7 +51,7 @@ function JobMetadataCard({ className, job }) {
             )}
           />
           <MetadataEntry
-            format={(value) => <Badge color={colour}>{value}</Badge>}
+            format={(_) => <JobStateBadges job={job} />}
             name="State"
             value={jobState}
           />
