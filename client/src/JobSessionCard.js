@@ -3,6 +3,7 @@ import { Button } from 'reactstrap';
 import { useRef } from 'react';
 
 import {
+  ActionButton,
   DefaultErrorMessage,
   Spinner,
 } from 'flight-webapp-components';
@@ -198,34 +199,6 @@ function RefreshButton({ onRefresh, refreshing }) {
       icon="fa-refresh"
       size="sm"
     />
-  );
-}
-
-function ActionButton({
-  act,
-  acting,
-  actingButtonText,
-  buttonText,
-  className,
-  color,
-  icon,
-  size,
-}) {
-  return (
-    <Button
-      className={classNames("btn", className, { [acting]: 'disabled' })}
-      color={color}
-      disabled={acting}
-      onClick={act}
-      size={size}
-    >
-      {
-        acting ?
-          <i className="fa fa-spinner fa-spin mr-1"></i> :
-          <i className={`fa ${icon} mr-1`}></i>
-      }
-      <span>{ acting ? actingButtonText : buttonText }</span>
-    </Button>
   );
 }
 
