@@ -7,6 +7,7 @@ import { useTable, usePagination, useSortBy, useRowSelect } from 'react-table';
 
 import PaginationControls from './PaginationControls';
 import styles from './ScriptsTable.module.css';
+import { ScriptTypeBadge } from './JobStateBadges';
 
 function ScriptsTable({ onRowSelect, scripts }) {
   const data = React.useMemo(() => scripts, [scripts]);
@@ -31,6 +32,11 @@ function ScriptsTable({ onRowSelect, scripts }) {
         Header: 'Name',
         accessor: 'id',
         Cell: ({ value }) => <code>{value}</code>,
+      },
+      {
+        Header: 'Type',
+        accessor: 'attributes.tags',
+        Cell: ({ row }) => <ScriptTypeBadge script={row.original} />,
       },
       {
         Header: 'Template',

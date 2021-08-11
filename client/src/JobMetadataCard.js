@@ -52,7 +52,7 @@ function JobMetadataCard({ className, job }) {
           />
           <MetadataEntry
             format={(_) => <JobStateBadges job={job} />}
-            name="State"
+            name="State / Type"
             value={jobState}
           />
           <MetadataEntry

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import MetadataEntry from './MetadataEntry';
 import ScriptActions from './ScriptActions';
 import TimeAgo from './TimeAgo';
+import { ScriptTypeBadge } from './JobStateBadges';
 
 function ScriptMetadataCard({ onDeleted, script }) {
   return (
@@ -27,6 +28,11 @@ function ScriptMetadataCard({ onDeleted, script }) {
             format={(value) => <code>{value}</code>}
             name="ID"
             value={script.id}
+          />
+          <MetadataEntry
+            format={(value) => <ScriptTypeBadge script={script} />}
+            name="Type"
+            value={script.tags}
           />
           <MetadataEntry
             name="Template"

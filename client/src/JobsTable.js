@@ -48,7 +48,7 @@ function JobsTable({ reloadJobs, jobs }) {
         ),
       },
       {
-        Header: 'State',
+        Header: 'State / Type',
         accessor: 'attributes.state',
         Cell: ({ row }) => (
           <JobStateBadges job={row.original} />
