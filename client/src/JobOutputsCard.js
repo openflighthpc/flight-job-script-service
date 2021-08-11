@@ -321,14 +321,16 @@ function OpenDirectoryButtons({ dir }) {
         href={`/files/browse?dir=${dir}`}
         size="sm"
       >
-        Open in file manager
+        <i className="fa fa-file-o mr-1"/>
+        <span>Open in file manager</span>
       </Button>
       <Button
         color="primary"
         href={`/console/terminal?dir=${dir}`}
         size="sm"
       >
-        Open in console
+        <i className="fa fa-terminal mr-1"/>
+        <span>Open in console</span>
       </Button>
     </ButtonToolbar>
   );
