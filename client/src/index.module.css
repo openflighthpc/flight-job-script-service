@@ -45,6 +45,9 @@
 .FileContent {
     max-height: 40em;
 }
+.FileItemViewable {
+    cursor: pointer;
+}
 .FileItemNonViewable {
     /* cursor: not-allowed; */
 }

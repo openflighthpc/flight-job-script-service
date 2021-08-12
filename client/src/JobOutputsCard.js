@@ -90,13 +90,15 @@ function FileItem({ file, isSelected, name, nameTag="span", toggleSelected }) {
 
   return (
     <ListGroupItem
-      className={classNames({ [styles.FileItemNonViewable]: !isViewable})}
+      className={classNames({
+        [styles.FileItemNonViewable]: !isViewable,
+        [styles.FileItemViewable]: isViewable,
+      })}
       key={file.attributes.filename}
       active={isActive}
       action={isViewable}
       onClick={() => isViewable && toggleSelected(file)}
       tag="a"
-      href={isViewable ? '#' : null}
       title={isViewable ? null : 'Previewing files of this type is not supported.  To view the file, you can open the results directory in the File manager.'}
     >
       <span className="d-flex flex-row align-items-center justify-content-between">
