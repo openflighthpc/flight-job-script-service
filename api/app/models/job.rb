@@ -133,7 +133,7 @@ class Job
 
   def find_desktop
     controls = metadata['controls']
-    id = controls['flight_desktop_id']
+    id = controls['flight-desktop-id']
     return nil unless id
     Desktop.new(job: self, id: id)
   end
