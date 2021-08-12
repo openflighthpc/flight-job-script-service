@@ -30,7 +30,6 @@ require 'pathname'
 
 module FlightJobScriptAPI
   class CommandError < Sinja::ServiceUnavailable; end
-  class WaitTimeout < Sinja::ServiceUnavailable; end
 
   class JobCLI
     class << self

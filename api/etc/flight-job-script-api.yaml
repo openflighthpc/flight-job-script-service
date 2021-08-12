@@ -51,19 +51,12 @@
 # command_path: /usr/sbin:/usr/bin:/sbin:/bin
 
 #-------------------------------------------------------------------------------
-# Command and Wait Timeout
+# Command Timeout
 # The maximum time to wait when launching a scheduler command. Commands which
 # take longer then this period will be terminated.
-#
-# The 'command_timeout' is used by the majority of the system commands and is
-# intended to be a short period. The 'wait_timeout' should be a longer period
-# as it is used by the wait_* query arguments.
-#
-# The environment variables flight_JOB_SCRIPT_API_command_timeout and
-# flight_JOB_SCRIPT_API_wait_timeout take precedence
+# The environment variable flight_JOB_SCRIPT_API_command_timeout takes precedence
 #-------------------------------------------------------------------------------
 # command_timeout: 5
-# wait_timeout: 60
 
 #-------------------------------------------------------------------------------
 # Shared Secret Path
