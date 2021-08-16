@@ -13,6 +13,7 @@ import {
 
 import JobMetadataCard from './JobMetadataCard';
 import JobOutputsCard from './JobOutputsCard';
+import JobSessionCard from './JobSessionCard';
 import SubmissionFailureOutputCard from './SubmissionFailureOutputCard';
 import { useFetchJob } from './api';
 import { useInterval } from './utils';
@@ -60,7 +61,8 @@ function Layout({ job, loading }) {
     <>
     <Row>
       <Col md={12} lg={5}>
-        <JobMetadataCard job={job} />
+        <JobMetadataCard className="mb-3" job={job} />
+        <JobSessionCard job={job} />
       </Col>
       <Col md={12} lg={7}>
         {

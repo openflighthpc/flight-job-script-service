@@ -14,10 +14,8 @@ import { useFetchTemplate } from './api';
 function TemplatePage() {
   const { id } = useParams();
   const ref = useRef(id);
-
   const { data, error, loading } = useFetchTemplate(ref.current);
 
-  console.log('error:', error);  // eslint-disable-line no-console
   if (loading) {
     return <Loading id={ref.current} />;
   } else if (error) {

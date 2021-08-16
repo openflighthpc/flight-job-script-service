@@ -131,6 +131,13 @@ class Job
     JobFile.find("#{id}.stderr", user: user)
   end
 
+  def find_desktop
+    controls = metadata['controls']
+    id = controls['flight_desktop_id']
+    return nil unless id
+    Desktop.new(job: self, id: id)
+  end
+
   def cache_related_resources
     if script_data = metadata['script']
       Script.cache(user: user, **script_data)

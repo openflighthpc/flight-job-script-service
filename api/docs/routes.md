@@ -571,7 +571,7 @@ Content-Type: application/vnd.api+json
       "submitStdout": STRING,   # RECOMMENDED - The standard output of the underlining scheduler command
       "submitStderr": STRING,   # RECOMMENDED - The standard error of the underlining scheduler command
       "resultsDir": STRING,     # RECOMMENDED - The directory that will store the results files (excluding STDOUT/STDERR)
-      "mergedStderr": BOOLEAN   # RECOMMENDED - Flags if the job's STDERR has been merged with STDOUT
+      "mergedStderr": BOOLEAN,  # RECOMMENDED - Flags if the job's STDERR has been merged with STDOUT
     },
     "links": {
       "self": "/v0/jobs/:id"
@@ -582,14 +582,25 @@ Content-Type: application/vnd.api+json
           "related": "/v0/jobs/:id/script"
         }
       },
+      "desktop": {               # OPTIONAL - The related desktop resource
+        "links": {
+          "related": "/v0/jobs/:id/script"
+        }
+      },
       "stdoutFile": {           # RECOMMENDED - The standard output of the job
-        "links": "/v0/jobs/:id/stdoutFile"
+        "links": {
+          "related": "/v0/jobs/:id/stdoutFile"
+        }
       },
       "stderrFile": {           # OPTIONAL - The standard error of the job
-        "links": "/v0/jobs/:id/stderrFile"
+        "links": {
+          "related": "/v0/jobs/:id/stderrFile"
+        }
       },
       "resultFiles": {          # RECOMMENDED - Additional result files
-        "links": "/v0/jobs/:id/resultFiles"
+        "links": {
+          "related": "/v0/jobs/:id/resultFiles"
+        }
       }
     }
   },
@@ -599,6 +610,54 @@ Content-Type: application/vnd.api+json
   "included": [
   ]
 }
+```
+
+## GET - /jobs/:id/desktop
+
+Return the related `desktop` resource for a `job`.
+
+```
+GET /v0/jobs/:job_id/desktop
+Authorization: basic <base64 username:password>
+Accept: application/vnd.api+json
+
+HTTP/2 200 OK
+Content-Type: application/vnd.api+json
+{
+  "data": {                     # REQUIRED - The DesktopResource
+    "type": "desktops",         # REQUIRED - Specfies the ID of the desktop
+    "id": STRING,               # REQUIRED - The related job's ID
+    "attributes":{
+    },
+    "links": {
+      "self": "/v0/desktop/:id"
+    }
+    "relationships": {
+      "job": {               # REQUIRED - The related job resource
+        "links": {
+          "related": "/v0/jobs/:id"
+        }
+      }
+    }
+  },
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "included": [
+  ]
+}
+```
+
+```
+GET /v0/jobs/:job_id/desktop
+Authorization: basic <base64 username:password>
+Accept: application/vnd.api+json
+
+# The request reached one of the above end conditions
+HTTP/2 200 OK
+
+# The desktop session was not created within the required time period
+HTTP/2 503 ServiceUnavailable
 ```
 
 ## GET - /jobs/:id/result-files
@@ -802,6 +861,10 @@ HTTP/2 200 OK
   ]
 }
 ```
+
+## GET - /desktops/:id
+
+Currently not supported.
 
 ## POST - /render/:template_id
 

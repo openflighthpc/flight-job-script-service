@@ -27,13 +27,13 @@ export function getResourceFromResponse(data) {
 }
 
 function JobOutputsCard({ job }) {
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selected, setSelected] = useState(null);
 
-  function toggleFile(file) {
-    selectedFile === file ? setSelectedFile(null) : setSelectedFile(file)
+  function toggleSelected(file) {
+    selected === file ? setSelected(null) : setSelected(file)
   }
   function isSelected(file) {
-    return selectedFile != null && selectedFile.id === file.id;
+    return selected != null && selected.id === file.id;
   }
 
   const hasFiles = true;
@@ -49,7 +49,7 @@ function JobOutputsCard({ job }) {
           className="ml-4 mb-3"
           isSelected={isSelected}
           job={job}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
         <h6
           className="d-flex flex-row align-items-center justify-content-between"
@@ -66,14 +66,14 @@ function JobOutputsCard({ job }) {
           className="ml-4 mb-3"
           isSelected={isSelected}
           job={job}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
         {
           hasFiles ?
             (
               <>
               <hr/>
-              <FilePreview job={job} selectedFile={selectedFile} />
+              <FilePreview job={job} selected={selected} />
               </>
             ) :
             null
@@ -83,20 +83,22 @@ function JobOutputsCard({ job }) {
   );
 }
 
-function FileItem({ file, isSelected, name, nameTag="span", toggleFile }) {
+function FileItem({ file, isSelected, name, nameTag="span", toggleSelected }) {
   const isViewable = file.attributes.mimeType.split('/')[0] === 'text';
   const isActive = isSelected(file);
   const NameTag = nameTag;
 
   return (
     <ListGroupItem
-      className={classNames({ [styles.FileItemNonViewable]: !isViewable})}
+      className={classNames({
+        [styles.FileItemNonViewable]: !isViewable,
+        [styles.FileItemViewable]: isViewable,
+      })}
       key={file.attributes.filename}
       active={isActive}
       action={isViewable}
-      onClick={() => isViewable && toggleFile(file)}
+      onClick={() => isViewable && toggleSelected(file)}
       tag="a"
-      href={isViewable ? '#' : null}
       title={isViewable ? null : 'Previewing files of this type is not supported.  To view the file, you can open the results directory in the File manager.'}
     >
       <span className="d-flex flex-row align-items-center justify-content-between">
@@ -124,7 +126,7 @@ function FileItem({ file, isSelected, name, nameTag="span", toggleFile }) {
   );
 }
 
-function OutputListingAsync({ className, isSelected, job, toggleFile }) {
+function OutputListingAsync({ className, isSelected, job, toggleSelected }) {
   const { data, error, loading, get } = useFetchOutputFiles(job.id);
   useInterval(get, 1 * 60 * 1000);
 
@@ -152,14 +154,14 @@ function OutputListingAsync({ className, isSelected, job, toggleFile }) {
           isSelected={isSelected}
           job={job}
           files={files}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
       </React.Fragment>
     );
   }
 }
 
-function OutputListing({ className, isSelected, job, files, toggleFile }) {
+function OutputListing({ className, isSelected, job, files, toggleSelected }) {
   const mergedStderr = job.attributes.mergedStderr;
 
   if (files.length === 0) {
@@ -187,7 +189,7 @@ function OutputListing({ className, isSelected, job, files, toggleFile }) {
                 'Standard output and error' :
                 'Standard output'
             }
-            toggleFile={toggleFile}
+            toggleSelected={toggleSelected}
           />
         ))
       }
@@ -195,14 +197,16 @@ function OutputListing({ className, isSelected, job, files, toggleFile }) {
   );
 }
 
-function ResultsListingAsync({ className, isSelected, job, toggleFile }) {
+function ResultsListingAsync({ className, isSelected, job, toggleSelected }) {
   const { data, error, loading, get } = useFetchResultFiles(job.id);
   useInterval(get, 1 * 60 * 1000);
 
   if (error) {
-    <div className={className}>
-      The job did not report its results directory.
-    </div>
+    return (
+      <div className={className}>
+        The job did not report its results directory.
+      </div>
+    );
   } else if (!data && loading) {
     return (
       <div className="mb-2">
@@ -220,18 +224,20 @@ function ResultsListingAsync({ className, isSelected, job, toggleFile }) {
           isSelected={isSelected}
           job={job}
           files={files}
-          toggleFile={toggleFile}
+          toggleSelected={toggleSelected}
         />
       </React.Fragment>
     );
   }
 }
 
-function ResultsListing({ className, files, isSelected, job, toggleFile }) {
+function ResultsListing({ className, files, isSelected, job, toggleSelected }) {
   if (job.attributes.resultsDir == null) {
-    <div className={className}>
-      The job did not report its results directory.
-    </div>
+    return (
+      <div className={className}>
+        The job did not report its results directory.
+      </div>
+    );
   }
   if (files.length === 0){
     return (
@@ -250,7 +256,7 @@ function ResultsListing({ className, files, isSelected, job, toggleFile }) {
             isSelected={isSelected}
             name={file.attributes.relativePath}
             nameTag="code"
-            toggleFile={toggleFile}
+            toggleSelected={toggleSelected}
           />
         ))
       }
@@ -265,8 +271,8 @@ function getContentFromResponse(data) {
   return data.data.attributes.payload;
 }
 
-function FilePreview({selectedFile, job}) {
-  if (selectedFile == null) {
+function FilePreview({selected, job}) {
+  if (selected == null) {
     return (
       <div>
         <em>Select a text file above to preview its output.</em>
@@ -274,18 +280,18 @@ function FilePreview({selectedFile, job}) {
     );
   }
 
-  const filename = selectedFile === job.stdoutFile ?
+  const filename = selected === job.stdoutFile ?
     'standard output' :
-    selectedFile === job.stderrFile ?
+    selected === job.stderrFile ?
     'standard error' :
-    selectedFile.attributes.relativePath;
+    selected.attributes.relativePath;
 
   return (
     <>
     <h6 className="card-title font-weight-bold">
       Preview for <code>{filename}</code>
     </h6>
-    <FileContent file={selectedFile} />
+    <FileContent file={selected} />
     </>
   );
 }
@@ -317,14 +323,16 @@ function OpenDirectoryButtons({ dir }) {
         href={`/files/browse?dir=${dir}`}
         size="sm"
       >
-        Open in file manager
+        <i className="fa fa-file-o mr-1"/>
+        <span>Open in file manager</span>
       </Button>
       <Button
         color="primary"
         href={`/console/terminal?dir=${dir}`}
         size="sm"
       >
-        Open in console
+        <i className="fa fa-terminal mr-1"/>
+        <span>Open in console</span>
       </Button>
     </ButtonToolbar>
   );

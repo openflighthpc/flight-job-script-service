@@ -130,7 +130,8 @@ module FlightJobScriptAPI
       end
     end
 
-    def initialize(*cmd, user:, stdin: nil, env: {})
+    def initialize(*cmd, user:, stdin: nil, timeout: nil, env: {})
+      @timeout = timeout || FlightJobScriptAPI.config.command_timeout
       @cmd = cmd
       @user = user
       @stdin = stdin
@@ -149,7 +150,7 @@ module FlightJobScriptAPI
           sp = Subprocess.new(
             env: @env,
             logger: FlightJobScriptAPI.logger,
-            timeout: FlightJobScriptAPI.config.command_timeout,
+            timeout: @timeout,
             username: @user,
           )
           sp.run(@cmd, @stdin, &block)

@@ -1,10 +1,14 @@
-import { useContext } from 'react';
+import { useContext, useRef, useState } from 'react';
 import useFetch from 'use-http';
 
 import {
+  ConfigContext,
   CurrentUserContext,
   utils,
 } from 'flight-webapp-components';
+
+import { useInterval } from './utils';
+import useFetchBookKeeping from './useFetchBookKeeping';
 
 export function useFetchTemplates() {
   const { currentUser } = useContext(CurrentUserContext);
@@ -309,4 +313,87 @@ export function useFetchFileContent(file) {
       headers: { Accept: 'application/vnd.api+json' },
     },
     [ currentUser.authToken, file.id ]);
+}
+
+const desktopApiUrl = new URL(
+  process.env.REACT_APP_DESKTOP_API_BASE_URL,
+  window.location.origin,
+).toString();
+
+export class SessionNotFound extends Error {}
+export class SessionUnknown extends Error {}
+
+export function useFetchDesktop(jobId) {
+  const { apiRootUrl } = useContext(ConfigContext);
+
+  return useFetchBookKeeping(
+    async function() {
+      const waitResponse = await fetch(
+        `${apiRootUrl}/jobs/${jobId}/desktop`, {
+          headers: {
+            Accept: 'application/vnd.api+json',
+          },
+        },
+      );
+      if (waitResponse.ok) {
+        const sessionId = (await waitResponse.json())?.data?.id;
+        if (sessionId) {
+          const sessionResponse = await fetch(`${desktopApiUrl}/sessions/${sessionId}`);
+          if (sessionResponse.ok) {
+            return sessionResponse;
+          } else {
+            throw new SessionNotFound();
+          }
+        } else {
+          throw new SessionUnknown();
+        }
+      } else {
+        return waitResponse;
+      }
+    }
+  );
+}
+
+export function useFetchDesktopScreenshot(id, { reloadInterval=1*60*1000 }={}) {
+  const { currentUser } = useContext(CurrentUserContext);
+  const lastLoadedAt = useRef(null);
+  const [image, setImage] = useState();
+
+  const now = new Date();
+  const reloadDue = lastLoadedAt.current == null ||
+    now - lastLoadedAt.current < reloadInterval;
+  if (reloadDue) {
+    lastLoadedAt.current = now;
+  }
+
+  const { get, response } = useFetch(
+    `${desktopApiUrl}/sessions/${id}/screenshot.png`,
+    {
+      headers: { Accept: 'image/*' },
+    }, [currentUser.authToken, id, lastLoadedAt]
+  );
+
+  useInterval(get, reloadInterval, { immediate: false });
+
+  if (response.ok) {
+    response.blob()
+      .then((blob) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      })
+      .then((base64Image) => {
+        if (image !== base64Image) {
+          setImage(base64Image);
+        }
+      })
+      .catch((e) => {
+        console.log('Error base64 encoding screenshot:', e);  // eslint-disable-line no-console
+      });
+  }
+
+  return { image };
 }

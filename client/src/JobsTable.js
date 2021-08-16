@@ -6,7 +6,7 @@ import { useTable, usePagination, useSortBy } from 'react-table';
 
 import PaginationControls from './PaginationControls';
 import styles from './JobsTable.module.css';
-import { stateColourMap } from './utils';
+import JobStateBadges from './JobStateBadges';
 
 function JobsTable({ reloadJobs, jobs }) {
   const data = React.useMemo(() => jobs, [jobs]);
@@ -48,9 +48,11 @@ function JobsTable({ reloadJobs, jobs }) {
         ),
       },
       {
-        Header: 'State',
+        Header: 'State / Type',
         accessor: 'attributes.state',
-        Cell: ({ value }) => <Badge color={stateColourMap[value]}>{value}</Badge>,
+        Cell: ({ row }) => (
+          <JobStateBadges job={row.original} />
+        ),
       },
       {
         Header: 'Start time',

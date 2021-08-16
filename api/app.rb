@@ -246,6 +246,12 @@ class App < Sinatra::Base
       end
     end
 
+    has_one :desktop do
+      pluck do
+        next resource.find_desktop
+      end
+    end
+
     has_many :result_files do
       fetch do
         next resource.index_result_files

@@ -26,14 +26,12 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-class ScriptSerializer < ApplicationSerializer
-  attribute(:created_at) { object.metadata['created_at'] }
-  attribute(:path) { object.metadata['path'] }
-  attribute(:tags) { object.metadata['tags'] }
+class Desktop
+  attr_reader :job, :id
 
-  attribute(:name) { object.id }
-
-  has_one(:template)
-  has_one(:note) { object.find_note }
-  has_one(:content) { object.find_content }
+  def initialize(job:, id:)
+    @id = id
+    @job = job
+  end
 end
+

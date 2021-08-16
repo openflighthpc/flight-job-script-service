@@ -67,8 +67,9 @@ const routes = [
     sideNav: true,
   },
   {
-    name: 'Not found',
     Component: NotFound,
+    key: 'not-found',
+    name: 'Not found',
     sideNav: true
   }
 ]

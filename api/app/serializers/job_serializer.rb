@@ -40,6 +40,7 @@ class JobSerializer < ApplicationSerializer
   attribute(:merged_stderr) { object.stderr_merged? }
 
   has_one :script
+  has_one(:desktop) { object.find_desktop }
   has_one(:stdout_file) { object.find_stdout_file }
   has_one(:stderr_file) { object.find_stderr_file }
   has_many(:result_files) { object.index_result_files }
