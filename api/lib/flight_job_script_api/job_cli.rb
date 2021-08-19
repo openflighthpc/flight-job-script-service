@@ -108,9 +108,9 @@ module FlightJobScriptAPI
       end
     end
 
-    def initialize(*cmd, user:, stdin: nil, timeout: nil, env: {})
+    def initialize(*cmd, user:, stdin: nil, timeout: nil, env: {}, include: nil)
       @timeout = timeout || FlightJobScriptAPI.config.command_timeout
-      @include = opts[:include]
+      @include = include
       @cmd = cmd
       @user = user
       @stdin = stdin
