@@ -27,6 +27,13 @@
 #==============================================================================
 
 require_relative 'config/boot'
+
+# Ensures the shared secret exists
+FlightJobScriptAPI.config.auth_decoder
+
+require_relative 'config/post_boot'
+require_relative 'app'
+
 require 'sinatra'
 
 configure do
