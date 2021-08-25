@@ -35,6 +35,3 @@ require 'logger'
 
 # Shared activesupport libraries
 require 'active_support/core_ext/hash/keys'
-
-# Ensure ApplicationModel::ValidationError is defined in advance
-require 'active_model/validations.rb'
