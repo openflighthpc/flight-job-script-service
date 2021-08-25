@@ -25,6 +25,7 @@
 # For more information on Flight Job Script Service, please visit:
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
+require 'active_support/core_ext/string/filters'
 
 class JobFileSerializer < ApplicationSerializer
   # NOTE: Update this constant as new attributes are added
