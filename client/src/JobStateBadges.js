@@ -16,12 +16,30 @@ function prettyScriptType(script) {
   return "Batch job";
 }
 
+function iconForType(script) {
+  if (script == null) {
+    return null;
+  }
+  const scriptType = getTagValue(script.attributes.tags, 'script:type');
+  if (scriptType === 'interactive') {
+    const sessionType = getTagValue(script.attributes.tags, 'session:type');
+    if (sessionType === 'desktop') {
+      return <i className="fa fa-desktop"></i>;
+    }
+  }
+  return <i className="fa fa-clock-o"></i>;
+}
+
 export function ScriptTypeBadge({ color, script }) {
   const scriptType = prettyScriptType(script);
+  const icon = iconForType(script);
 
   return scriptType == null ?
     null:
-    <Badge color={color}>{scriptType}</Badge>;
+    <Badge color={color}>
+      {icon}
+      {scriptType}
+    </Badge>;
 }
 
 function JobStateBadges({ job }) {
