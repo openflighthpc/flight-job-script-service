@@ -25,6 +25,7 @@
 # For more information on Flight Job Script Service, please visit:
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
+require 'active_support/core_ext/hash/keys'
 
 FactoryBot.define do
   # NOTE: The template object intentionally uses save_* attributes on build

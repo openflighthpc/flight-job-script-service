@@ -26,6 +26,10 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
+# XXX flight_configuration requires this library, but doesn't `require` it.
+# That needs fixing.
+require 'active_support/core_ext/hash/keys'
+
 module FlightJobScriptAPI
   class Configuration
     extend FlightConfiguration::RackDSL
