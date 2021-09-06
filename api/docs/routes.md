@@ -612,6 +612,42 @@ Content-Type: application/vnd.api+json
 }
 ```
 
+## PATCH (cancel) - /jobs/:id
+
+Attempt to cancel the job given by `id`. This method SHOULD set the `state` to `CANCELLED` on `200 OK` response, however it MAY respond `200 OK` with:
+
+* Another terminal `state` if the job has already finished, or
+* Any other `state` if the cancellation was successfully started but not completed.
+
+\*NOTE: The alternative `200 OK` response are volatile and may change in a future release.
+
+```
+GET /v0/scripts/:id
+Authorization: basic <base64 username:password>
+Accept: application/vnd.api+json
+
+{
+  "data": {
+    "type": "jobs",
+    "id": <id>,
+    "attributes": {
+      "state": "CANCELLED"
+    }
+  }
+}
+
+HTTP/2 200 OK
+Content-Type: application/vnd.api+json
+{
+  "data": JobResource,
+  "jsonapi": {
+    "version": "1.0"
+  },
+  "included": [
+  ]
+```
+
+
 ## GET - /jobs/:id/desktop
 
 Return the related `desktop` resource for a `job`.
