@@ -27,6 +27,7 @@
 #==============================================================================
 
 require 'pathname'
+require 'ffi-magic'
 
 class JobFile
   class << self
@@ -69,6 +70,10 @@ class JobFile
       find!(id, **opts)
     rescue FlightJobScriptAPI::CommandError
       nil
+    end
+
+    def magic
+      @ffi_magic ||= Magic.new(Magic::MIME)
     end
   end
 
@@ -179,13 +184,7 @@ class JobFile
   def mime_type
     # Protect against bad/missing paths, this shouldn't happen in practice
     return nil unless exists?
-    cmd = ['file', '--mime-type', path]
-    results = FlightJobScriptAPI::Subprocess.default.run(cmd, '')
-    if results.exitstatus == 0
-      results.stdout.chomp.split(/\s/).last
-    else
-      'application/octet-stream'
-    end
+    self.class.magic.file(path)
   end
 
   protected
