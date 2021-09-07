@@ -1,12 +1,14 @@
 import classNames from 'classnames';
 import { useState } from 'react';
-import { Badge } from 'reactstrap';
+import { Button, Badge } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 import MetadataEntry from './MetadataEntry';
 import TimeAgo from './TimeAgo';
 import { stateColourMap } from './utils';
 import JobStateBadges from './JobStateBadges';
+
+import { useCancelJob } from './api';
 
 function endTimeNameFromState(state) {
   if (state === 'CANCELLED') {
@@ -36,6 +38,11 @@ function JobMetadataCard({ className, job }) {
           Job <code>{job.id}</code>
         </span>
         <span>
+          <CancelButton
+            id={job.id}
+            jobAttributes={jobAttributes}
+            setJobAttributes={setJobAttributes}
+          />
           <Badge color={colour}>{jobState}</Badge>
         </span>
       </h4>
@@ -133,6 +140,36 @@ function EstimatedTime({estimated, jobAttributes, known, name}) {
       value={estimated == null ? unknown_estimate : estimated}
     />
   );
+}
+
+function CancelButton({id, jobAttributes, setJobAttributes}) {
+  const { loading, patch, response } = useCancelJob(id)
+
+  if (["PENDING", "RUNNING"].includes(jobAttributes.state)) {
+    const cancel = async() => {
+      await patch();
+      if (response.ok) {
+        setJobAttributes(response.data.data.attributes);
+      } else {
+        console.log("Failed to cancel job");
+      }
+    }
+
+    return (
+      <Button
+        color="danger"
+        onClick={cancel}
+        className={classNames({ 'disabled': loading })}
+        disabled={loading}
+        size="sm"
+      >
+        <i className={`fa fa-ban mr-1`}></i>
+        <span>Cancel</span>
+      </Button>
+    );
+  } else {
+    return <></>;
+  }
 }
 
 export default JobMetadataCard;

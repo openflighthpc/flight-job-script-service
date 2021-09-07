@@ -285,6 +285,30 @@ export function useFetchJob(id) {
     [ currentUser.authToken ]);
 }
 
+export function useCancelJob(id) {
+  const request = useFetch(
+    `/jobs/${id}`,
+    {
+      method: 'patch',
+      headers: {
+        Accept: 'application/vnd.api+json',
+        'Content-Type': 'application/vnd.api+json',
+      },
+      body: {
+        "data": {
+          "type": "jobs",
+          "id": id,
+          "attributes": {
+            "state": "CANCELLED"
+          }
+        }
+      },
+      cachePolicy: 'no-cache',
+    },
+  );
+  return request;
+}
+
 export function useFetchOutputFiles(id) {
   const { currentUser } = useContext(CurrentUserContext);
   return useFetch(
