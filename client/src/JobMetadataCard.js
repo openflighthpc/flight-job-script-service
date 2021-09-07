@@ -38,12 +38,12 @@ function JobMetadataCard({ className, job }) {
           Job <code>{job.id}</code>
         </span>
         <span>
+          <Badge color={colour}>{jobState}</Badge>
           <CancelButton
             id={job.id}
             jobAttributes={jobAttributes}
             setJobAttributes={setJobAttributes}
           />
-          <Badge color={colour}>{jobState}</Badge>
         </span>
       </h4>
       <div className="card-body">
@@ -155,15 +155,17 @@ function CancelButton({id, jobAttributes, setJobAttributes}) {
       }
     }
 
+    const icon = loading ? 'fa-spin fa-spinner' : 'fa-ban'
+
     return (
       <Button
         color="danger"
         onClick={cancel}
-        className={classNames({ 'disabled': loading })}
+        className={classNames('ml-2', { 'disabled': loading })}
         disabled={loading}
         size="sm"
       >
-        <i className={`fa fa-ban mr-1`}></i>
+        <i className={`fa ${icon} mr-1`}></i>
         <span>Cancel</span>
       </Button>
     );
