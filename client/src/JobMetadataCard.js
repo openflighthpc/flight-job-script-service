@@ -9,6 +9,7 @@ import { stateColourMap } from './utils';
 import JobStateBadges from './JobStateBadges';
 
 import { useCancelJob } from './api';
+import { useToast } from './ToastContext';
 
 function endTimeNameFromState(state) {
   if (state === 'CANCELLED') {
@@ -144,6 +145,7 @@ function EstimatedTime({estimated, jobAttributes, known, name}) {
 
 function CancelButton({id, jobAttributes, setJobAttributes}) {
   const { loading, patch, response } = useCancelJob(id)
+  const { addToast } = useToast();
 
   if (["PENDING", "RUNNING"].includes(jobAttributes.state)) {
     const cancel = async() => {
@@ -152,6 +154,18 @@ function CancelButton({id, jobAttributes, setJobAttributes}) {
         setJobAttributes(response.data.data.attributes);
       } else {
         console.log("Failed to cancel job");
+        addToast({
+          body: (
+            <div>
+              Unfortunately there has been a problem cancel your job.
+              Please try again and, if problems persist, help us to
+              more quickly rectify the problem by contacting us and letting us
+              know.
+            </div>
+          ),
+          icon: 'danger',
+          header: 'Failed to cancel job',
+        });
       }
     }
 
