@@ -146,12 +146,27 @@ function EstimatedTime({estimated, jobAttributes, known, name}) {
 function CancelButton({id, jobAttributes, setJobAttributes}) {
   const { loading, patch, response } = useCancelJob(id)
   const { addToast } = useToast();
+  const isActive = function() {
+    return(["PENDING", "RUNNING"].includes(jobAttributes.state));
+  }
 
-  if (["PENDING", "RUNNING"].includes(jobAttributes.state)) {
+  if (isActive()) {
     const cancel = async() => {
       await patch();
       if (response.ok) {
         setJobAttributes(response.data.data.attributes);
+        if (isActive()) {
+          addToast({
+            body: (
+              <div>
+                Your request to cancel the job has been received
+                and will be completed shortly. Please check again latter.
+              </div>
+            ),
+            icon: 'success',
+            header: 'Cancellation Started',
+          });
+        }
       } else {
         console.log("Failed to cancel job");
         addToast({
