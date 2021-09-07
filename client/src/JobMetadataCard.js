@@ -146,46 +146,42 @@ function EstimatedTime({estimated, jobAttributes, known, name}) {
 function CancelButton({id, jobAttributes, setJobAttributes}) {
   const { loading, patch, response } = useCancelJob(id)
   const { addToast } = useToast();
-  const isActive = function() {
-    return(["PENDING", "RUNNING"].includes(jobAttributes.state));
-  }
+  const icon = loading ? 'fa-spin fa-spinner' : 'fa-ban'
 
-  if (isActive()) {
-    const cancel = async() => {
-      await patch();
-      if (response.ok) {
-        setJobAttributes(response.data.data.attributes);
-        if (isActive()) {
-          addToast({
-            body: (
-              <div>
-                Your request to cancel the job has been received
-                and will be completed shortly. Please check again latter.
-              </div>
-            ),
-            icon: 'success',
-            header: 'Cancellation Started',
-          });
-        }
-      } else {
-        console.log("Failed to cancel job");
+  const cancel = async() => {
+    await patch();
+    if (response.ok) {
+      setJobAttributes(response.data.data.attributes);
+      if (["PENDING", "RUNNING"].includes(response.data.data.attributes.state)) {
         addToast({
           body: (
             <div>
-              Unfortunately there has been a problem cancel your job.
-              Please try again and, if problems persist, help us to
-              more quickly rectify the problem by contacting us and letting us
-              know.
+              Your request to cancel the job has been received
+              and will be completed shortly. Please check again latter.
             </div>
           ),
-          icon: 'danger',
-          header: 'Failed to cancel job',
+          icon: 'success',
+          header: 'Cancellation Started',
         });
       }
+    } else {
+      console.log("Failed to cancel job");
+      addToast({
+        body: (
+          <div>
+            Unfortunately there has been a problem cancel your job.
+            Please try again and, if problems persist, help us to
+            more quickly rectify the problem by contacting us and letting us
+            know.
+          </div>
+        ),
+        icon: 'danger',
+        header: 'Failed to cancel job',
+      });
     }
+  }
 
-    const icon = loading ? 'fa-spin fa-spinner' : 'fa-ban'
-
+  if (["PENDING", "RUNNING"].includes(jobAttributes.state)) {
     return (
       <Button
         color="danger"
