@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import { useState } from 'react';
 import { Badge } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
@@ -18,7 +19,9 @@ function endTimeNameFromState(state) {
 }
 
 function JobMetadataCard({ className, job }) {
-  const jobState = job.attributes.state;
+  const [jobAttributes, setJobAttributes] = useState(job.attributes);
+
+  const jobState = jobAttributes.state
   const colour = stateColourMap[jobState];
 
   return (
@@ -45,7 +48,7 @@ function JobMetadataCard({ className, job }) {
           />
           <MetadataEntry
             name="Scheduler ID"
-            value={job.attributes.schedulerId}
+            value={jobAttributes.schedulerId}
             format={(value) => (
               value == null ? <span>&mdash;</span> : <code>{value}</code>
             )}
@@ -58,7 +61,7 @@ function JobMetadataCard({ className, job }) {
           <MetadataEntry
             hideWhenNull
             name="Reason"
-            value={job.attributes.reason}
+            value={jobAttributes.reason}
           />
           <MetadataEntry
             name="Script"
@@ -76,31 +79,31 @@ function JobMetadataCard({ className, job }) {
           />
           <MetadataEntry
             name="Submitted"
-            value={job.attributes.createdAt}
+            value={jobAttributes.createdAt}
             format={(value) => <TimeAgo date={value} />}
           />
           <MetadataEntry
             format={(value) => <TimeAgo date={value} />}
             hideWhenNull
             name="Started"
-            value={job.attributes.startTime}
+            value={jobAttributes.startTime}
           />
           <EstimatedTime
-            job={job}
-            estimated={job.attributes.estimatedStartTime}
-            known={job.attributes.startTime}
+            jobAttributes={jobAttributes}
+            estimated={jobAttributes.estimatedStartTime}
+            known={jobAttributes.startTime}
             name="Starts"
           />
           <MetadataEntry
             format={(value) => <TimeAgo date={value} />}
             hideWhenNull
             name={endTimeNameFromState(jobState)}
-            value={job.attributes.endTime}
+            value={jobAttributes.endTime}
           />
           <EstimatedTime
-            estimated={job.attributes.estimatedEndTime}
-            job={job}
-            known={job.attributes.endTime}
+            estimated={jobAttributes.estimatedEndTime}
+            jobAttributes={jobAttributes}
+            known={jobAttributes.endTime}
             name="Completes"
           />
         </dl>
@@ -109,9 +112,9 @@ function JobMetadataCard({ className, job }) {
   );
 }
 
-function EstimatedTime({estimated, job, known, name}) {
+function EstimatedTime({estimated, jobAttributes, known, name}) {
   let unknown_estimate = "currently unknown";
-  if (job.attributes.state === 'FAILED' || job.attributes.state === 'UNKNOWN') {
+  if (jobAttributes.state === 'FAILED' || jobAttributes.state === 'UNKNOWN') {
     unknown_estimate = 'N/A';
   }
 
