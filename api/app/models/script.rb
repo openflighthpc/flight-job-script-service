@@ -74,7 +74,7 @@ class Script
   def template
     if @template == false
       template_id = metadata['template_id']
-      FlightJobScriptAPI.logger.info "Lazy loading related template: #{template_id} (script: #{id})"
+      Flight.logger.info "Lazy loading related template: #{template_id} (script: #{id})"
       @template = Template.find(template_id, user: user)
     end
     @template

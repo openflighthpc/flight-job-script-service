@@ -25,61 +25,84 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # API Bind Address
 # The address (including port) puma will bind to
 # See: https://github.com/puma/puma#binding-tcp--sockets
 # The environment variable flight_JOB_SCRIPT_API_bind_address takes precedence
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # bind_address: tcp://127.0.0.1:921
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # Base Url
 # The URL to where the API is being hosted. Used in the serialized responses.
 # The environment variable flight_JOB_SCRIPT_API_base_url takes precedence
 #
 # NOTE: Do not include the version prefix, as this will be added implicitly
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # base_url: '/'
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # Command PATH
 # The PATH the scheduler command will be executed with. This is a global value
 # for all users.
 # The environment variable flight_JOB_SCRIPT_API_command_path takes precedence
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # command_path: /usr/sbin:/usr/bin:/sbin:/bin
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # Command Timeout
 # The maximum time to wait when launching a scheduler command. Commands which
 # take longer then this period will be terminated.
 # The environment variable flight_JOB_SCRIPT_API_command_timeout takes precedence
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # command_timeout: 5
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # Shared Secret Path
-# Specify the path to to shared secret config. The secret must exist before the
+# Specify the path to the shared secret config. The secret must exist before the
 # service can be started.
+#
+# Relative paths are expanded from flight_ROOT. **
+#
 # The environment variable flight_JOB_SCRIPT_API_shared_secret_path takes
 # precedence.
-#
-# All relative paths are expanded from the install directory.
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # shared_secret_path: /path/to/flight-job-script-api/etc/shared-secret.conf
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # Cookie name
 # Specify the name to use for the sso cookie
+#
 # The environment variable flight_JOB_SCRIPT_API_sso_cookie_name takes precedence
-#-------------------------------------------------------------------------------
+# ==============================================================================
 # sso_cookie_name: flight_login
 
-#-------------------------------------------------------------------------------
+# ==============================================================================
+# Log Path
+# The file the logger will write to. It will write to standard error if
+# omitted.
+#
+# Relative paths are expanded from flight_ROOT. **
+#
+# The environment variable flight_JOB_SCRIPT_API_log_path takes precedence.
+# ==============================================================================
+# log_path: /dev/stdout
+
+# ==============================================================================
 # Log Level
 # Specify the logging level
-# The environment variable flight_JOB_SCRIPT_API_log_level takes precedence
+#
 # Valid levels are: fatal, error, warn, info, debug
-#-------------------------------------------------------------------------------
+#
+# The environment variable flight_JOB_SCRIPT_API_log_level takes precedence
+# ==============================================================================
 # log_level: info
+
+# ==============================================================================
+# ** Relative Paths to flight_ROOT
+#
+# NOTES:
+# 1. This only applies in production and if flight_ROOT is set, otherwise
+# 2. It will default to the installation directory.
+# ==============================================================================

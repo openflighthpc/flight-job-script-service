@@ -34,7 +34,7 @@ class ApplicationSerializer
   end
 
   def base_url
-    File.join(FlightJobScriptAPI.config.base_url, FlightJobScriptAPI::Configuration::API_VERSION)
+    File.join(Flight.config.base_url, FlightJobScriptAPI::Configuration::API_VERSION)
   end
 
   def relationship_self_link(attribute_name)

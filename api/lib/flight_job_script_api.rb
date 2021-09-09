@@ -27,30 +27,11 @@
 #==============================================================================
 
 module FlightJobScriptAPI
+  class UnexpectedError < StandardError; end
+
   autoload(:Configuration, 'flight_job_script_api/configuration')
   autoload(:ModelCache, 'flight_job_script_api/model_cache')
   autoload(:JobCLI, 'flight_job_script_api/job_cli')
   autoload(:CommandError, 'flight_job_script_api/job_cli')
   autoload(:Subprocess, 'flight_job_script_api/subprocess')
-
-  class UnexpectedError < StandardError; end
-
-  class << self
-    def app
-      # XXX: Eventually extract this to a Application object when the need arises
-      @app ||= Struct.new(:config).new(
-        Configuration.load
-      )
-    end
-
-    def config
-      app.config
-    end
-
-    def logger
-      @logger ||= Logger.new($stdout, level: config.log_level.to_sym)
-    end
-
-    alias_method :load_configuration, :config
-  end
 end

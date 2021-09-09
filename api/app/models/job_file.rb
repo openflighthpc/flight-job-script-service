@@ -187,12 +187,12 @@ class JobFile
   # We directly check the file permissions here to avoid launching a new
   # `flight job` command
   def is_readable?
-    logger = FlightJobScriptAPI.logger
+    logger = Flight.logger
     logger.debug("Checking file is readable: id:#{id.inspect} path:#{path.inspect} user:#{@user.inspect}")
     sp = FlightJobScriptAPI::Subprocess.new(
       env: {},
       logger: logger,
-      timeout: FlightJobScriptAPI.config.command_timeout,
+      timeout: Flight.config.command_timeout,
       username: @user,
     )
     result = sp.run(nil, nil) do

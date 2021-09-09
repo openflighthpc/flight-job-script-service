@@ -28,6 +28,6 @@
 
 require_relative 'boot.rb'
 
-bind FlightJobScriptAPI.config.bind_address
+bind Flight.config.bind_address
 log_requests
-tag FlightJobScriptAPI.config.class.application_name
+tag Flight.config.class.application_name
