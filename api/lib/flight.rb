@@ -38,9 +38,15 @@ module Flight
       @config = FlightJobScriptAPI::Configuration.build
       @config.tap do |c|
         c.__logs__.log_with(logger)
-        raise FlightJobScriptAPI::ConfigError, c.rich_error_message unless c.valid?
       end
     end
+
+    def assert_config_valid
+      unless config.valid?
+        raise FlightJobScriptAPI::ConfigError, config.rich_error_message
+      end
+    end
+
     alias_method :load_configuration, :config
 
     def env

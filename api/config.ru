@@ -27,10 +27,6 @@
 #==============================================================================
 
 require_relative 'config/boot'
-
-# Ensures the shared secret exists
-Flight.config.auth_decoder
-
 require_relative 'config/post_boot'
 require_relative 'app'
 

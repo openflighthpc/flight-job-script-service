@@ -35,3 +35,5 @@ require 'logger'
 
 # Shared activesupport libraries
 require 'active_support/core_ext/hash/keys'
+
+Flight.assert_config_valid

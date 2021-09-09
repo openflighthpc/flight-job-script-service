@@ -26,6 +26,9 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
+# Boot as little of the app as possible.  Just enough to be able to load the
+# configuration.
+
 ENV['RACK_ENV'] ||= 'development'
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 

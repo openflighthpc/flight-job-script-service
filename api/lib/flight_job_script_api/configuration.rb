@@ -34,13 +34,14 @@ require 'active_model'
 require 'flight_configuration'
 
 module FlightJobScriptAPI
+  class ConfigError < StandardError; end
+
   class Configuration
     include FlightConfiguration::DSL
     include FlightConfiguration::RichActiveValidationErrorMessage
     include ActiveModel::Validations
 
     API_VERSION = 'v0'
-    class ConfigError < StandardError; end
 
     application_name 'job-script-api'
     user_config_files false
@@ -85,6 +86,14 @@ module FlightJobScriptAPI
     }
 
     attribute :sso_cookie_name, default: 'flight_login'
+
+    validate do
+      begin
+        auth_decoder
+      rescue
+        errors.add(:shared_secret_path, $!.message)
+      end
+    end
 
     def auth_decoder
       @auth_decoder ||= FlightAuth::Builder.new(shared_secret_path)
