@@ -25,6 +25,9 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
+require 'etc'
+require 'timeout'
+
 module FlightJobScriptAPI
   class Subprocess
     class Result < Struct.new(:stdout, :stderr, :exitstatus, :pid); end

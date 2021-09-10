@@ -25,15 +25,12 @@
 # For more information on FlightDesktopRestAPI, please visit:
 # https://github.com/openflighthpc/flight-desktop-restapi
 #===============================================================================
-require 'yaml'
-require 'json'
-require 'pathname'
-require 'ostruct'
-require 'etc'
-require 'timeout'
-require 'logger'
 
-# Shared activesupport libraries
+# Require libraries that are used so pervasively throught the app that it
+# isn't worth requiring them in the files that actually use them.
+#
+# This should be limited to as few libraries as possible.
+require 'json'
 require 'active_support/core_ext/hash/keys'
 
 Flight.assert_config_valid

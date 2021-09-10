@@ -25,8 +25,9 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-require 'securerandom'
+require 'etc'
 require 'pathname'
+require 'securerandom'
 
 module FlightJobScriptAPI
   class CommandError < Sinja::ServiceUnavailable; end
