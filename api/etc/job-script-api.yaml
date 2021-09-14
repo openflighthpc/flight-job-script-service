@@ -68,7 +68,7 @@
 # The environment variable flight_JOB_SCRIPT_API_shared_secret_path takes
 # precedence.
 # ==============================================================================
-# shared_secret_path: /path/to/flight-job-script-api/etc/shared-secret.conf
+# shared_secret_path: etc/shared-secret.conf
 
 # ==============================================================================
 # Cookie name
