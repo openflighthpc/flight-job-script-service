@@ -63,7 +63,8 @@
 # Specify the path to the shared secret config. The secret must exist before the
 # service can be started.
 #
-# Relative paths are expanded from flight_ROOT. **
+# Relative paths are expanded according to the "Relative path expansion" rules
+# described below.
 #
 # The environment variable flight_JOB_SCRIPT_API_shared_secret_path takes
 # precedence.
@@ -83,7 +84,8 @@
 # The file the logger will write to. It will write to standard error if
 # omitted.
 #
-# Relative paths are expanded from flight_ROOT. **
+# Relative paths are expanded according to the "Relative path expansion" rules
+# described below.
 #
 # The environment variable flight_JOB_SCRIPT_API_log_path takes precedence.
 # ==============================================================================
@@ -100,9 +102,16 @@
 # log_level: info
 
 # ==============================================================================
-# ** Relative Paths to flight_ROOT
+# Relative path expansion rules
 #
-# NOTES:
-# 1. This only applies in production and if flight_ROOT is set, otherwise
-# 2. It will default to the installation directory.
+# Relative paths, where supported, are expanded in one of two ways:
+#
+# 1. If Flight Job Script API was installed from the OpenFlight package repos,
+#    they will be expanded from the value of the `flight_ROOT` environment
+#    variable.
+# 2. Otherwise they will be expanded from the Flight Job Script API
+#    installation directory.
+#
+# More details can be found at
+# https://github.com/openflighthpc/flight-job-script-service/blob/master/api/docs/environment-modes.md
 # ==============================================================================
