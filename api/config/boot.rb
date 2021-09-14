@@ -43,7 +43,7 @@ end
 
 # Limited use of dotenv to support setting flight_ENVIRONMENT.
 require 'dotenv'
-dot_files = [ '../.flight_environment' ].map do |file|
+dot_files = [ '../.env.development.local', '../.env.development' ].map do |file|
   File.expand_path(file, __dir__)
 end
 Dotenv.load(*dot_files)
