@@ -44,5 +44,5 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_support/core_ext/hash/keys'
 require 'flight_job_script_api'
 
-FlightAuth::CLI.new(FlightJobScriptAPI.config.shared_secret_path, 'job-script-api-dev')
+FlightAuth::CLI.new(Flight.config.shared_secret_path, 'job-script-api-dev')
                .run(*ARGV)

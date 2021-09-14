@@ -95,7 +95,7 @@ FactoryBot.define do
     exp { iat + 60 }
 
     transient do
-      shared_secret { FlightJobScriptAPI.config.shared_secret }
+      shared_secret { Flight.config.auth_decoder.shared_secret }
     end
 
     initialize_with do

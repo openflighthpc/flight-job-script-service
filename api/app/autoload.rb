@@ -26,6 +26,8 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
+require 'pathname'
+
 ['models', 'serializers'].each do |type|
   Pathname.new(__dir__).join(type).children.each do |file|
     next if file.directory? # Recursive autoload is not supported

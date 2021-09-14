@@ -27,3 +27,4 @@
 
 # Mostly disable logging within the specs
 log_level: fatal
+log_path: null

@@ -26,6 +26,9 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
+# Boot as little of the app as possible.  Just enough to be able to load the
+# configuration.
+
 ENV['RACK_ENV'] ||= 'development'
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 
@@ -38,7 +41,15 @@ else
   Bundler.require(:default)
 end
 
+# Limited use of dotenv to support setting flight_ENVIRONMENT.
+require 'dotenv'
+dot_files = [ '../.env.development.local', '../.env.development' ].map do |file|
+  File.expand_path(file, __dir__)
+end
+Dotenv.load(*dot_files)
+
 lib = File.expand_path('../lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
+require 'flight'
 require 'flight_job_script_api'

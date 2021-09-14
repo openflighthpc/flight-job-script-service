@@ -25,8 +25,9 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-require 'securerandom'
+require 'etc'
 require 'pathname'
+require 'securerandom'
 
 module FlightJobScriptAPI
   class CommandError < Sinja::ServiceUnavailable; end
@@ -104,18 +105,18 @@ module FlightJobScriptAPI
       private
 
       def flight_job
-        FlightJobScriptAPI.config.flight_job
+        Flight.config.flight_job
       end
     end
 
     def initialize(*cmd, user:, stdin: nil, timeout: nil, env: {}, include: nil)
-      @timeout = timeout || FlightJobScriptAPI.config.command_timeout
+      @timeout = timeout || Flight.config.command_timeout
       @include = include
       @cmd = cmd
       @user = user
       @stdin = stdin
       @env = {
-        'PATH' => FlightJobScriptAPI.app.config.command_path,
+        'PATH' => Flight.config.command_path,
         'HOME' => passwd.dir,
         'USER' => @user,
         'LOGNAME' => @user
@@ -128,10 +129,10 @@ module FlightJobScriptAPI
     def run(&block)
       result =
         self.class.mutexes[@user].synchronize do
-          FlightJobScriptAPI.logger.debug("Running subprocess (#{@user}): #{stringified_cmd}")
+          Flight.logger.debug("Running subprocess (#{@user}): #{stringified_cmd}")
           sp = Subprocess.new(
             env: @env,
-            logger: FlightJobScriptAPI.logger,
+            logger: Flight.logger,
             timeout: @timeout,
             username: @user,
           )
@@ -165,14 +166,14 @@ module FlightJobScriptAPI
     end
 
     def log_command(result)
-      FlightJobScriptAPI.logger.info <<~INFO.chomp
+      Flight.logger.info <<~INFO.chomp
         COMMAND: #{stringified_cmd}
         INCLUDE: #{@include || '(none)'}
         USER: #{@user}
         PID: #{result.pid}
         STATUS: #{result.exitstatus}
       INFO
-      FlightJobScriptAPI.logger.debug <<~DEBUG
+      Flight.logger.debug <<~DEBUG
         ENV:
         #{JSON.pretty_generate @env}
         STDIN:

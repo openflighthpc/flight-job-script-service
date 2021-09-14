@@ -54,8 +54,8 @@ class App < Sinatra::Base
 
   helpers do
     def auth
-      @auth ||= FlightJobScriptAPI.config.auth_decoder.decode(
-        cookies[FlightJobScriptAPI.app.config.sso_cookie_name],
+      @auth ||= Flight.config.auth_decoder.decode(
+        cookies[Flight.config.sso_cookie_name],
         env['HTTP_AUTHORIZATION']
       )
     end
@@ -301,8 +301,8 @@ class RenderApp < Sinatra::Base
   helpers Sinatra::Cookies
 
   before do
-    auth = FlightJobScriptAPI.config.auth_decoder.decode(
-      cookies[FlightJobScriptAPI.app.config.sso_cookie_name],
+    auth = Flight.config.auth_decoder.decode(
+      cookies[Flight.config.sso_cookie_name],
       env['HTTP_AUTHORIZATION']
     )
 

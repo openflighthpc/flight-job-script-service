@@ -29,62 +29,71 @@
 # XXX flight_configuration requires this library, but doesn't `require` it.
 # That needs fixing.
 require 'active_support/core_ext/hash/keys'
+require 'active_model'
+
+require 'flight_configuration'
 
 module FlightJobScriptAPI
-  class Configuration
-    extend FlightConfiguration::RackDSL
+  class ConfigError < StandardError; end
 
-    root_path File.expand_path('../..', __dir__)
-    application_name 'flight-job-script-api'
+  class Configuration
+    include FlightConfiguration::DSL
+    include FlightConfiguration::RichActiveValidationErrorMessage
+    include ActiveModel::Validations
+
     API_VERSION = 'v0'
 
-    class ConfigError < StandardError; end
+    application_name 'job-script-api'
+    user_config_files false
 
-    [
-      {
-        name: 'bind_address',
-        env_var: true,
-        default: 'tcp://127.0.0.1:921'
-      },
-      {
-        name: 'base_url',
-        env_var: true,
-        default: '/'
-      },
-      {
-        name: 'shared_secret_path',
-        env_var: true,
-        default: 'etc/shared-secret.conf',
-        transform: relative_to(root_path)
-      },
-      {
-        name: 'flight_job',
-        env_var: true,
-        default: File.join(ENV.fetch('flight_ROOT', '/opt/flight'), 'bin/flight job'),
-        transform: ->(value) { value.split(' ') }
-      },
-      {
-        name: 'command_path',
-        env_var: true,
-        default: '/usr/sbin:/usr/bin:/sbin:/bin'
-      },
-      {
-        name: 'command_timeout',
-        env_var: true,
-        default: 5,
-        transform: :to_f
-      },
-      {
-        name: 'log_level',
-        env_var: true,
-        default: 'info'
-      },
-      {
-        name: 'sso_cookie_name',
-        env_var: true,
-        default: 'flight_login',
-      },
-    ].each { |opt| attribute(opt[:name], **opt) }
+    attribute :bind_address, default: 'tcp://127.0.0.1:921'
+    validates :bind_address, presence: true
+
+    attribute :base_url, default: '/'
+    validates :base_url, presence: true
+
+    attribute :shared_secret_path, default: 'etc/shared-secret.conf',
+      transform: relative_to(root_path)
+    validates :shared_secret_path, presence: true
+
+    attribute :flight_job,
+      default: File.join(ENV.fetch('flight_ROOT', '/opt/flight'), 'bin/flight job'),
+      transform: ->(value) { value.split(' ') }
+    validates :flight_job, presence: true
+
+    attribute :command_path, default: '/usr/sbin:/usr/bin:/sbin:/bin'
+
+    attribute :command_timeout, default: 5,
+      transform: :to_f
+    validates :command_timeout, numericality: true, allow_blank: false
+
+    attribute :log_path, required: false,
+              default: '/dev/stdout',
+              transform: ->(path) do
+                if path
+                  relative_to(root_path).call(path).tap do |full_path|
+                    FileUtils.mkdir_p File.dirname(full_path)
+                  end
+                else
+                  $stderr
+                end
+              end
+
+    attribute :log_level, default: 'info'
+    validates :log_level, inclusion: {
+      within: %w(fatal error warn info debug disabled),
+      message: 'must be one of fatal, error, warn, info, debug or disabled'
+    }
+
+    attribute :sso_cookie_name, default: 'flight_login'
+
+    validate do
+      begin
+        auth_decoder
+      rescue
+        errors.add(:shared_secret_path, $!.message)
+      end
+    end
 
     def auth_decoder
       @auth_decoder ||= FlightAuth::Builder.new(shared_secret_path)
