@@ -47,8 +47,6 @@ module Flight
       end
     end
 
-    alias_method :load_configuration, :config
-
     def env
       @env ||= ActiveSupport::StringInquirer.new(
         ENV["flight_ENVIRONMENT"].presence || "production"
