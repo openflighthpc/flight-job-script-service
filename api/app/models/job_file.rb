@@ -182,9 +182,10 @@ class JobFile
   end
 
   def mime_type
-    # Protect against bad/missing paths, this shouldn't happen in practice
     return nil unless exists?
-    self.class.magic.file(path)
+    mt = self.class.magic.file(path)
+    return nil unless mt
+    mt.split(';').first.strip
   end
 
   protected
