@@ -59,9 +59,7 @@ class JobFileSerializer < ApplicationSerializer
   attribute(:relative_path) { object.relative_path || nil }
 
   attribute :filename
-
-  # NOTE: The default is text/plain because the string encoding is forced to be UTF8
-  attribute(:mime_type) { MIME::Types.type_for(object.filename)&.first&.content_type || 'text/plain' }
+  attribute :mime_type
 
   has_one(:job) { object.find_job }
 end

@@ -94,7 +94,7 @@ module FlightJobScriptAPI
       block.call(@out_write, @err_write) if block
       if cmd.nil?
         @logger.debug("Nothing to exec")
-        return 
+        return
       end
 
       opts = {

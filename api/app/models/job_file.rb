@@ -27,6 +27,7 @@
 #==============================================================================
 
 require 'pathname'
+require 'ffi-magic'
 
 class JobFile
   class << self
@@ -69,6 +70,10 @@ class JobFile
       find!(id, **opts)
     rescue FlightJobScriptAPI::CommandError
       nil
+    end
+
+    def magic
+      @ffi_magic ||= Magic.new(Magic::MIME)
     end
   end
 
@@ -174,6 +179,13 @@ class JobFile
       raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to read file: #{id}"
     end
     @payload = File.read path
+  end
+
+  def mime_type
+    return nil unless exists?
+    mt = self.class.magic.file(path)
+    return nil unless mt
+    mt.split(';').first.strip
   end
 
   protected
