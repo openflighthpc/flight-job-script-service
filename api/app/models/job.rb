@@ -112,7 +112,7 @@ class Job
     cmd = FlightJobScriptAPI::JobCLI.cancel_job(id, user: user).tap do |cmd|
       next if cmd.exitstatus == 0
       if cmd.exitstatus == 22
-        raise MissingScript, "Failed to locate script : #{script_id}"
+        raise MissingScript, "Unexpectedly failed to find job : #{id}"
       else
         raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to cancel job"
       end
