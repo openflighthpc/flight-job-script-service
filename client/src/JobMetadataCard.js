@@ -1,15 +1,12 @@
 import classNames from 'classnames';
-import { useState } from 'react';
-import { Button, Badge } from 'reactstrap';
+import { Badge } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
+import JobActions from './JobActions';
+import JobStateBadges from './JobStateBadges';
 import MetadataEntry from './MetadataEntry';
 import TimeAgo from './TimeAgo';
 import { stateColourMap } from './utils';
-import JobStateBadges from './JobStateBadges';
-
-import { useCancelJob } from './api';
-import { useToast } from './ToastContext';
 
 function endTimeNameFromState(state) {
   if (state === 'CANCELLED') {
@@ -21,32 +18,29 @@ function endTimeNameFromState(state) {
   }
 }
 
-function JobMetadataCard({ className, job }) {
-  const [jobAttributes, setJobAttributes] = useState(job.attributes);
-
-  const jobState = jobAttributes.state
+function JobMetadataCard({ className, job, onCancelled }) {
+  const jobState = job.attributes.state
   const colour = stateColourMap[jobState];
 
   return (
     <div
       className={classNames("card", `border-${colour}`, className)}
     >
-      <h4
-        className="card-header text-truncate justify-content-between d-flex align-items-end"
-        title={job.script ? job.script.attributes.name : 'Unknown'}
-      >
-        <span>
-          Job <code>{job.id}</code>
-        </span>
-        <span>
-          <Badge color={colour}>{jobState}</Badge>
-          <CancelButton
-            id={job.id}
-            jobAttributes={jobAttributes}
-            setJobAttributes={setJobAttributes}
-          />
-        </span>
-      </h4>
+      <div className="card-header d-flex flex-row justify-content-between">
+        <h4
+          className="text-truncate mb-0"
+          title={job.script ? job.script.attributes.name : 'Unknown'}
+        >
+          <span>
+            Job <code>{job.id}</code>
+          </span>
+          <Badge className="ml-2" color={colour}>{jobState}</Badge>
+        </h4>
+        <JobActions
+          job={job}
+          onCancelled={onCancelled}
+        />
+      </div>
       <div className="card-body">
         <dl>
           <MetadataEntry
@@ -56,7 +50,7 @@ function JobMetadataCard({ className, job }) {
           />
           <MetadataEntry
             name="Scheduler ID"
-            value={jobAttributes.schedulerId}
+            value={job.attributes.schedulerId}
             format={(value) => (
               value == null ? <span>&mdash;</span> : <code>{value}</code>
             )}
@@ -69,7 +63,7 @@ function JobMetadataCard({ className, job }) {
           <MetadataEntry
             hideWhenNull
             name="Reason"
-            value={jobAttributes.reason}
+            value={job.attributes.reason}
           />
           <MetadataEntry
             name="Script"
@@ -87,31 +81,31 @@ function JobMetadataCard({ className, job }) {
           />
           <MetadataEntry
             name="Submitted"
-            value={jobAttributes.createdAt}
+            value={job.attributes.createdAt}
             format={(value) => <TimeAgo date={value} />}
           />
           <MetadataEntry
             format={(value) => <TimeAgo date={value} />}
             hideWhenNull
             name="Started"
-            value={jobAttributes.startTime}
+            value={job.attributes.startTime}
           />
           <EstimatedTime
-            jobAttributes={jobAttributes}
-            estimated={jobAttributes.estimatedStartTime}
-            known={jobAttributes.startTime}
+            job={job}
+            estimated={job.attributes.estimatedStartTime}
+            known={job.attributes.startTime}
             name="Starts"
           />
           <MetadataEntry
             format={(value) => <TimeAgo date={value} />}
             hideWhenNull
             name={endTimeNameFromState(jobState)}
-            value={jobAttributes.endTime}
+            value={job.attributes.endTime}
           />
           <EstimatedTime
-            estimated={jobAttributes.estimatedEndTime}
-            jobAttributes={jobAttributes}
-            known={jobAttributes.endTime}
+            estimated={job.attributes.estimatedEndTime}
+            job={job}
+            known={job.attributes.endTime}
             name="Completes"
           />
         </dl>
@@ -120,9 +114,9 @@ function JobMetadataCard({ className, job }) {
   );
 }
 
-function EstimatedTime({estimated, jobAttributes, known, name}) {
+function EstimatedTime({estimated, job, known, name}) {
   let unknown_estimate = "currently unknown";
-  if (jobAttributes.state === 'FAILED' || jobAttributes.state === 'UNKNOWN') {
+  if (['FAILED', 'UNKNOWN', 'CANCELLED'].includes(job.attributes.state)) {
     unknown_estimate = 'N/A';
   }
 
@@ -141,62 +135,6 @@ function EstimatedTime({estimated, jobAttributes, known, name}) {
       value={estimated == null ? unknown_estimate : estimated}
     />
   );
-}
-
-function CancelButton({id, jobAttributes, setJobAttributes}) {
-  const { loading, patch, response } = useCancelJob(id)
-  const { addToast } = useToast();
-  const icon = loading ? 'fa-spin fa-spinner' : 'fa-ban'
-
-  const cancel = async() => {
-    await patch();
-    if (response.ok) {
-      setJobAttributes(response.data.data.attributes);
-      if (["PENDING", "RUNNING"].includes(response.data.data.attributes.state)) {
-        addToast({
-          body: (
-            <div>
-              Your request to cancel the job has been received
-              and will be completed shortly. Please check again latter.
-            </div>
-          ),
-          icon: 'success',
-          header: 'Cancellation Started',
-        });
-      }
-    } else {
-      console.log("Failed to cancel job");
-      addToast({
-        body: (
-          <div>
-            Unfortunately there has been a problem cancel your job.
-            Please try again and, if problems persist, help us to
-            more quickly rectify the problem by contacting us and letting us
-            know.
-          </div>
-        ),
-        icon: 'danger',
-        header: 'Failed to cancel job',
-      });
-    }
-  }
-
-  if (["PENDING", "RUNNING"].includes(jobAttributes.state)) {
-    return (
-      <Button
-        color="danger"
-        onClick={cancel}
-        className={classNames('ml-2', { 'disabled': loading })}
-        disabled={loading}
-        size="sm"
-      >
-        <i className={`fa ${icon} mr-1`}></i>
-        <span>Cancel</span>
-      </Button>
-    );
-  } else {
-    return <></>;
-  }
 }
 
 export default JobMetadataCard;

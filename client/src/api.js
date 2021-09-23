@@ -287,7 +287,7 @@ export function useFetchJob(id) {
 
 export function useCancelJob(id) {
   const request = useFetch(
-    `/jobs/${id}`,
+    `/jobs/${id}?include=script`,
     {
       method: 'patch',
       headers: {
@@ -301,6 +301,14 @@ export function useCancelJob(id) {
           "attributes": {
             "state": "CANCELLED"
           }
+        }
+      },
+      interceptors: {
+        response: async ({ response }) => {
+          if (response.ok) {
+            denormalizeResponse(response);
+          }
+          return response;
         }
       },
       cachePolicy: 'no-cache',
