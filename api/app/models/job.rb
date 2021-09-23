@@ -108,6 +108,18 @@ class Job
     @metadata = cmd.stdout
   end
 
+  def cancel
+    cmd = FlightJobScriptAPI::JobCLI.cancel_job(id, user: user).tap do |cmd|
+      next if cmd.exitstatus == 0
+      if cmd.exitstatus == 22
+        raise MissingScript, "Unexpectedly failed to find job : #{id}"
+      else
+        raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to cancel job"
+      end
+    end
+    @metadata = cmd.stdout
+  end
+
   def index_result_files
     JobFile.index_job_results(self.id, user: user)
   end

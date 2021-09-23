@@ -2,10 +2,11 @@ import classNames from 'classnames';
 import { Badge } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
+import JobActions from './JobActions';
+import JobStateBadges from './JobStateBadges';
 import MetadataEntry from './MetadataEntry';
 import TimeAgo from './TimeAgo';
 import { stateColourMap } from './utils';
-import JobStateBadges from './JobStateBadges';
 
 function endTimeNameFromState(state) {
   if (state === 'CANCELLED') {
@@ -17,25 +18,29 @@ function endTimeNameFromState(state) {
   }
 }
 
-function JobMetadataCard({ className, job }) {
-  const jobState = job.attributes.state;
+function JobMetadataCard({ className, job, onCancelled }) {
+  const jobState = job.attributes.state
   const colour = stateColourMap[jobState];
 
   return (
     <div
       className={classNames("card", `border-${colour}`, className)}
     >
-      <h4
-        className="card-header text-truncate justify-content-between d-flex align-items-end"
-        title={job.script ? job.script.attributes.name : 'Unknown'}
-      >
-        <span>
-          Job <code>{job.id}</code>
-        </span>
-        <span>
-          <Badge color={colour}>{jobState}</Badge>
-        </span>
-      </h4>
+      <div className="card-header d-flex flex-row justify-content-between">
+        <h4
+          className="text-truncate mb-0"
+          title={job.script ? job.script.attributes.name : 'Unknown'}
+        >
+          <span>
+            Job <code>{job.id}</code>
+          </span>
+          <Badge className="ml-2" color={colour}>{jobState}</Badge>
+        </h4>
+        <JobActions
+          job={job}
+          onCancelled={onCancelled}
+        />
+      </div>
       <div className="card-body">
         <dl>
           <MetadataEntry
@@ -111,7 +116,7 @@ function JobMetadataCard({ className, job }) {
 
 function EstimatedTime({estimated, job, known, name}) {
   let unknown_estimate = "currently unknown";
-  if (job.attributes.state === 'FAILED' || job.attributes.state === 'UNKNOWN') {
+  if (['FAILED', 'UNKNOWN', 'CANCELLED'].includes(job.attributes.state)) {
     unknown_estimate = 'N/A';
   }
 

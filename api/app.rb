@@ -209,8 +209,6 @@ class App < Sinatra::Base
       def validate!
         if @action == :create
           resource.submit
-        else
-          raise Sinja::ForbiddenError, 'Jobs can not be modfied!'
         end
       end
     end
@@ -227,6 +225,13 @@ class App < Sinatra::Base
       # However the actual ID won't be assigned until later, so a temporary ID
       # is used instead.
       ['temporary', Job.new(user: current_user)]
+    end
+
+    update do |attr|
+      unless attr == { state: 'CANCELLED' }
+        raise Sinja::BadRequestError, "Illegally trying to update a job"
+      end
+      resource.tap(&:cancel)
     end
 
     has_one :script do
