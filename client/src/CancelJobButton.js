@@ -37,18 +37,15 @@ function CancelJobButton({
       act={cancelJob}
       acting={loading}
       actingButtonText="Cancelling..."
-      buttonText="Cancel"
+      buttonText="Cancel job"
+      cancelButtonText="Abort cancellation"
       className={className}
       confirmationHeaderText="Confirm job cancellation"
       confirmationText={
-        <>
-          <p>
-            Are you sure you want to cancel this job?
-          </p>
-          <p>
-            Cancelling the job may prevent it from fully processing its data.
-          </p>
-        </>
+        <p>
+          Cancelling the job may prevent if from running to completion and
+          fully processing its data.
+        </p>
       }
       icon="fa-ban"
       id={`cancel-job-${job.id}`}

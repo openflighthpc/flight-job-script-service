@@ -18,7 +18,7 @@ function endTimeNameFromState(state) {
   }
 }
 
-function JobMetadataCard({ className, job, onCancelled }) {
+function JobMetadataCard({ className, job, onCancelled, onDeleted }) {
   const jobState = job.attributes.state
   const colour = stateColourMap[jobState];
 
@@ -39,6 +39,7 @@ function JobMetadataCard({ className, job, onCancelled }) {
         <JobActions
           job={job}
           onCancelled={onCancelled}
+          onDeleted={onDeleted}
         />
       </div>
       <div className="card-body">

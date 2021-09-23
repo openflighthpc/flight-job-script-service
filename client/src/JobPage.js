@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Col, Row } from 'reactstrap';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import {
   DefaultErrorMessage,
@@ -93,6 +93,7 @@ function LayoutContainer({ job, loading }) {
 }
 
 function Layout({ job, onCancelled }) {
+  const history = useHistory();
   const submissionFailed = job.attributes.submitStatus !== 0;
 
   return (
@@ -103,6 +104,7 @@ function Layout({ job, onCancelled }) {
           className="mb-3"
           job={job}
           onCancelled={onCancelled}
+          onDeleted={() => history.push('/jobs')}
         />
         <JobSessionCard job={job} />
       </Col>

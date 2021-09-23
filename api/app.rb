@@ -234,6 +234,8 @@ class App < Sinatra::Base
       resource.tap(&:cancel)
     end
 
+    destroy { resource.delete }
+
     has_one :script do
       helpers do
         # NOTE: The 'serialize_linkage' method gets called on sideloads before its

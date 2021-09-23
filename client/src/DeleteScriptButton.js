@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { Button } from 'reactstrap';
 import { ConfirmedActionButton, utils, } from 'flight-webapp-components';
+
 import { useDeleteScript } from './api';
 import { useToast } from './ToastContext';
 
@@ -10,7 +11,6 @@ function DeleteScriptButton({
   onDeleted=()=>{},
   script,
 }) {
-  const id = `delete-script-${script.id}`;
   const { loading: deleting, del, response } = useDeleteScript(script);
   const { addToast } = useToast();
   const deleteScript = async () => {
@@ -47,7 +47,7 @@ function DeleteScriptButton({
         </p>
       }
       icon="fa-trash"
-      id={id}
+      id={`delete-script-${script.id}`}
     />
   );
 }

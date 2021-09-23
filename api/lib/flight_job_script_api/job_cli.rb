@@ -106,6 +106,10 @@ module FlightJobScriptAPI
         new(*flight_job, 'cancel-job', id, '--json', **opts).run
       end
 
+      def delete_job(id, **opts)
+        new(*flight_job, 'delete-job', id, **opts).run
+      end
+
       private
 
       def flight_job
