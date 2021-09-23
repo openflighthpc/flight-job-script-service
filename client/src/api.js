@@ -317,6 +317,20 @@ export function useCancelJob(id) {
   return request;
 }
 
+export function useDeleteJob(id) {
+  const request = useFetch(
+    `/jobs/${id}`,
+    {
+      method: 'delete',
+      headers: {
+        Accept: 'application/vnd.api+json',
+      },
+      cachePolicy: 'no-cache',
+    },
+  );
+  return request;
+}
+
 export function useFetchOutputFiles(id) {
   const { currentUser } = useContext(CurrentUserContext);
   return useFetch(
