@@ -5,17 +5,27 @@ import CancelJobButton from './CancelJobButton';
 import DeleteJobButton from './DeleteJobButton';
 
 function JobActions({ className, job, onCancelled, onDeleted }) {
+  const showCancel = ['PENDING', 'RUNNING'].includes(job.attributes.state);
+  const showDelete = !showCancel;
   return (
     <ButtonToolbar className={classNames(className)} >
-      <CancelJobButton
-        className="mr-2"
-        job={job}
-        onCancelled={onCancelled}
-      />
-      <DeleteJobButton
-        job={job}
-        onDeleted={onDeleted}
-      />
+      {
+        showCancel ?
+          <CancelJobButton
+            className="mr-2"
+            job={job}
+            onCancelled={onCancelled}
+          /> :
+          null
+      }
+      {
+        showDelete ?
+          <DeleteJobButton
+            job={job}
+            onDeleted={onDeleted}
+          /> :
+          null
+      }
     </ButtonToolbar>
   );
 }
