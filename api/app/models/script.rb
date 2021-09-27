@@ -36,7 +36,7 @@ class Script
         raise FlightJobScriptAPI::CommandError, 'Unexpectedly failed to list scripts'
       end
       cmd.stdout.map do |metadata|
-        new(user: opts[:user], **metadata)
+        new(**metadata)
       end
     end
 
@@ -53,15 +53,14 @@ class Script
         raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to find script: #{id}"
       end
 
-      new(user: opts[:user], **cmd.stdout)
+      new(**cmd.stdout)
     end
   end
 
-  attr_reader :metadata, :user
+  attr_reader :metadata
 
-  def initialize(user:, **metadata)
+  def initialize(**metadata)
     @metadata = metadata
-    @user = user
 
     # Flag that the template has not been loaded
     @template = false
@@ -75,24 +74,24 @@ class Script
     if @template == false
       template_id = metadata['template_id']
       FlightJobScriptAPI.logger.info "Lazy loading related template: #{template_id} (script: #{id})"
-      @template = Template.find(template_id, user: user)
+      @template = Template.find(template_id)
     end
     @template
   end
 
   def delete
-    FlightJobScriptAPI::JobCLI.delete_script(id, user: user).tap do |cmd|
+    FlightJobScriptAPI::JobCLI.delete_script(id).tap do |cmd|
       next if cmd.exitstatus == 0
       raise FlightJobScriptAPI::CommandError, "Unexpectedly failed to delete script: #{id}"
     end
   end
 
   def find_content
-    ScriptContent.find(id, user: user)
+    ScriptContent.find(id)
   end
 
   def find_note
-    ScriptNote.find(id, user: user)
+    ScriptNote.find(id)
   end
 
   def cache_related_resources

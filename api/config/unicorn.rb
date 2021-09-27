@@ -26,14 +26,41 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-require_relative 'config/boot'
-require 'sinatra'
+# Ensure the working directory is correct, this is applied immediately
+working_directory File.dirname(__dir__)
 
-v = FlightJobScriptAPI::Configuration::API_VERSION
-app = Rack::Builder.new do
-  use RequestStore::Middleware
-  map("/#{v}/render") { run RenderApp }
-  map("/#{v}") { run App }
+# NOTE: boot.rb essentially "preloads" the app into memory. IIUC unicorn is
+# expecting the app to be loaded by the 'config.ru', not here.
+#
+# This doesn't make a big difference, as the app should be preloaded regardless
+require_relative 'boot.rb'
+preload_app true
+
+listen FlightJobScriptAPI.config.bind_address
+
+logger FlightJobScriptAPI.logger
+if FlightJobScriptAPI.config.log_path
+  stdout_path FlightJobScriptAPI.config.log_path
+  stderr_path FlightJobScriptAPI.config.log_path
 end
 
-run app
+FileUtils.mkdir_p File.dirname(FlightJobScriptAPI.config.pid_path)
+pid FlightJobScriptAPI.config.pid_path
+
+worker_processes 1
+timeout FlightJobScriptAPI.config.hard_timeout
+
+# PATCH unicorn to allow the process title to be set
+module UnicornTagPatch
+  def proc_name(tag)
+    $0 =  [
+      File.basename(self.class::START_CTX[0]),
+      tag,
+      "(#{FlightJobScriptAPI.config.bind_address})",
+      "[#{FlightJobScriptAPI.config.class.application_name}]",
+      '-',
+      ENV['RACK_ENV']
+    ].join(' ')
+  end
+end
+Unicorn::HttpServer.prepend UnicornTagPatch

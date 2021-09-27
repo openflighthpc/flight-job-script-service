@@ -48,6 +48,8 @@ module FlightJobScriptAPI
     end
 
     def logger
+      # NOTE: This intentionally uses $stdout, unicorn will redirect
+      # the logger instead.
       @logger ||= Logger.new($stdout, level: config.log_level.to_sym)
     end
 

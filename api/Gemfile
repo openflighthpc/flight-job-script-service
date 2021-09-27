@@ -39,10 +39,12 @@ gem 'mime-types'
 gem 'rack-parser', require: 'rack/parser'
 gem 'rake'
 gem 'request_store'
-gem 'jwt'
-gem 'puma'
 gem 'sinatra', require: 'sinatra/base'
 gem 'sinja', '~> 1.3'
+
+# NOTE: A fairly modern version of unicorn is required as it needs to support
+#       the "rack.after-reply" callback
+gem 'unicorn', '~> 6'
 
 group :development, :test do
   gem 'pry'

@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+#!/bin/bash
 #==============================================================================
 # Copyright (C) 2021-present Alces Flight Ltd.
 #
@@ -26,8 +26,5 @@
 # https://github.com/openflighthpc/flight-job-script-service
 #==============================================================================
 
-require_relative 'boot.rb'
-
-bind FlightJobScriptAPI.config.bind_address
-log_requests
-tag FlightJobScriptAPI.config.class.application_name
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
+exec "$ROOT"/bin/unicorn --config-file "$ROOT"/config/unicorn.rb "$@"

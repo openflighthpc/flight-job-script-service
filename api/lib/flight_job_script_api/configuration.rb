@@ -40,7 +40,12 @@ module FlightJobScriptAPI
       {
         name: 'bind_address',
         env_var: true,
-        default: 'tcp://127.0.0.1:921'
+        default: 'tcp://127.0.0.1:921',
+        transform: ->(addr) do
+          # Strip the 'tcp://' prefix because unicorn...
+          # This is intentionally being maintained for consistency with puma
+          addr.sub(/\Atcp:\/\//, '')
+        end
       },
       {
         name: 'base_url',
@@ -65,6 +70,11 @@ module FlightJobScriptAPI
         default: '/usr/sbin:/usr/bin:/sbin:/bin'
       },
       {
+        name: 'hard_timeout',
+        env_var: true,
+        default: 600
+      },
+      {
         name: 'command_timeout',
         env_var: true,
         default: 5,
@@ -76,10 +86,31 @@ module FlightJobScriptAPI
         default: 'info'
       },
       {
+        name: 'log_path',
+        env_var: true,
+        required: false,
+        default: 'var/log/job-script-api/unicorn.log',
+        transform: ->(path) do
+          if path.blank?
+            nil
+          else
+            relative_to(root_path).call(path).tap do |full_path|
+              FileUtils.mkdir_p File.dirname(full_path)
+            end
+          end
+        end
+      },
+      {
         name: 'sso_cookie_name',
         env_var: true,
         default: 'flight_login',
       },
+      {
+        name: 'pid_path',
+        env_var: true,
+        default: 'var/run/job-script-api.pid',
+        transform: relative_to(root_path)
+      }
     ].each { |opt| attribute(opt[:name], **opt) }
 
     def auth_decoder

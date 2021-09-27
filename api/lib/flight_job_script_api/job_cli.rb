@@ -33,15 +33,6 @@ module FlightJobScriptAPI
 
   class JobCLI
     class << self
-      # Used to ensure each user is only running a single command at at time
-      # NOTE: These objects will be indefinitely cached in memory until the server
-      #       is restarted. This may constitute a memory leak if an indefinite
-      #       number of users access the service.
-      #       Consider refactoring
-      def mutexes
-        @mutexes ||= Hash.new { |h, k| h[k] = Mutex.new }
-      end
-
       def list_templates(**opts)
         opts = opts.dup
         includes = opts.key?(:include) ? ["--include", opts.delete(:include)] : []
@@ -130,40 +121,31 @@ module FlightJobScriptAPI
       end
     end
 
-    def initialize(*cmd, user:, stdin: nil, env: {})
+    def initialize(*cmd, stdin: nil, env: {})
       @cmd = cmd
-      @user = user
       @stdin = stdin
       @env = {
         'PATH' => FlightJobScriptAPI.app.config.command_path,
-        'HOME' => passwd.dir,
-        'USER' => @user,
-        'LOGNAME' => @user
+        'HOME' => ENV['HOME'],
+        'USER' => ENV['USER'],
+        'LOGNAME' => ENV['LOGNAME']
       }.merge(env)
     end
 
     def run(&block)
-      result =
-        self.class.mutexes[@user].synchronize do
-          FlightJobScriptAPI.logger.debug("Running subprocess (#{@user}): #{stringified_cmd}")
-          sp = Subprocess.new(
-            env: @env,
-            logger: FlightJobScriptAPI.logger,
-            timeout: FlightJobScriptAPI.config.command_timeout,
-            username: @user,
-          )
-          sp.run(@cmd, @stdin, &block)
-        end
+      FlightJobScriptAPI.logger.debug("Running subprocess (#{ENV['USER']}): #{stringified_cmd}")
+      sp = Subprocess.new(
+        env: @env,
+        logger: FlightJobScriptAPI.logger,
+        timeout: FlightJobScriptAPI.config.command_timeout
+      )
+      result = sp.run(@cmd, @stdin, &block)
       parse_result(result)
       log_command(result)
       result
     end
 
     private
-
-    def passwd
-      @passwd ||= Etc.getpwnam(@user)
-    end
 
     def parse_result(result)
       if result.exitstatus == 0 && expect_json_response?
@@ -184,7 +166,7 @@ module FlightJobScriptAPI
     def log_command(result)
       FlightJobScriptAPI.logger.info <<~INFO.chomp
         COMMAND: #{stringified_cmd}
-        USER: #{@user}
+        USER: #{ENV['USER']}
         PID: #{result.pid}
         STATUS: #{result.exitstatus}
       INFO
