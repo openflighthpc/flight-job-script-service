@@ -68,7 +68,7 @@ expanded from `/opt/flight-job-script/api`.  E.g., by default the
 `shared_secret_path` (`etc/shared-secret.conf`) would be expanded to
 `/opt/flight-job-script/api/etc/shared-secret.conf`.
 
-There are two mechanisms by which standalone mode can be activated, either
+There are two mechanisms by which development mode can be activated, either
 of which is sufficient.
 
 * Create the file `.flight-envionment` containing the line
