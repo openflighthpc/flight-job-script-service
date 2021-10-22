@@ -178,7 +178,9 @@ module FlightJobScriptAPI
         remaining = @timeout + start_time - now
         break unless remaining > 0
 
-        @read_threads.select(&:alive?).first.join(remaining)
+        living_thread = @read_threads.select(&:alive?).first
+        # Guard against potential race condition.
+        living_thread.join(remaining) unless living_thread.nil?
       end
 
       @read_threads.select(&:alive?).map(&:kill)
