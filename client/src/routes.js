@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { NotFound } from 'flight-webapp-components';
 
 import Dashboard from './Dashboard';
@@ -9,6 +10,24 @@ import TemplatePage from './TemplatePage';
 import TemplateQuestionsPage from './TemplateQuestionsPage';
 import TemplatesPage from './TemplatesPage';
 import UnconfiguredDashboard from './UnconfiguredDashboard';
+
+const notFoundRoute = {
+  name: 'Not found',
+  Component: () => (
+    <NotFound
+      homeLink={
+        <Link
+          className="btn btn-link"
+          to="/"
+        >
+          <span>Move Along...</span>
+        </Link>
+      }
+    />
+  ),
+  sideNav: true,
+  key: 'notfound',
+};
 
 const routes = [
   {
@@ -66,12 +85,7 @@ const routes = [
     Component: Dashboard,
     sideNav: true,
   },
-  {
-    Component: NotFound,
-    key: 'not-found',
-    name: 'Not found',
-    sideNav: true
-  }
+  notFoundRoute,
 ]
 
 const unconfiguredRoutes = [
@@ -81,6 +95,7 @@ const unconfiguredRoutes = [
     Component: UnconfiguredDashboard,
     sideNav: true,
   },
+  notFoundRoute,
 ];
 
 export {

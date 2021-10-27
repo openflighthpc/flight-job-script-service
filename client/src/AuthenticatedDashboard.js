@@ -16,7 +16,7 @@ function AuthenticatedDashboard() {
 function Cards() {
   const cards = [
     (
-      <div className="card mb-2">
+      <div className="card mb-2" key="create">
         <div className="card-body fa-background fa-background-file-code-o">
           <h5 className="card-title text-center">
             Create job scripts from predefined templates
@@ -47,7 +47,7 @@ function Cards() {
     ),
 
     (
-      <div className="card mb-2">
+      <div className="card mb-2" key="submit">
         <div className="card-body fa-background fa-background-file-text-o">
           <h5 className="card-title text-center">
             Submit your customized job script
@@ -78,7 +78,7 @@ function Cards() {
     ),
 
     (
-      <div className="card mb-2">
+      <div className="card mb-2" key="monitor">
         <div className="card-body fa-background fa-background-tasks" >
           <h5 className="card-title text-center">
             Monitor your jobs
