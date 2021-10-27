@@ -1,55 +1,40 @@
+import classNames from 'classnames';
 import { useContext } from 'react';
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-import { CurrentUserContext, useEnvironment } from 'flight-webapp-components';
+import { CurrentUserContext } from 'flight-webapp-components';
 
 function NavItems() {
   const { currentUser } = useContext(CurrentUserContext);
-  const environment = useEnvironment();
-
-  const homeNav = (
-    <li className="nav-item">
-      <a
-        className="nav-link nav-menu-button"
-        href="/"
-      >
-        {environment('environment.name') || 'Home'}
-      </a>
-    </li>
-  );
 
   if (currentUser == null) {
-    return homeNav;
+    return null;
   }
 
   return (
     <>
-    {homeNav}
-    <li className="nav-item">
-      <Link
-        className="nav-link nav-menu-button"
-        to="/templates"
-      >
-        Templates
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link
-        className="nav-link nav-menu-button"
-        to="/scripts"
-      >
-        Scripts
-      </Link>
-    </li>
-    <li className="nav-item">
-      <Link
-        className="nav-link nav-menu-button"
-        to="/jobs"
-      >
-        Jobs
-      </Link>
-    </li>
+    <NavLink path="/">Home</NavLink>
+    <NavLink path="/templates">Templates</NavLink>
+    <NavLink path="/scripts">Scripts</NavLink>
+    <NavLink path="/jobs">Jobs</NavLink>
     </>
+  );
+}
+
+function NavLink({ path, children }) {
+  const location = useLocation();
+  const active = location.pathname === path;
+
+  return (
+    <li className={classNames("nav-item", { active: active})}>
+      <Link
+        className={classNames("nav-link nav-menu-button", { active: active })}
+        to={path}
+      >
+        {children}
+      </Link>
+    </li>
   );
 }
 
