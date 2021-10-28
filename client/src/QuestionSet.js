@@ -242,7 +242,9 @@ function SaveButton({ answers, className, state, templateId }) {
 
   const flattenedAnswers = answers.reduce((accum, answer) => {
     if (shouldAsk(answer.question, state)) {
-      accum[answer.question.id] = answer.valueOrNull();
+      if (answer.valueOrNull() != null) {
+        accum[answer.question.id] = answer.valueOrNull();
+      }
     }
     return accum;
   }, {});
@@ -361,7 +363,9 @@ function QuestionInput({ answer, onChange, question }) {
         />
       );
 
+    case 'number':
     case 'text':
+    case 'time':
     default:
       return (
         <input
@@ -370,7 +374,7 @@ function QuestionInput({ answer, onChange, question }) {
           name={question.id}
           onChange={onChange}
           placeholder={question.attributes.default}
-          type="text"
+          type={format.type || "text"}
           value={answer.value}
         />
       );
