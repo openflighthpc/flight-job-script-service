@@ -242,7 +242,9 @@ function SaveButton({ answers, className, state, templateId }) {
 
   const flattenedAnswers = answers.reduce((accum, answer) => {
     if (shouldAsk(answer.question, state)) {
-      accum[answer.question.id] = answer.valueOrNull();
+      if (answer.valueOrNull() != null) {
+        accum[answer.question.id] = answer.valueOrNull();
+      }
     }
     return accum;
   }, {});
