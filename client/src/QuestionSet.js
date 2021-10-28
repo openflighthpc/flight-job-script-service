@@ -89,13 +89,22 @@ function QuestionSet({ templateId, questions }) {
 
   if (state.currentQuestion < questions.length) {
     const currentAnswer = state.answers[state.currentQuestion];
+    const onChange = (ev) => {
+      let value;
+      if (ev.target.type === "number") {
+        value = ev.target.valueAsNumber;
+      } else {
+        value = ev.target.value;
+      }
+      return dispatch({ type: 'change', value: value });
+    };
 
     return (
       <Question
         answer={currentAnswer}
         isFirstQuestion={state.currentQuestion === 0}
         isLastQuestion={state.currentQuestion === questions.length - 1}
-        onChange={(ev) => dispatch({ type: 'change', value: ev.target.value })}
+        onChange={onChange}
         onNext={() => dispatch({ type: 'next' })}
         onPrevious={() => dispatch({ type: 'previous' })}
         question={currentAnswer.question}
@@ -242,7 +251,9 @@ function SaveButton({ answers, className, state, templateId }) {
 
   const flattenedAnswers = answers.reduce((accum, answer) => {
     if (shouldAsk(answer.question, state)) {
-      accum[answer.question.id] = answer.valueOrNull();
+      if (answer.valueOrNull() != null) {
+        accum[answer.question.id] = answer.valueOrNull();
+      }
     }
     return accum;
   }, {});
@@ -361,6 +372,7 @@ function QuestionInput({ answer, onChange, question }) {
         />
       );
 
+    case 'number':
     case 'text':
     default:
       return (
@@ -370,7 +382,7 @@ function QuestionInput({ answer, onChange, question }) {
           name={question.id}
           onChange={onChange}
           placeholder={question.attributes.default}
-          type="text"
+          type={format.type || "text"}
           value={answer.value}
         />
       );
