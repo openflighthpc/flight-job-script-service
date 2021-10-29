@@ -334,7 +334,7 @@ export function useDeleteJob(id) {
 export function useFetchOutputFiles(id) {
   const { currentUser } = useContext(CurrentUserContext);
   return useFetch(
-    `/jobs/${id}/output-files`,
+    `/jobs/${id}/output-files?include=tasks`,
     {
       headers: { Accept: 'application/vnd.api+json' },
     },

@@ -81,8 +81,7 @@ class App < Sinatra::Base
       when Array
         params.fetch('include').map(&:underscore).join(',')
       else
-        # XXX Remove this hard coding. Client needs to add it instead.
-        'tasks'
+        ''
       end
     end
   end
