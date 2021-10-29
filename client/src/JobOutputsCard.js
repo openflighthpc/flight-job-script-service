@@ -172,27 +172,39 @@ function OutputListing({ className, isSelected, job, files, toggleSelected }) {
     );
   }
 
+  const isTaskFiles = job.attributes.stdoutPath == null &&
+    job.attributes.stderrPath == null;
   const isStdErrFile = (file) => file.id === `${job.id}.stderr`;
 
   return (
-    <ListGroup className={className}>
+    <ListGroup className={classNames(styles.OutputListing, className)}>
       {
-        files.map(file => (
-          <FileItem
-            key={file.id}
-            file={file}
-            isSelected={isSelected}
-            name={
-              isStdErrFile(file) ?
-                'Standard error' :
-                mergedStderr ?
-                'Standard output and error' :
-                'Standard output'
-            }
-            toggleSelected={toggleSelected}
-          />
-        ))
-      }
+        files.map(file => {
+          let name;
+          if (isTaskFiles) {
+            const [taskId, type] = file.id.replace(`${job.id}.`, '').split('.');
+            name = type === 'stdout' ?
+              `Task ${taskId} standard output` :
+              `Task ${taskId} standard error`;
+          } else {
+            name =isStdErrFile(file) ?
+              'Standard error' :
+              mergedStderr ?
+              'Standard output and error' :
+              'Standard output';
+          }
+
+          return (
+            <FileItem
+              key={file.id}
+              file={file}
+              isSelected={isSelected}
+              name={name}
+              toggleSelected={toggleSelected}
+            />
+          );
+      })
+}
     </ListGroup>
   );
 }
