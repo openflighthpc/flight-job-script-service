@@ -136,7 +136,17 @@ class Job
   end
 
   def index_output_files
-    [ find_stdout_file, find_stderr_file ].compact
+    if metadata['tasks'].nil? || metadata['tasks'].empty?
+      [ find_stdout_file, find_stderr_file ].compact
+    else
+      # Return the output files for any tasks.
+      metadata['tasks']
+        .each_with_index
+        .map { |t, i| ["#{i + 1}.stdout", "#{i + 1}.stderr"] }
+        .flatten
+        .map { |file_id| JobFile.find("#{id}.#{file_id}", user: user) }
+        .compact
+    end
   end
 
   def stderr_merged?

@@ -121,7 +121,7 @@ class JobFile
   end
 
   def find_job
-    Job.find!(@job_id, user: @user)
+    Job.find!(@job_id, user: @user, include: 'tasks')
   end
 
   def relative_path
@@ -148,6 +148,14 @@ class JobFile
   def path
     return @path unless @path.nil?
     case @file_id
+    when /\A\d+\.stdout\Z/
+      tasks = find_job.metadata['tasks'] || []
+      task = tasks[@file_id.to_i - 1] || {}
+      @path = task['stdout_path'] || false
+    when /\A\d+\.stderr\Z/
+      tasks = find_job.metadata['tasks'] || []
+      task = tasks[@file_id.to_i - 1] || {}
+      @path = task['stderr_path'] || false
     when 'stdout'
       @path = find_job.metadata['stdout_path']
     when 'stderr'
