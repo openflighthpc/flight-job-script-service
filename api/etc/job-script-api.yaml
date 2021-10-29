@@ -43,6 +43,18 @@
 # base_url: '/'
 
 # ==============================================================================
+# Flight Job executable
+# Specify how to run the Flight Job executable.
+#
+# The default value uses the 'flight_ROOT' environment variable.  Expanding
+# environment variables is only supported when using the default value.  You
+# will need to use explicit full path if you override this value.
+#
+# The environment variable flight_JOB_SCRIPT_API_flight_job takes precedence.
+# ==============================================================================
+# flight_job: ${flight_ROOT}/bin/flight job
+
+# ==============================================================================
 # Command PATH
 # The PATH the scheduler command will be executed with. This is a global value
 # for all users.
