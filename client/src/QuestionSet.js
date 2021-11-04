@@ -343,7 +343,8 @@ function QuestionInput({ answer, onChange, question }) {
       const isMulti = format.type === 'multiselect';
       let defaultValue;
       if (isMulti) {
-        defaultValue = options.filter(o => question.attributes.default.includes(o.value));
+        const questionDefault = question.attributes.default || [];
+        defaultValue = options.filter(o => questionDefault.includes(o.value));
       } else {
         defaultValue = options.filter(o => o.value === question.attributes.default);
       }

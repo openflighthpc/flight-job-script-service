@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#export flight_JOB_log_path=/dev/stderr
+#export flight_JOB_log_level=debug
+/opt/flight/bin/ruby /code/flight-job/bin/job "$@"

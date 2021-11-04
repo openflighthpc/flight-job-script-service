@@ -149,11 +149,13 @@ class App < Sinatra::Base
   resource :scripts, pkre: /[\w-]+/ do
     helpers do
       def find(id)
+::STDERR.puts "=== Script find include_string: #{(include_string).inspect rescue $!.message}"
         Script.find!(id, user: current_user, include: include_string)
       end
     end
 
     index do
+::STDERR.puts "=== Script index include_string: #{(include_string).inspect rescue $!.message}"
       Script.index(user: current_user, include: include_string)
     end
 
@@ -203,6 +205,7 @@ class App < Sinatra::Base
   resource :jobs, pkre: /[\w-]+/ do
     helpers do
       def find(id)
+::STDERR.puts "=== Job find include_string: #{(include_string).inspect rescue $!.message}"
         Job.find!(id, user: current_user, include: include_string)
       end
 
@@ -214,6 +217,7 @@ class App < Sinatra::Base
     end
 
     index do
+::STDERR.puts "=== Job index include_string: #{(include_string).inspect rescue $!.message}"
       Job.index(user: current_user, include: include_string)
     end
 
@@ -270,6 +274,12 @@ class App < Sinatra::Base
         next resource.index_output_files
       end
     end
+
+    # has_many :tasks do
+    #   fetch do
+    #     next []
+    #   end
+    # end
 
     has_one :stdout_file do
       pluck do
