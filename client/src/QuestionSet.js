@@ -332,7 +332,8 @@ function QuestionInput({ answer, onChange, question }) {
       const isMulti = format.type === 'multiselect';
       let defaultValue;
       if (isMulti) {
-        defaultValue = options.filter(o => question.attributes.default.includes(o.value));
+        const defaults = question.attributes.default || [];
+        defaultValue = options.filter(o => defaults.includes(o.value));
       } else {
         defaultValue = options.filter(o => o.value === question.attributes.default);
       }
@@ -347,6 +348,7 @@ function QuestionInput({ answer, onChange, question }) {
 
       return (
         <Select
+          key={`select-${question.id}`}
           defaultValue={isMulti ? defaultValue : defaultValue[0]}
           isMulti={isMulti}
           isClearable={isMulti}
