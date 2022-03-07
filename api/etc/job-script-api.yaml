@@ -68,7 +68,7 @@
 # take longer then this period will be terminated.
 # The environment variable flight_JOB_SCRIPT_API_command_timeout takes precedence
 # ==============================================================================
-# command_timeout: 5
+# command_timeout: 30
 
 # ==============================================================================
 # Shared Secret Path

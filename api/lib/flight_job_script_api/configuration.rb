@@ -63,7 +63,7 @@ module FlightJobScriptAPI
 
     attribute :command_path, default: '/usr/sbin:/usr/bin:/sbin:/bin'
 
-    attribute :command_timeout, default: 5,
+    attribute :command_timeout, default: 30,
       transform: :to_f
     validates :command_timeout, numericality: true, allow_blank: false
 
