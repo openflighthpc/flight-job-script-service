@@ -1,14 +1,10 @@
 import React, { useReducer } from 'react';
 import ReactMarkdown from 'react-markdown'
 import Select from 'react-select'
-import classNames from 'classnames';
 import { Button } from 'reactstrap';
-import { useHistory } from "react-router-dom";
 
 import styles from './question.module.css';
 import { CardFooter } from './CardParts';
-import { useGenerateScript } from './api';
-import { useToast } from './ToastContext';
 
 function shouldAsk(question, state) {
   const ask_when = question.attributes.askWhen;
@@ -84,7 +80,7 @@ function reducer(state, action) {
   }
 }
 
-function QuestionSet({ templateId, questions }) {
+function QuestionSet({ questions, SaveButton }) {
   const [state, dispatch] = useReducer(reducer, initialState(questions));
 
   if (state.currentQuestion < questions.length) {
@@ -116,7 +112,7 @@ function QuestionSet({ templateId, questions }) {
         answers={state.answers}
         onEditAnswers={() => dispatch({ type: 'previous' })}
         state={state}
-        templateId={templateId}
+        SaveButton={SaveButton}
       />
     );
   }
@@ -178,7 +174,7 @@ function Question({
   );
 }
 
-function Summary({ answers, onEditAnswers, state, templateId }) {
+function Summary({ answers, onEditAnswers, state, SaveButton }) {
   const answerSummary = answers.map((answer, idx) => {
     const format = answer.question.attributes.format;
     if (shouldAsk(answer.question, state)) {
@@ -212,6 +208,16 @@ function Summary({ answers, onEditAnswers, state, templateId }) {
     }
   });
 
+
+  const flattenedAnswers = answers.reduce((accum, answer) => {
+    if (shouldAsk(answer.question, state)) {
+      if (answer.valueOrNull() != null) {
+        accum[answer.question.id] = answer.valueOrNull();
+      }
+    }
+    return accum;
+  }, {});
+
   return (
     <div className={`card border-primary ${styles.SummaryCard}`} >
       <h5 className="card-header bg-primary text-light text-truncate">
@@ -233,84 +239,11 @@ function Summary({ answers, onEditAnswers, state, templateId }) {
           </Button>
           <SaveButton
             className="ml-2"
-            answers={answers}
-            state={state}
-            templateId={templateId}
+            answers={flattenedAnswers}
           />
         </div>
       </CardFooter>
     </div>
-  );
-}
-
-class ApiError extends Error { }
-
-function SaveButton({ answers, className, state, templateId }) {
-  const { addToast } = useToast();
-  const history = useHistory();
-
-  const flattenedAnswers = answers.reduce((accum, answer) => {
-    if (shouldAsk(answer.question, state)) {
-      if (answer.valueOrNull() != null) {
-        accum[answer.question.id] = answer.valueOrNull();
-      }
-    }
-    return accum;
-  }, {});
-  const scriptName = flattenedAnswers['%_script_name_%'];
-  delete flattenedAnswers['%_script_name_%'];
-
-  const { loading, post, response } = useGenerateScript(
-    templateId, flattenedAnswers, scriptName
-  );
-
-  const submit = async () => {
-    try {
-      await post();
-      if (response.ok) {
-        const script = ( await response.json() ).data;
-        history.push(`/scripts/${script.id}`);
-      } else if (response.status === 409) {
-        throw new ApiError(`The script name "${scriptName}" is already taken.`);
-      } else if (response.status === 422) {
-        throw new ApiError(await response.text());
-      } else {
-        throw new ApiError();
-      }
-    } catch (e) {
-      let body;
-      if (e.constructor === ApiError) {
-        body = e.message;
-      }
-      addToast({
-        body: body || (
-          <div>
-            Unfortunately there has been a problem rendering your job
-            script.  Please try again and, if problems persist, help us to
-            more quickly rectify the problem by contacting us and letting us
-            know.
-          </div>
-        ),
-        icon: 'danger',
-        header: 'Failed to render template',
-      });
-    }
-  }
-
-  const buttonText = loading ? 'Saving...' : 'Save job script';
-
-  return (
-    <React.Fragment>
-      <Button
-        color="primary"
-        onClick={submit}
-        className={classNames(className, { 'disabled': loading })}
-        disabled={loading}
-      >
-        <i className="fa fa-save mr-1" />
-        {buttonText}
-      </Button>
-    </React.Fragment>
   );
 }
 
