@@ -168,6 +168,10 @@ class App < Sinatra::Base
     has_one :content do
       pluck { resource.find_content }
     end
+
+    has_many :questions do
+      fetch { resource.submission_questions || [] }
+    end
   end
 
   resource :notes, pkre: /[\w-]+/ do
@@ -224,7 +228,7 @@ class App < Sinatra::Base
       # Due to the how the internal Sinja routing works, the job needs an "ID"
       # However the actual ID won't be assigned until later, so a temporary ID
       # is used instead.
-      ['temporary', Job.new(user: current_user)]
+      ['temporary', Job.new(user: current_user, **attr.deep_stringify_keys)]
     end
 
     update do |attr|

@@ -59,6 +59,8 @@ class Script
 
   attr_reader :metadata, :user
 
+  delegate :submission_questions, to: :template, allow_nil: true
+
   def initialize(user:, **metadata)
     @metadata = metadata
     @user = user

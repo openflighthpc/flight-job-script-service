@@ -78,4 +78,8 @@ class Template
   def generation_questions
     metadata['generation_questions'].map { |metadata| Question.new(**metadata) }
   end
+
+  def submission_questions
+    metadata['submission_questions'].map { |metadata| Question.new(**metadata) }
+  end
 end

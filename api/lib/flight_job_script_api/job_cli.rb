@@ -98,8 +98,19 @@ module FlightJobScriptAPI
         new(*flight_job, 'info-job', id, '--json', **opts).run
       end
 
-      def submit_job(script_id, **opts)
-        new(*flight_job, 'submit-job', script_id, '--json', **opts).run
+      def submit_job(script_id, answers: nil, **opts)
+        answers_path = File.join('/tmp', "flight-job-script-api-#{SecureRandom.uuid}")
+
+        args = [].tap do |a|
+          a << script_id
+          a << "--json"
+          a << "--answers" << "@#{answers_path}" if answers
+        end
+        new(*flight_job, 'submit-job', *args, **opts).run do
+          File.write(answers_path, answers.to_json) if answers
+        end
+      ensure
+        FileUtils.rm_f answers_path
       end
 
       def cancel_job(id, **opts)
