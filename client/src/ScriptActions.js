@@ -3,7 +3,6 @@ import { ButtonToolbar } from 'reactstrap';
 import { Link } from "react-router-dom";
 
 import DeleteScriptButton from './DeleteScriptButton';
-import SubmitScriptButton from './SubmitScriptButton';
 
 function ScriptActions({ className, includeLink=true, onDeleted, script }) {
   const link = (
@@ -18,7 +17,7 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
   return (
     <ButtonToolbar className={classNames(className)} >
       { includeLink ? link : null }
-      <SubmitScriptButton
+      <SubmitLink
         className="mr-2"
         script={script}
       />
@@ -27,6 +26,30 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
         script={script}
       />
     </ButtonToolbar>
+  );
+}
+
+function SubmitLink({ className, script }) {
+  return (
+    <Link
+      className={classNames("btn btn-primary btn-sm", className)}
+      to={`/scripts/submit/${script.id}`}
+    >
+      <i className={`fa fa-rocket mr-1`}></i>
+      <span>Submit</span>
+    </Link>
+  );
+}
+
+SubmitLink.Disabled = function({ className }) {
+  return (
+    <Link
+      className={classNames("btn btn-secondary btn-sm disabled", className)}
+      to={""}
+    >
+      <i className={`fa fa-rocket mr-1`}></i>
+      <span>Submit</span>
+    </Link>
   );
 }
 
@@ -40,7 +63,7 @@ function DisabledActions({ className, includeLink=true }) {
   return (
     <ButtonToolbar className={classNames(className)} >
       { includeLink ? link : null }
-      <SubmitScriptButton.Disabled className="mr-2" />
+      <SubmitLink.Disabled className="mr-2" />
       <DeleteScriptButton.Disabled />
     </ButtonToolbar>
   );

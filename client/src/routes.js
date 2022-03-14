@@ -5,6 +5,7 @@ import Dashboard from './Dashboard';
 import JobPage from './JobPage';
 import JobsPage from './JobsPage';
 import ScriptPage from './ScriptPage';
+import ScriptSubmissionPage from './ScriptSubmissionPage';
 import ScriptsPage from './ScriptsPage';
 import TemplatePage from './TemplatePage';
 import TemplateQuestionsPage from './TemplateQuestionsPage';
@@ -48,6 +49,13 @@ const routes = [
     path: '/scripts/new/:templateId',
     name: 'New script',
     Component: TemplateQuestionsPage,
+    authenticated: true,
+    sideNav: true,
+  },
+  {
+    path: '/scripts/submit/:scriptId',
+    name: 'Submit script',
+    Component: ScriptSubmissionPage,
     authenticated: true,
     sideNav: true,
   },
