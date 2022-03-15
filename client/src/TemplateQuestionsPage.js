@@ -10,7 +10,7 @@ import {
 } from 'flight-webapp-components';
 
 import CreateScriptButton from './CreateScriptButton';
-import QuestionSet from './QuestionSet';
+import QuestionSet from './questions/QuestionSet';
 import { useFetchQuestions } from './api';
 
 const scriptNameQuestion = {
