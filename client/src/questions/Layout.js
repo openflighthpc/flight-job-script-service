@@ -1,18 +1,9 @@
 import React from 'react';
-import { ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 import styles from "./question.module.css";
 import { CardFooter } from "../CardParts";
 
-function Layout({ flavour="card", ...props }) {
-  if (flavour === "card") {
-    return <CardLayout {...props} />;
-  } else {
-    return null;
-  }
-}
-
-function CardLayout({
+function Layout({
   children,
   leftButton,
   rightButton,

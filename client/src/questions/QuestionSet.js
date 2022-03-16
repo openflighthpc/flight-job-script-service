@@ -4,10 +4,11 @@ import { Button } from 'reactstrap';
 
 import Layout from "./Layout";
 import QuestionInput from "./QuestionInput";
+import ModalContainer from "./ModalContainer";
 import Summary from "./Summary";
 import useQuestionSet from "./useQuestionSet";
 
-function QuestionSet({ flavour="card", questions, SaveButton }) {
+function QuestionSet({ LayoutComponent=Layout, questions, SaveButton }) {
   const qs = useQuestionSet(questions);
 
   if (qs.allAsked) {
@@ -29,14 +30,13 @@ function QuestionSet({ flavour="card", questions, SaveButton }) {
     );
 
     return (
-      <Layout
-        flavour={flavour}
+      <LayoutComponent
         leftButton={leftButton}
         rightButton={rightButton}
         title="Summary"
       >
         <Summary answers={answers} shouldAsk={shouldAsk} />
-      </Layout>
+      </LayoutComponent>
     );
 
   } else {
@@ -77,8 +77,7 @@ function QuestionSet({ flavour="card", questions, SaveButton }) {
     );
 
     return (
-      <Layout
-        flavour={flavour}
+      <LayoutComponent
         leftButton={leftButton}
         rightButton={rightButton}
         title={currentQuestion.attributes.text}
@@ -89,9 +88,10 @@ function QuestionSet({ flavour="card", questions, SaveButton }) {
           onChange={onChange}
           question={currentQuestion}
         />
-      </Layout>
+      </LayoutComponent>
     );
   }
 }
 
+QuestionSet.ModalContainer = ModalContainer;
 export default QuestionSet;

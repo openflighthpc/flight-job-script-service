@@ -40,7 +40,6 @@ function SubmitScriptButton({ answers, className, script, scriptId }) {
       onClick={submit}
       className={classNames(className, { 'disabled': submitting })}
       disabled={submitting}
-      size="sm"
     >
       <i className={`fa ${icon} mr-1`}></i>
       <span>{text}</span>
