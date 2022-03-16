@@ -5,10 +5,10 @@ import { useHistory } from 'react-router-dom';
 import { useSubmitScript } from './api';
 import { useToast } from './ToastContext';
 
-function SubmitScriptButton({ answers, className, script, scriptId }) {
+function SubmitScriptButton({ answers, className, script }) {
   const { addToast } = useToast();
   const history = useHistory();
-  const { loading: submitting, post, response } = useSubmitScript(scriptId || script.id, answers);
+  const { loading: submitting, post, response } = useSubmitScript(script.id, answers);
 
   const submit = async () => {
     await post();
