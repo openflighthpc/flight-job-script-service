@@ -91,12 +91,20 @@ class Job
     @script
   end
 
+  def submission_answers
+    metadata['submission_answers']
+  end
+
   def submit
     unless script_id
       raise MissingScript, "Cannot create a job without a script"
     end
 
-    cmd = FlightJobScriptAPI::JobCLI.submit_job(script_id, user: user).tap do |cmd|
+    cmd = FlightJobScriptAPI::JobCLI.submit_job(
+      script_id,
+      answers: submission_answers,
+      user: user,
+    ).tap do |cmd|
       next if cmd.exitstatus == 0
       if cmd.exitstatus == 22
         raise MissingScript, "Failed to locate script : #{script_id}"

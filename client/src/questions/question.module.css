@@ -1,4 +1,4 @@
-.SummaryCard, .QuestionCard {
+.QuestionCard {
     min-height: calc(
       100vh
       - 102px  /* Card header */

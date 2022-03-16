@@ -60,16 +60,21 @@ module FlightJobScriptAPI
       end
 
       def create_script(template_id, name = nil, answers: nil, notes: nil, **opts)
-        # Define the paths so they can be cleaned up
-        # NOTE: Tempfile should not be used as the file permissions will be incorrect
-        #       Instead the paths are defined with UUIDs and then created after the command forks
+        # Tempfile is not suitable here as we need to 1) delay creation of the
+        # files until after the subprocess is running, so that they are
+        # created with the correct permissions; and 2) ensure that file are
+        # removed once this method exits.
         answers_path = File.join('/tmp', "flight-job-script-api-#{SecureRandom.uuid}")
         notes_path = File.join('/tmp', "flight-job-script-api-#{SecureRandom.uuid}")
-        args = name ? [template_id, name] : [template_id]
-        args.push('--answers', "@#{answers_path}") if answers
-        args.push('--notes', "@#{notes_path}") if notes
-        sys = new(*flight_job, 'create-script', *args, '--json', **opts)
-        sys.run do
+
+        args = [].tap do |a|
+          a << template_id
+          a << name if name
+          a << "--json"
+          a << "--answers" << "@#{answers_path}" if answers
+          a << "--notes" << "@#{notes_path}" if notes
+        end
+        new(*flight_job, 'create-script', *args, **opts).run do
           File.write answers_path, answers if answers
           File.write notes_path, notes if notes
         end
@@ -98,8 +103,23 @@ module FlightJobScriptAPI
         new(*flight_job, 'info-job', id, '--json', **opts).run
       end
 
-      def submit_job(script_id, **opts)
-        new(*flight_job, 'submit-job', script_id, '--json', **opts).run
+      def submit_job(script_id, answers: nil, **opts)
+        # Tempfile is not suitable here as we need to 1) delay creation of the
+        # files until after the subprocess is running, so that they are
+        # created with the correct permissions; and 2) ensure that file are
+        # removed once this method exits.
+        answers_path = File.join('/tmp', "flight-job-script-api-#{SecureRandom.uuid}")
+
+        args = [].tap do |a|
+          a << script_id
+          a << "--json"
+          a << "--answers" << "@#{answers_path}" if answers
+        end
+        new(*flight_job, 'submit-job', *args, **opts).run do
+          File.write(answers_path, answers.to_json) if answers
+        end
+      ensure
+        FileUtils.rm_f answers_path
       end
 
       def cancel_job(id, **opts)

@@ -3,7 +3,7 @@ import { ButtonToolbar } from 'reactstrap';
 import { Link } from "react-router-dom";
 
 import DeleteScriptButton from './DeleteScriptButton';
-import SubmitScriptButton from './SubmitScriptButton';
+import StartSubmissionButton from './StartSubmissionButton';
 
 function ScriptActions({ className, includeLink=true, onDeleted, script }) {
   const link = (
@@ -18,7 +18,7 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
   return (
     <ButtonToolbar className={classNames(className)} >
       { includeLink ? link : null }
-      <SubmitScriptButton
+      <StartSubmissionButton
         className="mr-2"
         script={script}
       />
@@ -40,7 +40,7 @@ function DisabledActions({ className, includeLink=true }) {
   return (
     <ButtonToolbar className={classNames(className)} >
       { includeLink ? link : null }
-      <SubmitScriptButton.Disabled className="mr-2" />
+      <StartSubmissionButton.Disabled className="mr-2" />
       <DeleteScriptButton.Disabled />
     </ButtonToolbar>
   );

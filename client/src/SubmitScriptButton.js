@@ -5,10 +5,10 @@ import { useHistory } from 'react-router-dom';
 import { useSubmitScript } from './api';
 import { useToast } from './ToastContext';
 
-function SubmitScriptButton({ className, script }) {
+function SubmitScriptButton({ answers, className, script }) {
   const { addToast } = useToast();
   const history = useHistory();
-  const { loading: submitting, post, response } = useSubmitScript(script);
+  const { loading: submitting, post, response } = useSubmitScript(script.id, answers);
 
   const submit = async () => {
     await post();
@@ -40,27 +40,11 @@ function SubmitScriptButton({ className, script }) {
       onClick={submit}
       className={classNames(className, { 'disabled': submitting })}
       disabled={submitting}
-      size="sm"
     >
       <i className={`fa ${icon} mr-1`}></i>
       <span>{text}</span>
     </Button>
   );
 }
-
-function Disabled({ className }) {
-  return (
-    <Button
-      className={classNames(className)}
-      disabled
-      size="sm"
-    >
-      <i className={`fa fa-rocket mr-1`}></i>
-      <span>Submit</span>
-    </Button>
-  );
-}
-
-SubmitScriptButton.Disabled = Disabled;
 
 export default SubmitScriptButton;

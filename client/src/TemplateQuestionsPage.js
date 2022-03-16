@@ -9,8 +9,9 @@ import {
   utils,
 } from 'flight-webapp-components';
 
+import CreateScriptButton from './CreateScriptButton';
+import QuestionSet from './questions/QuestionSet';
 import { useFetchQuestions } from './api';
-import QuestionSet from './QuestionSet';
 
 const scriptNameQuestion = {
   attributes: {
@@ -47,8 +48,8 @@ function TemplateQuestionsPage() {
     } else {
       return (
         <QuestionSet
-          templateId={ref.current}
           questions={[...data.data, scriptNameQuestion]}
+          SaveButton={(props) => <CreateScriptButton templateId={templateId} {...props} />}
         />
       );
     }

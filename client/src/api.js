@@ -45,6 +45,15 @@ export function useFetchQuestions(templateId) {
   );
 }
 
+export function useFetchSubmissionQuestions(scriptId) {
+  const { currentUser } = useContext(CurrentUserContext);
+  return useFetch(
+    `/scripts/${scriptId}/questions`,
+    { headers: { Accept: 'application/vnd.api+json' } },
+    [ scriptId, currentUser.authToken ]
+  );
+}
+
 export function useGenerateScript(templateId, answers, scriptName) {
   const request = useFetch(
     `/render/${templateId}`,
@@ -100,7 +109,7 @@ export function useFetchScript(id) {
     [ currentUser.authToken ]);
 }
 
-export function useSubmitScript(script) {
+export function useSubmitScript(scriptId, answers) {
   const request = useFetch(
     '/jobs',
     {
@@ -112,11 +121,14 @@ export function useSubmitScript(script) {
       body: {
         "data": {
           "type": "jobs",
+          "attributes": {
+            "submission_answers": answers,
+          },
           "relationships": {
             "script": {
               "data": {
                 "type": "scripts",
-                "id": script.id,
+                "id": scriptId,
               }
             }
           }
