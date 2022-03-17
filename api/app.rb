@@ -74,6 +74,10 @@ class App < Sinatra::Base
       end
     end
 
+    def include?(resource)
+      include_string.split(',').include?(resource)
+    end
+
     def include_string
       case params.fetch('include', nil)
       when String
@@ -154,7 +158,8 @@ class App < Sinatra::Base
     end
 
     index do
-      Script.index(user: current_user, include: include_string)
+      Template.index(user: current_user) if include?('template')
+      Script.index(user: current_user)
     end
 
     show
@@ -218,7 +223,8 @@ class App < Sinatra::Base
     end
 
     index do
-      Job.index(user: current_user, include: include_string)
+      Script.index(user: current_user) if include?('script')
+      Job.index(user: current_user)
     end
 
     show
