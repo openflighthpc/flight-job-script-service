@@ -25,8 +25,14 @@ function JobSessionCard({ className, job }) {
     return null;
   }
   switch (job.attributes.state) {
+    case 'SUBMITTING':
+    case 'BOOTSTRAPPING':
     case 'PENDING':
-      return <SessionPending className={className} />;
+      if (job.relationships.desktop.data.id) {
+        return <SessionPreview className={className} job={job} />;
+      } else {
+        return <SessionPending className={className} />;
+      }
     case 'RUNNING':
       return <SessionPreview className={className} job={job} />;
     default:
