@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { Button } from 'reactstrap';
 import { useRef } from 'react';
+import get from 'lodash/get';
 
 import {
   ActionButton,
@@ -25,8 +26,14 @@ function JobSessionCard({ className, job }) {
     return null;
   }
   switch (job.attributes.state) {
+    case 'SUBMITTING':
+    case 'BOOTSTRAPPING':
     case 'PENDING':
-      return <SessionPending className={className} />;
+      if (get(job, "relationships.desktop.data.id")) {
+        return <SessionPreview className={className} job={job} />;
+      } else {
+        return <SessionPending className={className} />;
+      }
     case 'RUNNING':
       return <SessionPreview className={className} job={job} />;
     default:
