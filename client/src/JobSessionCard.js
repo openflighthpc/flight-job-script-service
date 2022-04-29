@@ -70,7 +70,7 @@ function SessionPending({ className }) {
 }
 
 function SessionComplete({ className, job }) {
-  const { error, loading } = useFetchDesktop(job.id);
+  const { data: session, error, loading } = useFetchDesktop(job.id);
 
   let content;
   if (loading) {
@@ -82,7 +82,7 @@ function SessionComplete({ className, job }) {
   }
 
   return (
-    <Layout className={className}>
+    <Layout className={className} session={session}>
       {content}
     </Layout>
   );
