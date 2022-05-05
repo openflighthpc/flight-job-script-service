@@ -44,7 +44,10 @@ function JobSessionCard({ className, job }) {
 function Layout({ button, children, className, session }) {
   let sessionName = null;
   if (session != null) {
-    sessionName = session.name || session.id.split('-')[0];
+    const sessionId = session.id.split('-')[0];
+    sessionName = session.name == null ?
+      sessionId :
+      `${session.name} (${sessionId})`;
   }
 
   return (
