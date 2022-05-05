@@ -44,7 +44,10 @@ function JobSessionCard({ className, job }) {
 function Layout({ button, children, className, session }) {
   let sessionName = null;
   if (session != null) {
-    sessionName = session.name || session.id.split('-')[0];
+    const sessionId = session.id.split('-')[0];
+    sessionName = session.name == null ?
+      sessionId :
+      `${session.name} (${sessionId})`;
   }
 
   return (
@@ -70,7 +73,7 @@ function SessionPending({ className }) {
 }
 
 function SessionComplete({ className, job }) {
-  const { error, loading } = useFetchDesktop(job.id);
+  const { data: session, error, loading } = useFetchDesktop(job.id);
 
   let content;
   if (loading) {
@@ -82,7 +85,7 @@ function SessionComplete({ className, job }) {
   }
 
   return (
-    <Layout className={className}>
+    <Layout className={className} session={session}>
       {content}
     </Layout>
   );
