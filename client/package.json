@@ -5,7 +5,7 @@
   "dependencies": {
     "classnames": "^2.3.1",
     "debug": "^4.3.3",
-    "flight-webapp-components": "git+https://github.com/openflighthpc/flight-webapp-components#0.3.0",
+    "flight-webapp-components": "git+https://github.com/openflighthpc/flight-webapp-components#0.4.1",
     "react": "^17.0.2",
     "react-ace": "^9.5.0",
     "react-beforeunload": "^2.5.2",

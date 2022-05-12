@@ -4646,9 +4646,9 @@ flatted@^3.1.0:
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.2.5.tgz#76c8584f4fc843db64702a6bd04ab7a8bd666da3"
   integrity sha512-WIWGi2L3DyTUvUrwRKgGi9TwxQMUEqPOPQBVi71R96jZXJdFskXEmf54BoZaS1kknGODoIGASGEzBUYdyMCBJg==
 
-"flight-webapp-components@git+https://github.com/openflighthpc/flight-webapp-components#0.3.0":
-  version "0.3.0"
-  resolved "git+https://github.com/openflighthpc/flight-webapp-components#5ee4ab08ff6dcb878b0d588bde40068347bfb8e8"
+"flight-webapp-components@git+https://github.com/openflighthpc/flight-webapp-components#0.4.1":
+  version "0.4.1"
+  resolved "git+https://github.com/openflighthpc/flight-webapp-components#891231419e6e6c74210afe50b292fb660a9bd821"
   dependencies:
     classnames "^2.2.6"
     js-gravatar "^1.1.3"
