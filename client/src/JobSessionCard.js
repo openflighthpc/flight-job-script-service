@@ -53,8 +53,10 @@ function Layout({ button, children, className, session }) {
   return (
     <div className={classNames(className, "card")} >
       <div className="card-header d-flex flex-row justify-content-between">
-        <h4 className="mb-0">Desktop session <code>{sessionName}</code></h4>
-        {button}
+        <h4 className="mb-0 text-truncate">
+          Desktop session <code>{sessionName}</code>
+        </h4>
+        <span className="flex-shrink-0">{button}</span>
       </div>
       <div className="card-body">
         {children}
