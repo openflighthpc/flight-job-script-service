@@ -1,6 +1,6 @@
 {
   "name": "flight-job-scripts",
-  "version": "1.8.0-rc2",
+  "version": "1.8.0",
   "private": true,
   "dependencies": {
     "classnames": "^2.3.1",
