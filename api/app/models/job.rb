@@ -85,8 +85,12 @@ class Job
   def script
     if @script == false
       script_id = metadata['script_id']
-      Flight.logger.info "Lazy loading related script: #{script_id} (script: #{id})"
-      @script = Script.find(script_id, user: user)
+      if script_id.nil? || script_id.empty?
+        @script = nil
+      else
+        Flight.logger.info "Lazy loading related script: #{script_id} (job: #{id})"
+        @script = Script.find(script_id, user: user)
+      end
     end
     @script
   end
