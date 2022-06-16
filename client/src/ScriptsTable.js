@@ -42,13 +42,15 @@ function ScriptsTable({ onRowSelect, scripts }) {
         Header: 'Template',
         accessor: 'template.attributes.name',
         Cell: ({ row, value }) => (
-          <Link
-            onClick={(ev) => ev.stopPropagation() }
-            title="View template"
-            to={`/templates/${row.original.template.id}`}
-          >
-            {value}
-          </Link>
+          row.original.template == null ? <i>Unknown</i> : (
+            <Link
+              onClick={(ev) => ev.stopPropagation() }
+              title="View template"
+              to={`/templates/${row.original.template.id}`}
+            >
+              {value}
+            </Link>
+          )
         ),
       },
     ],
