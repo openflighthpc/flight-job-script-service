@@ -42,15 +42,7 @@ function ScriptsTable({ onRowSelect, scripts }) {
         Header: 'Template',
         accessor: 'template.attributes.name',
         Cell: ({ row, value }) => (
-          row.original.template == null ? <i>Unknown</i> : (
-            <Link
-              onClick={(ev) => ev.stopPropagation() }
-              title="View template"
-              to={`/templates/${row.original.template.id}`}
-            >
-              {value}
-            </Link>
-          )
+          errorHandledTemplate({ row, value })
         ),
       },
     ],
@@ -129,6 +121,30 @@ function ScriptsTable({ onRowSelect, scripts }) {
     {paginationControls}
     </>
   );
+}
+
+function errorHandledTemplate({ row, value }) {
+  const invalid = row.original.template == null;
+  const className = invalid ? "text-warning" : ""
+
+  if (invalid) {
+    return (
+      <p className={className} title="Template is invalid">
+        {row.original.attributes.templateId}
+        <i className="fa fa-exclamation-triangle"></i>
+      </p>
+    );
+  } else {
+    return (
+      <Link
+        onClick={(ev) => ev.stopPropagation() }
+        title="View template"
+        to={`/templates/${row.original.template.id}`}
+      >
+        {value}
+      </Link>
+    );
+  }
 }
 
 function TableHeaders({ headerGroup }) {
