@@ -38,7 +38,12 @@ function ScriptMetadataCard({ onDeleted, script }) {
             name="Template"
             value={script.template ? script.template.attributes.name : null}
             format={(value) => (
-              value == null ? <i>Unknown</i> : (
+              value == null ? (
+                <span className="text-warning" title="Template is unknown">
+                  {script.template.id}
+                  <i class="fa fa-exclamation-triangle"></i>
+                </span>
+              ) : (
                 <Link
                   to={`/templates/${script.template.id}`}
                   title="View template"

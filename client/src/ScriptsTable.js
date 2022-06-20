@@ -129,7 +129,7 @@ function errorHandledTemplate({ row, value }) {
 
   if (invalid) {
     return (
-      <p className={className} title="Template is invalid">
+      <p className={className} title="Template is unknown">
         {row.original.attributes.templateId}
         <i className="fa fa-exclamation-triangle"></i>
       </p>
