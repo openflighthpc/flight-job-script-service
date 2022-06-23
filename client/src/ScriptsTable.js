@@ -125,11 +125,10 @@ function ScriptsTable({ onRowSelect, scripts }) {
 
 function errorHandledTemplate({ row, value }) {
   const invalid = row.original.template == null;
-  const className = invalid ? "text-warning" : ""
 
   if (invalid) {
     return (
-      <p className={className} title="Template is unknown">
+      <p className="text-warning" title="Template is unknown">
         <span className="text-nowrap">
           {row.original.attributes.templateId}
           <i className="fa fa-exclamation-triangle ml-1"></i>
