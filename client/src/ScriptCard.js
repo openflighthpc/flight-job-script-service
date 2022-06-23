@@ -39,9 +39,9 @@ function ScriptMetadataCard({ onDeleted, script }) {
             value={script.template ? script.template.attributes.name : null}
             format={(value) => (
               value == null ? (
-                <span className="text-warning" title="Template is unknown">
+                <span className="text-warning mr-1" title="Template is unknown">
                   {script.template.id}
-                  <i class="fa fa-exclamation-triangle"></i>
+                  <i className="fa fa-exclamation-triangle ml-1"></i>
                 </span>
               ) : (
                 <Link

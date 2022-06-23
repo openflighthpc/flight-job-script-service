@@ -130,8 +130,10 @@ function errorHandledTemplate({ row, value }) {
   if (invalid) {
     return (
       <p className={className} title="Template is unknown">
-        {row.original.attributes.templateId}
-        <i className="fa fa-exclamation-triangle"></i>
+        <span className="text-nowrap">
+          {row.original.attributes.templateId}
+          <i className="fa fa-exclamation-triangle ml-1"></i>
+        </span>
       </p>
     );
   } else {
