@@ -128,12 +128,12 @@ function errorHandledTemplate({ row, value }) {
 
   if (invalid) {
     return (
-      <p className="text-warning" title="Template is unknown">
+      <span className="text-muted" title="Template is unknown">
         <span className="text-nowrap">
           {row.original.attributes.templateId}
           <i className="fa fa-exclamation-triangle ml-1"></i>
         </span>
-      </p>
+      </span>
     );
   } else {
     return (

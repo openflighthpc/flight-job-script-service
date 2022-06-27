@@ -140,12 +140,12 @@ function errorHandledScript({ row, value }) {
 
   if (invalid) {
     return (
-      <p className="text-warning" title="Script is unknown">
+      <span className="text-muted" title="Script is unknown">
         <span className="text-nowrap">
           {row.original.attributes.scriptId}
           <i className="fa fa-exclamation-triangle ml-1"></i>
         </span>
-      </p>
+      </span>
     );
   } else {
     return (
@@ -231,7 +231,7 @@ function TimeCell({row, value, ...rest}) {
       {
         known != null ?
           null :
-          <Badge className="ml-1" color="warning" pill>Estimated</Badge>
+          <Badge className="ml-1" color="muted" pill>Estimated</Badge>
       }
     </React.Fragment>
   );

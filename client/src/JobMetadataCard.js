@@ -71,7 +71,7 @@ function JobMetadataCard({ className, job, onCancelled, onDeleted }) {
             value={job.script ? job.script.attributes.name : null}
             format={(value) => (
               value == null ? (
-                <span className="text-warning mr-1" title="Script is unknown">
+                <span className="text-muted mr-1" title="Script is unknown">
                   {job.attributes.scriptId}
                   <i className="fa fa-exclamation-triangle ml-1"></i>
                 </span>
@@ -133,7 +133,7 @@ function EstimatedTime({estimated, job, known, name}) {
           <em>{value}</em> :
           <>
             <TimeAgo date={value} />
-            <Badge className="ml-1" color="warning" pill>Estimated</Badge>
+            <Badge className="ml-1" color="muted" pill>Estimated</Badge>
           </>
       }
       hide={known != null}
