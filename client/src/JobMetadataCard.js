@@ -70,7 +70,12 @@ function JobMetadataCard({ className, job, onCancelled, onDeleted }) {
             name="Script"
             value={job.script ? job.script.attributes.name : null}
             format={(value) => (
-              value == null ? <i>Unknown</i> : (
+              value == null ? (
+                <span className="text-warning mr-1" title="Script is unknown">
+                  {job.attributes.scriptId}
+                  <i className="fa fa-exclamation-triangle ml-1"></i>
+                </span>
+              ) : (
                 <Link
                   to={`/scripts/${job.script.id}`}
                   title="View script"
