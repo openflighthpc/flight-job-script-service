@@ -141,10 +141,7 @@ function errorHandledScript({ row, value }) {
   if (invalid) {
     return (
       <span className="text-muted" title="Script is unknown">
-        <span className="text-nowrap">
-          {row.original.attributes.scriptId}
-          <i className="fa fa-exclamation-triangle ml-1"></i>
-        </span>
+        {row.original.attributes.scriptId}
       </span>
     );
   } else {
