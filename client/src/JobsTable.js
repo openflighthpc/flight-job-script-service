@@ -228,7 +228,7 @@ function TimeCell({row, value, ...rest}) {
       {
         known != null ?
           null :
-          <Badge className="ml-1" color="muted" pill>Estimated</Badge>
+          <Badge className="ml-1" color="warning" pill>Estimated</Badge>
       }
     </React.Fragment>
   );

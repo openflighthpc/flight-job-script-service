@@ -133,7 +133,7 @@ function EstimatedTime({estimated, job, known, name}) {
           <em>{value}</em> :
           <>
             <TimeAgo date={value} />
-            <Badge className="ml-1" color="muted" pill>Estimated</Badge>
+            <Badge className="ml-1" color="warning" pill>Estimated</Badge>
           </>
       }
       hide={known != null}
