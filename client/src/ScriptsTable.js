@@ -42,7 +42,7 @@ function ScriptsTable({ onRowSelect, scripts }) {
         Header: 'Template',
         accessor: 'template.attributes.name',
         Cell: ({ row, value }) => (
-          errorHandledTemplate({ row, value })
+          <ErrorHandledTemplate script={row.original} name={value} />
         ),
       },
     ],
@@ -123,13 +123,13 @@ function ScriptsTable({ onRowSelect, scripts }) {
   );
 }
 
-function errorHandledTemplate({ row, value }) {
-  const invalid = row.original.template == null;
+function ErrorHandledTemplate({ script, name }) {
+  const invalid = script.template == null;
 
   if (invalid) {
     return (
       <span className="text-muted" title="Template is unknown">
-        {row.original.attributes.templateId}
+        {script.attributes.templateId}
       </span>
     );
   } else {
@@ -137,9 +137,9 @@ function errorHandledTemplate({ row, value }) {
       <Link
         onClick={(ev) => ev.stopPropagation() }
         title="View template"
-        to={`/templates/${row.original.template.id}`}
+        to={`/templates/${script.template.id}`}
       >
-        {value}
+        {name}
       </Link>
     );
   }

@@ -43,7 +43,7 @@ function JobsTable({ reloadJobs, jobs }) {
         Header: 'Script',
         accessor: 'script.attributes.name',
         Cell: ({ row, value }) => (
-          errorHandledScript({ row, value })
+          <ErrorHandledScript job={row.original} name={value} />
         ),
       },
       {
@@ -135,13 +135,13 @@ function JobsTable({ reloadJobs, jobs }) {
   );
 }
 
-function errorHandledScript({ row, value }) {
-  const invalid = row.original.script == null;
+function ErrorHandledScript({ job, name }) {
+  const invalid = job.script == null;
 
   if (invalid) {
     return (
       <span className="text-muted" title="Script is unknown">
-        {row.original.attributes.scriptId}
+        {job.attributes.scriptId}
       </span>
     );
   } else {
@@ -149,9 +149,9 @@ function errorHandledScript({ row, value }) {
       <Link
         onClick={(ev) => ev.stopPropagation() }
         title="View script"
-        to={`/scripts/${row.original.script.id}`}
+        to={`/scripts/${job.script.id}`}
       >
-        {value}
+        {name}
       </Link>
     );
   }
