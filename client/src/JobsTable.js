@@ -43,15 +43,7 @@ function JobsTable({ reloadJobs, jobs }) {
         Header: 'Script',
         accessor: 'script.attributes.name',
         Cell: ({ row, value }) => (
-          row.original.script == null ? <i>Unknown</i> : (
-            <Link
-              onClick={(ev) => ev.stopPropagation() }
-              title="View script"
-              to={`/scripts/${row.original.script.id}`}
-            >
-              {value}
-            </Link>
-          )
+          <ErrorHandledScript job={row.original} name={value} />
         ),
       },
       {
@@ -141,6 +133,28 @@ function JobsTable({ reloadJobs, jobs }) {
     {paginationControls}
     </>
   );
+}
+
+function ErrorHandledScript({ job, name }) {
+  const invalid = job.script == null;
+
+  if (invalid) {
+    return (
+      <span className="text-muted" title="Script is unknown">
+        {job.attributes.scriptId}
+      </span>
+    );
+  } else {
+    return (
+      <Link
+        onClick={(ev) => ev.stopPropagation() }
+        title="View script"
+        to={`/scripts/${job.script.id}`}
+      >
+        {name}
+      </Link>
+    );
+  }
 }
 
 function TableHeaders({ headerGroup }) {

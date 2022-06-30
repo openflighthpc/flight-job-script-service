@@ -18,7 +18,7 @@ import { getTagValue, useInterval } from './utils';
 const activeStates = ['Active', 'Remote'];
 
 function isInteractive(script) {
-  return getTagValue(script.attributes.tags, 'script:type') === 'interactive';
+  return getTagValue(script?.attributes.tags, 'script:type') === 'interactive';
 }
 
 function JobSessionCard({ className, job }) {

@@ -39,6 +39,8 @@ class JobSerializer < ApplicationSerializer
   attribute(:end_time) { object.metadata['actual_end_time'] }
   attribute(:merged_stderr) { object.stderr_merged? }
 
+  attribute(:script_id) { object.metadata['script_id'] }
+
   has_one :script
   has_one(:desktop, include_data: true) { object.find_desktop }
   has_one(:stdout_file) { object.find_stdout_file }

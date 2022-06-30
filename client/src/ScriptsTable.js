@@ -42,15 +42,7 @@ function ScriptsTable({ onRowSelect, scripts }) {
         Header: 'Template',
         accessor: 'template.attributes.name',
         Cell: ({ row, value }) => (
-          row.original.template == null ? <i>Unknown</i> : (
-            <Link
-              onClick={(ev) => ev.stopPropagation() }
-              title="View template"
-              to={`/templates/${row.original.template.id}`}
-            >
-              {value}
-            </Link>
-          )
+          <ErrorHandledTemplate script={row.original} name={value} />
         ),
       },
     ],
@@ -129,6 +121,28 @@ function ScriptsTable({ onRowSelect, scripts }) {
     {paginationControls}
     </>
   );
+}
+
+function ErrorHandledTemplate({ script, name }) {
+  const invalid = script.template == null;
+
+  if (invalid) {
+    return (
+      <span className="text-muted" title="Template is unknown">
+        {script.attributes.templateId}
+      </span>
+    );
+  } else {
+    return (
+      <Link
+        onClick={(ev) => ev.stopPropagation() }
+        title="View template"
+        to={`/templates/${script.template.id}`}
+      >
+        {name}
+      </Link>
+    );
+  }
 }
 
 function TableHeaders({ headerGroup }) {
