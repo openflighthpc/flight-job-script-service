@@ -16,7 +16,7 @@
     "react-select": "^5.2.2",
     "react-table": "^7.7.0",
     "react-timeago": "^6.2.1",
-    "reactstrap": "^8.8.1",
+    "reactstrap": "^9.1.5",
     "use-http": "^1.0.26",
     "web-vitals": "^2.1.4"
   },
