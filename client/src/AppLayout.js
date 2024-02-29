@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 import { Redirect, Route, Switch, useLocation } from "react-router-dom";
 
 import {
@@ -9,7 +9,6 @@ import {
   Footer,
 } from 'flight-webapp-components';
 
-import NavItems from './NavItems';
 import styles from './AppLayout.module.css';
 import { routes, unconfiguredRoutes } from './routes';
 
@@ -20,7 +19,7 @@ function AppLayout() {
     <>
     <BrandBar
       className="brandbar"
-      navItems={<NavItems includeHome={false} />}
+      activeApp="Job"
     />
     <div
       className="container-fluid"

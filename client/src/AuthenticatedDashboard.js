@@ -1,14 +1,11 @@
 import { Link } from "react-router-dom";
-import { DashboardLogo, useMediaGrouping } from 'flight-webapp-components';
+import { useMediaGrouping } from 'flight-webapp-components';
 
-import Blurb from './Blurb';
 import { CardFooter } from './CardParts';
 
 function AuthenticatedDashboard() {
   return (
     <div>
-      <DashboardLogo />
-      <Blurb />
       <Cards />
     </div>
   );
