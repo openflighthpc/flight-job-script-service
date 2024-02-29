@@ -52,10 +52,39 @@ function Layout({ reloadJobs, jobs }) {
   }
 
   return (
-    <React.Fragment>
-      <IntroCard jobs={jobs} />
+    <>
+      <InfoRow jobs={jobs} />
       <JobsTable reloadJobs={reloadJobs} jobs={jobs} />
-    </React.Fragment>
+    </>
+  );
+}
+
+function InfoRow({ jobs }) {
+  const jobOrjobs = jobs.length === 1 ? 'job' : 'jobs';
+
+  return (
+    <div className={`row justify-content-between align-items-center mb-4`}>
+      <span className={`tagline mb-0`}>
+        You have {jobs.length} {jobOrjobs}.
+      </span>
+      <div className="d-flex">
+        <NewJobButton/>
+      </div>
+    </div>
+  );
+}
+
+function NewJobButton() {
+  return (
+    <>
+      <Link
+        className="button link white-text"
+        to="/scripts"
+      >
+        <i className="fa fa-plus mr-3"></i>
+        NEW JOB
+      </Link>
+    </>
   );
 }
 
@@ -63,23 +92,10 @@ function NoJobsFound() {
   return (
     <div>
       <p>
-        No jobs found.  You may want to <Link to="/scripts">submit a
-          script</Link>.
+        No jobs found.
       </p>
+      <NewJobButton/>
     </div>
-  );
-}
-
-function IntroCard({ jobs }) {
-  const jobOrJobs = jobs.length === 1 ? 'job' : 'jobs';
-
-  return (
-    <div className={`${styles.IntroCard} ${styles.JobsIntroCard} card card-body mb-4`}>
-      <p className={`${styles.IntroCardText} card-text`}>
-        You have {jobs.length} {jobOrJobs}.
-      </p>
-    </div>
-
   );
 }
 
