@@ -53,6 +53,7 @@ function Layout({ reloadScripts, scripts }) {
 
   return (
     <React.Fragment>
+      <NewScriptButton/>
       <IntroCard scripts={scripts} />
       <div>
         <Row>
@@ -78,10 +79,24 @@ function NoScriptsFound() {
   return (
     <div>
       <p>
-        No scripts found.  You may want to <Link to="/templates">create a
-          new script</Link>.
+        No scripts found.
       </p>
+      <NewScriptButton/>
     </div>
+  );
+}
+
+function NewScriptButton() {
+  return (
+    <>
+      <Link
+        className="btn btn-success btn-block"
+        to="/templates"
+      >
+        <i className="fa fa-file-code-o mr-1"></i>
+        <span>Create new script</span>
+      </Link>
+    </>
   );
 }
 
