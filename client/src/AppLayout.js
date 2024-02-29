@@ -17,36 +17,28 @@ function AppLayout() {
 
   return (
     <>
-    <BrandBar
-      className="brandbar"
-      activeApp="Job"
-    />
-    <div
-      className="container-fluid"
-      id="main"
-    >
-      <div id="toast-portal" className={styles.ToastPortal}></div>
-      <div className="content">
-        <AnimatedRouter
-          AuthenticatedRoute={AuthenticatedRoute}
-          Redirect={Redirect}
-          Route={Route}
-          Switch={Switch}
-          exact={!unconfigured}
-          routes={unconfigured ? unconfiguredRoutes : routes}
-          sideNav={SideNav}
-          useLocation={useLocation}
-        />
+      <BrandBar
+        className="brandbar"
+        activeApp="Job"
+      />
+      <div
+        id="main"
+      >
+        <div id="toast-portal" className={styles.ToastPortal}></div>
+        <div className="content">
+          <AnimatedRouter
+            AuthenticatedRoute={AuthenticatedRoute}
+            Redirect={Redirect}
+            Route={Route}
+            Switch={Switch}
+            exact={!unconfigured}
+            routes={unconfigured ? unconfiguredRoutes : routes}
+            useLocation={useLocation}
+          />
+        </div>
       </div>
-    </div>
-    <Footer />
+      <Footer />
     </>
-  );
-}
-
-function SideNav() {
-  return (
-    <div className="sidenav col-sm-2"></div>
   );
 }
 

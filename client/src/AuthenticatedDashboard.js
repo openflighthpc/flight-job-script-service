@@ -2,11 +2,17 @@ import { Link } from "react-router-dom";
 import { useMediaGrouping } from 'flight-webapp-components';
 
 import { CardFooter } from './CardParts';
+import Blurb from './Blurb';
 
 function AuthenticatedDashboard() {
   return (
-    <div>
-      <Cards />
+    <div
+      className="centernav col-8"
+    >
+      <div className="narrow-container">
+        <Blurb/>
+      </div>
+      <Cards/>
     </div>
   );
 }
