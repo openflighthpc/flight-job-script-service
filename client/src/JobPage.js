@@ -98,24 +98,23 @@ function Layout({ job, onCancelled }) {
 
   return (
     <>
-    <Row>
-      <Col md={12} lg={5}>
+      <div className="d-flex mb-3">
         <JobMetadataCard
-          className="mb-3"
+          className="mr-3 flex-grow-1"
           job={job}
           onCancelled={onCancelled}
           onDeleted={() => history.push('/jobs')}
         />
-        <JobSessionCard job={job} />
-      </Col>
-      <Col md={12} lg={7}>
-        {
-          submissionFailed ?
-            <SubmissionFailureOutputCard job={job} /> :
-            <JobOutputsCard job={job} />
-        }
-      </Col>
-    </Row>
+        <JobSessionCard
+          className="flex-grow-1"
+          job={job}
+        />
+      </div>
+      {
+        submissionFailed ?
+          <SubmissionFailureOutputCard job={job} /> :
+          <JobOutputsCard job={job} />
+      }
     </>
   );
 }
