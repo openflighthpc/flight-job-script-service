@@ -1,11 +1,15 @@
 import React from 'react';
+import {Link} from "react-router-dom";
 import Logo from './assets/job.png';
 
 function Blurb() {
   return (
     <>
-      <div
-        className="app-card blurb"
+      <Link
+        className="app-card blurb link"
+        relative="path"
+        title="Back to Flight Job dashboard"
+        to="/"
       >
         <img
           className="app-icon mr-3"
@@ -18,7 +22,7 @@ function Blurb() {
         <p className="tagline card-subtitle card-text">
           Create and manage your jobs.
         </p>
-      </div>
+      </Link>
     </>
   );
 }
