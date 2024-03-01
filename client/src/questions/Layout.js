@@ -1,6 +1,5 @@
 import React from 'react';
 
-import styles from "./question.module.css";
 import { CardFooter } from "../CardParts";
 
 function Layout({
@@ -10,9 +9,9 @@ function Layout({
   title,
 }) {
   return (
-    <div className={`card border-primary ${styles.QuestionCard}`} >
+    <div className={`card`} >
       <h5
-        className="card-header bg-primary text-light text-truncate"
+        className="card-header text-truncate"
         title={title}
       >
         {title}
@@ -21,7 +20,7 @@ function Layout({
         { children }
       </div>
       <CardFooter>
-        <div className="btn-toolbar justify-content-end">
+        <div className="btn-toolbar justify-content-center">
           {leftButton}
           {rightButton}
         </div>

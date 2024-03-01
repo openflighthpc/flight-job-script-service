@@ -9,7 +9,6 @@ import {
 } from 'flight-webapp-components';
 
 import QuestionSet from './QuestionSet';
-import styles from "./question.module.css";
 import { useFetchSubmissionQuestions } from '../api';
 
 function ModalContainer({
@@ -26,7 +25,6 @@ function ModalContainer({
       isOpen={isOpen}
       toggle={toggle}
       className={className}
-      contentClassName={styles.QuestionCard}
       size={size}
     >
       <DelayedModalContent

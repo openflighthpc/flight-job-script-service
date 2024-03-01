@@ -48,17 +48,15 @@ function CreateScriptButton({ answers, className, templateId }) {
     }
   }
 
-  const buttonText = loading ? 'Saving...' : 'Save job script';
+  const buttonText = loading ? 'SAVING...' : 'SAVE';
 
   return (
     <React.Fragment>
       <Button
-        color="primary"
+        className={`button white-text link ${className}`}
         onClick={submit}
-        className={classNames(className, { 'disabled': loading })}
         disabled={loading}
       >
-        <i className="fa fa-save mr-1" />
         {buttonText}
       </Button>
     </React.Fragment>
