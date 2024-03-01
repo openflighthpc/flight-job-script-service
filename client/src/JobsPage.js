@@ -11,7 +11,6 @@ import {
 } from 'flight-webapp-components';
 
 import JobsTable from './JobsTable';
-import styles from './index.module.css';
 import { useFetchJobs } from './api';
 import { useInterval } from './utils';
 
@@ -63,7 +62,7 @@ function InfoRow({ jobs }) {
   const jobOrjobs = jobs.length === 1 ? 'job' : 'jobs';
 
   return (
-    <div className={`row justify-content-between align-items-center mb-5 w-100`}>
+    <div className={`row justify-content-between align-items-center mb-5`}>
       <span className={`tagline mb-0`}>
         You have {jobs.length} {jobOrjobs}.
       </span>

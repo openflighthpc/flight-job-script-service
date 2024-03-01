@@ -12,7 +12,6 @@ import {
 import styles from './AppLayout.module.css';
 import {routes, unconfiguredRoutes} from './routes';
 import Blurb from "./Blurb";
-import JobsPage from "./JobsPage";
 
 function AppLayout() {
   const {unconfigured} = useContext(ConfigContext);
