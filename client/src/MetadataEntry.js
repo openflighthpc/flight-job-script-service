@@ -25,13 +25,13 @@ function MetadataEntry({ format, hide=false, hideWhenNull=false, name, value, va
   return (
     <>
     <dt
-      className={classNames("text-truncate", styles.MetadataEntryDT)}
+      className={classNames("text-truncate text-right mr-3", styles.MetadataEntryDT)}
       title={name}
     >
       {name}
     </dt>
     <dd
-      className={classNames("text-truncate", styles.MetadataEntryDD)}
+      className={classNames("text-truncate text-left", styles.MetadataEntryDD)}
       title={titleForValue}
     >
       {formatted}
