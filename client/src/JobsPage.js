@@ -63,7 +63,7 @@ function InfoRow({ jobs }) {
   const jobOrjobs = jobs.length === 1 ? 'job' : 'jobs';
 
   return (
-    <div className={`row justify-content-between align-items-center mb-4`}>
+    <div className={`row justify-content-between align-items-center mb-5 w-100`}>
       <span className={`tagline mb-0`}>
         You have {jobs.length} {jobOrjobs}.
       </span>
