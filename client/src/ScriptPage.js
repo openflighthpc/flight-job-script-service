@@ -1,5 +1,5 @@
 import { Col, Row } from 'reactstrap';
-import { useHistory, useParams } from 'react-router-dom';
+import {Link, useHistory, useParams} from 'react-router-dom';
 import { useRef } from 'react';
 
 import {
@@ -24,28 +24,46 @@ function ScriptPage() {
     return <Loading id={ref.current} />;
   } else if (error) {
     if (error.name === "404") {
-      return <NotFound />;
+      return (
+        <>
+          <BackLink/>
+          <NotFound/>
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink/>
+          <DefaultErrorMessage/>
+        </>
+      );
     }
   } else {
     const script = data.data;
     if ( script == null) {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink/>
+          <DefaultErrorMessage/>
+        </>
+      );
     } else {
       return (
-        <Row>
-          <Col md={12} lg={6}>
-            <ScriptMetadataCard
-              script={script}
-              onDeleted={() => history.push('/scripts')}
-            />
-            <ScriptContentCard className="mt-4" script={script} />
-          </Col>
-          <Col md={12} lg={6}>
-            <ScriptNotesCard script={script} />
-          </Col>
-        </Row>
+        <>
+          <BackLink/>
+          <Row>
+            <Col md={12} lg={6}>
+              <ScriptMetadataCard
+                script={script}
+                onDeleted={() => history.push('/scripts')}
+              />
+              <ScriptContentCard className="mt-4" script={script} />
+            </Col>
+            <Col md={12} lg={6}>
+              <ScriptNotesCard script={script} />
+            </Col>
+          </Row>
+        </>
       );
     }
   }
@@ -57,6 +75,17 @@ function Loading({ id }) {
       <Spinner text="Loading script..." />
     </Overlay>
   );
+}
+
+function BackLink() {
+  return (
+    <Link
+      className="link blue-text back-link"
+      to="/scripts"
+    >
+      Back to scripts
+    </Link>
+  )
 }
 
 export default ScriptPage;
