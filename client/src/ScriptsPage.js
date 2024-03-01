@@ -13,7 +13,6 @@ import {
 
 import ScriptSummary from './ScriptSummary';
 import ScriptsTable from './ScriptsTable';
-import styles from './index.module.css';
 import { useFetchScripts } from './api';
 
 function ScriptsPage() {
@@ -52,18 +51,22 @@ function Layout({ reloadScripts, scripts }) {
   }
 
   return (
-    <React.Fragment>
-      <NewScriptButton/>
-      <IntroCard scripts={scripts} />
+    <>
+      <InfoRow scripts={scripts} />
       <div>
         <Row>
-          <Col>
+          <Col
+            className="px-0"
+          >
             <ScriptsTable
               onRowSelect={setSelectedScript}
               scripts={scripts}
             />
           </Col>
-          <Col style={{ paddingTop: 'calc(38px + 16px)' }}>
+          <Col
+            className="col-5 pr-0 pl-3"
+            style={{ paddingTop: 'calc(38px + 16px)' }}
+          >
             <ScriptSummary
               reloadScripts={reloadScripts}
               script={selectedScript}
@@ -71,7 +74,7 @@ function Layout({ reloadScripts, scripts }) {
           </Col>
         </Row>
       </div>
-    </React.Fragment>
+    </>
   );
 }
 
@@ -86,31 +89,32 @@ function NoScriptsFound() {
   );
 }
 
+function InfoRow({ scripts }) {
+  const scriptOrScripts = scripts.length === 1 ? 'script' : 'scripts';
+
+  return (
+    <div className={`row justify-content-between align-items-center mb-5`}>
+      <span className={`tagline mb-0`}>
+        You have {scripts.length} saved{' '}{scriptOrScripts}.
+      </span>
+      <div className="d-flex">
+        <NewScriptButton/>
+      </div>
+    </div>
+  );
+}
+
 function NewScriptButton() {
   return (
     <>
       <Link
-        className="btn btn-success btn-block"
+        className="button link white-text"
         to="/templates"
       >
-        <i className="fa fa-file-code-o mr-1"></i>
+        <i className="fa fa-plus mr-1"></i>
         <span>Create new script</span>
       </Link>
     </>
-  );
-}
-
-function IntroCard({ scripts }) {
-  const scriptOrScripts = scripts.length === 1 ? 'script' : 'scripts';
-
-  return (
-    <div className={`${styles.IntroCard} ${styles.ScriptsIntroCard} card card-body mb-4`}>
-      <p className={`${styles.IntroCardText} card-text`}>
-        You have {scripts.length} saved{' '}{scriptOrScripts}.  Select a
-        script from the table to view more details about it.
-      </p>
-    </div>
-
   );
 }
 
