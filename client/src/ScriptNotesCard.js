@@ -1,4 +1,3 @@
-import { Button } from 'reactstrap';
 import { useState } from 'react';
 
 import { RenderedNotes } from './ScriptSummary';
