@@ -84,7 +84,7 @@ function ModalContent({
         {modalTitle}
       </ModalHeader>
       <ModalBody>
-        <h4 className="text-truncate" title={title} >
+        <h4 className="text-truncate mb-4" title={title} >
           {title}
         </h4>
         {children}
