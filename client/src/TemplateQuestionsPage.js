@@ -12,6 +12,7 @@ import {
 import CreateScriptButton from './CreateScriptButton';
 import QuestionSet from './questions/QuestionSet';
 import { useFetchQuestions } from './api';
+import BackLink from "./BackLink";
 
 const scriptNameQuestion = {
   attributes: {
@@ -37,20 +38,38 @@ function TemplateQuestionsPage() {
     return <Loading />;
   } else if (questionsLoadingError) {
     if (questionsLoadingError.name === "404") {
-      return <NotFound />;
+      return (
+        <>
+          <BackLink link="templates"/>
+          <NotFound />
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="templates"/>
+          <DefaultErrorMessage />
+        </>
+      );
     }
   } else {
     const questions = utils.getResourcesFromResponse(data);
     if ( questions == null) {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="templates"/>
+          <DefaultErrorMessage />
+        </>
+      );
     } else {
       return (
-        <QuestionSet
-          questions={[...data.data, scriptNameQuestion]}
-          SaveButton={(props) => <CreateScriptButton templateId={templateId} {...props} />}
-        />
+        <>
+          <BackLink link="templates"/>
+          <QuestionSet
+            questions={[...data.data, scriptNameQuestion]}
+            SaveButton={(props) => <CreateScriptButton templateId={templateId} {...props} />}
+          />
+        </>
       );
     }
   }

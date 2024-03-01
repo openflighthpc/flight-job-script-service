@@ -16,6 +16,7 @@ import SubmissionFailureOutputCard from './SubmissionFailureOutputCard';
 import { useFetchJob } from './api';
 import { useInterval } from './utils';
 import { useToast } from './ToastContext';
+import BackLink from "./BackLink";
 
 function JobPage() {
   const { id } = useParams();
@@ -24,17 +25,28 @@ function JobPage() {
 
   if (error) {
     if (error.name === "404") {
-      return <NotFound />;
+      return (
+        <>
+          <BackLink/>
+          <NotFound/>;
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink/>
+          <DefaultErrorMessage />;
+        </>
+      );
     }
   } else {
     const job = data == null ? null : data.data;
     return (
-      <React.Fragment>
+      <>
+        <BackLink/>
         { loading && <Loading /> }
         { job != null && <LayoutContainer job={job} loading={loading} /> }
-      </React.Fragment>
+      </>
     );
   }
 }

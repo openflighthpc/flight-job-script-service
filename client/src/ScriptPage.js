@@ -13,6 +13,7 @@ import ScriptContentCard from './ScriptContentCard';
 import ScriptMetadataCard from './ScriptCard';
 import ScriptNotesCard from './ScriptNotesCard';
 import { useFetchScript } from './api';
+import BackLink from "./BackLink";
 
 function ScriptPage() {
   const { id } = useParams();
@@ -26,14 +27,14 @@ function ScriptPage() {
     if (error.name === "404") {
       return (
         <>
-          <BackLink/>
+          <BackLink link="scripts"/>
           <NotFound/>
         </>
       );
     } else {
       return (
         <>
-          <BackLink/>
+          <BackLink link="scripts"/>
           <DefaultErrorMessage/>
         </>
       );
@@ -43,14 +44,14 @@ function ScriptPage() {
     if ( script == null) {
       return (
         <>
-          <BackLink/>
+          <BackLink link="scripts"/>
           <DefaultErrorMessage/>
         </>
       );
     } else {
       return (
         <>
-          <BackLink/>
+          <BackLink link="scripts"/>
           <Row>
             <Col md={12} lg={6}>
               <ScriptMetadataCard
@@ -76,17 +77,6 @@ function Loading({ id }) {
       <Spinner text="Loading script..." />
     </Overlay>
   );
-}
-
-function BackLink() {
-  return (
-    <Link
-      className="link blue-text back-link"
-      to="/scripts"
-    >
-      Back to scripts
-    </Link>
-  )
 }
 
 export default ScriptPage;

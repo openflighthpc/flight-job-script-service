@@ -14,20 +14,32 @@ import {
 import ScriptSummary from './ScriptSummary';
 import ScriptsTable from './ScriptsTable';
 import { useFetchScripts } from './api';
+import BackLink from "./BackLink";
 
 function ScriptsPage() {
   const { data, error, loading, get } = useFetchScripts();
 
   if (error) {
     if (utils.errorCode(data) === 'Unauthorized') {
-      return <UnauthorizedError />;
+      return (
+        <>
+          <BackLink/>
+          <UnauthorizedError/>
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink/>
+          <DefaultErrorMessage/>
+        </>
+      );
     }
   } else {
     const scripts = data == null ? null : data.data ;
     return (
-      <React.Fragment>
+      <>
+        <BackLink/>
         {
           loading && (
             <OverlayContainer>
@@ -38,7 +50,7 @@ function ScriptsPage() {
           )
         }
         { scripts != null && <Layout reloadScripts={get} scripts={scripts} /> }
-      </React.Fragment>
+      </>
     );
   }
 }

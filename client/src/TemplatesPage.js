@@ -1,5 +1,4 @@
 import React from 'react';
-import { Jumbotron } from 'reactstrap';
 
 import {
   DefaultErrorMessage,
@@ -13,20 +12,32 @@ import {
 
 import TemplateCard from './TemplateCard';
 import { useFetchTemplates } from './api';
+import BackLink from "./BackLink";
 
 function TemplatesPage() {
   const { data, error, loading } = useFetchTemplates();
 
   if (error) {
     if (utils.errorCode(data) === 'Unauthorized') {
-      return <UnauthorizedError />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <UnauthorizedError />
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <DefaultErrorMessage />
+        </>
+      );
     }
   } else {
     const templates = utils.getResourcesFromResponse(data);
     return (
-      <React.Fragment>
+      <>
+        <BackLink link="scripts"/>
         {
           loading && (
             <OverlayContainer>
@@ -37,7 +48,7 @@ function TemplatesPage() {
           )
         }
         <TemplateCardDeck templates={templates || []} />
-      </React.Fragment>
+      </>
     );
   }
 }
