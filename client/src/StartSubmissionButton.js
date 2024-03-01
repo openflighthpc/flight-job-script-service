@@ -11,7 +11,7 @@ function Disabled({ className }) {
       className={classNames(className)}
       disabled
     >
-      <span>SUBMIT</span>
+      <span>Submit</span>
     </Button>
   );
 }
@@ -28,7 +28,7 @@ function StartSubmissionButton({ className, script }) {
         className={`button link white-text ${className}`}
         onClick={toggle}
       >
-        <span>SUBMIT</span>
+        <span>Submit</span>
       </Button>
       <QuestionSet.ModalContainer
         SaveButton={SaveButton}

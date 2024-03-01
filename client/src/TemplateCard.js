@@ -28,7 +28,7 @@ function TemplateCard({ className, template }) {
             className="button link white-text"
             to={`/scripts/new/${template.id}`}
           >
-            <span>SELECT</span>
+            <span>Select</span>
           </Link>
         </div>
       </CardFooter>

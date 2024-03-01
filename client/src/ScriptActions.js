@@ -11,7 +11,7 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
       className="button link white-text mr-2"
       to={`/scripts/${script.id}`}
     >
-      VIEW
+      View
     </Link>
   );
 
@@ -35,7 +35,7 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
 function DisabledActions({ className, includeLink=true }) {
   const link = (
     <Link className="button link white-text disabled mr-2">
-      VIEW
+      View
     </Link>
   );
 

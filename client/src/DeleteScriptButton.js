@@ -38,7 +38,7 @@ function DeleteScriptButton({
       act={deleteScript}
       acting={deleting}
       actingButtonText="Deleting..."
-      buttonText="DELETE"
+      buttonText="Delete"
       className={className}
       confirmationHeaderText="Confirm deletion"
       confirmationText={
