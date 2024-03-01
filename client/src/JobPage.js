@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { Col, Row } from 'reactstrap';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
