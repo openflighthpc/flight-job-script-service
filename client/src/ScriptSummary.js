@@ -17,25 +17,28 @@ function ScriptSummary({ reloadScripts, script }) {
     <h4 className="mb-0"> </h4> :
     <h4 className="mb-0">{script.id}</h4>;
   const actions = script == null ?
-    <ScriptActions.Disabled className="h-100" /> :
+    null :
     <ScriptActions
-      className="h-100"
+      className="mt-4"
       onDeleted={reloadScripts}
       script={script}
     />;
 
   return (
     <div className="card">
-      <div className="card-header d-flex flex-row justify-content-between">
-        {header}
-        {actions}
-      </div>
+      {
+        script == null ? null :
+          <div className="card-header d-flex flex-row justify-content-between">
+            {header}
+          </div>
+      }
       <div className="card-body">
         {
           script == null ?
-            "Select a script form the table to view its notes." :
+            "Select a script from the table to view its notes." :
             <RenderedNotesForScript script={script} />
         }
+        {actions}
       </div>
     </div>
   );
@@ -66,7 +69,7 @@ export function RenderedNotes({ notes }) {
     return <em>The selected script does not have any notes.</em>;
   }
   return (
-    <div style={{ marginBottom: '-1rem' }}>
+    <div>
       <ReactMarkdown>{notes}</ReactMarkdown>
     </div>
   );
