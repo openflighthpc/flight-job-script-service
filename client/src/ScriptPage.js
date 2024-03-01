@@ -57,12 +57,13 @@ function ScriptPage() {
                 script={script}
                 onDeleted={() => history.push('/scripts')}
               />
-              <ScriptContentCard className="mt-4" script={script} />
+
             </Col>
             <Col md={12} lg={6}>
               <ScriptNotesCard script={script} />
             </Col>
           </Row>
+          <ScriptContentCard className="my-4" script={script} />
         </>
       );
     }

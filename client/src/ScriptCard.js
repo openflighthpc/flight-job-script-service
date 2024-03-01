@@ -7,7 +7,7 @@ import { ScriptTypeBadge } from './JobStateBadges';
 
 function ScriptMetadataCard({ onDeleted, script }) {
   return (
-    <div className="card">
+    <div className="card h-100">
       <div className="card-header d-flex flex-row justify-content-between">
         <h4
           className="text-truncate mb-0"
@@ -15,14 +15,8 @@ function ScriptMetadataCard({ onDeleted, script }) {
         >
           {script.attributes.name}
         </h4>
-        <ScriptActions
-          className="h-100"
-          includeLink={false}
-          onDeleted={onDeleted}
-          script={script}
-        />
       </div>
-      <div className="card-body">
+      <div className="card-body d-flex flex-column">
         <dl>
           <MetadataEntry
             format={(value) => <code>{value}</code>}
@@ -64,6 +58,12 @@ function ScriptMetadataCard({ onDeleted, script }) {
             value={script.attributes.path}
           />
         </dl>
+        <ScriptActions
+          className="mt-auto"
+          includeLink={false}
+          onDeleted={onDeleted}
+          script={script}
+        />
       </div>
     </div>
   );
