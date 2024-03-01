@@ -5,9 +5,9 @@ import ScriptActions from './ScriptActions';
 import TimeAgo from './TimeAgo';
 import { ScriptTypeBadge } from './JobStateBadges';
 
-function ScriptMetadataCard({ onDeleted, script }) {
+function ScriptMetadataCard({ className, onDeleted, script }) {
   return (
-    <div className="card h-100">
+    <div className={`card ${className}`}>
       <div className="card-header d-flex flex-row justify-content-between">
         <h4
           className="text-truncate mb-0"

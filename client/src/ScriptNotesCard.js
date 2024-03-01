@@ -18,7 +18,7 @@ function buildNotesResource(id, newNotes) {
   };
 }
 
-function ScriptNotesCard({ script }) {
+function ScriptNotesCard({ className, script }) {
   const [notes, setNotes] = useState(script.note);
   const [editing, setEditing] = useState(false);
   const [editorContent, setEditorContent] = useState(notes.attributes.payload);
@@ -41,7 +41,7 @@ function ScriptNotesCard({ script }) {
   };
 
   return (
-    <div className="card h-100">
+    <div className={`card ${className}`}>
       <div className="card-header d-flex flex-row justify-content-between">
         <h4 className="mb-0">Notes</h4>
         <EditSaveButton

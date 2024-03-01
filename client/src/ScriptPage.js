@@ -52,18 +52,16 @@ function ScriptPage() {
       return (
         <>
           <BackLink link="scripts"/>
-          <Row>
-            <Col md={12} lg={6}>
-              <ScriptMetadataCard
-                script={script}
-                onDeleted={() => history.push('/scripts')}
-              />
-
-            </Col>
-            <Col md={12} lg={6}>
-              <ScriptNotesCard script={script} />
-            </Col>
-          </Row>
+          <div className="d-flex mb-3">
+            <ScriptMetadataCard
+              className="mr-3 w-50"
+              script={script}
+              onDeleted={() => history.push('/scripts')}
+            />
+            <ScriptNotesCard
+              className="w-50"
+              script={script} />
+          </div>
           <ScriptContentCard className="my-4" script={script} />
         </>
       );
