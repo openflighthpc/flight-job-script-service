@@ -41,7 +41,7 @@ function ScriptNotesCard({ script }) {
   };
 
   return (
-    <div className="card">
+    <div className="card h-100">
       <div className="card-header d-flex flex-row justify-content-between">
         <h4 className="mb-0">Notes</h4>
         <EditSaveButton
