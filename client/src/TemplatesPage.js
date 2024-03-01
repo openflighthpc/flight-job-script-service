@@ -13,7 +13,6 @@ import {
 
 import TemplateCard from './TemplateCard';
 import { useFetchTemplates } from './api';
-import styles from './TemplatesPage.module.css';
 
 function TemplatesPage() {
   const { data, error, loading } = useFetchTemplates();
@@ -47,14 +46,14 @@ function TemplateCardDeck({ templates }) {
   const { groupedItems: groupedTemplates } = useGrouping(templates);
   const decks = groupedTemplates.map(
     (group, index) => (
-      <div key={index} className="card-deck">
+      <div key={index} className="card-deck mb-4">
         {
           group.map((template) => {
             if (template == null) {
               // The `key` attribute is intentionally omitted.
               return <BlankCard />;
             } else {
-            return <TemplateCard className="mb-2" key={template.id} template={template} />;
+            return <TemplateCard key={template.id} template={template} />;
             }
           })
         }
@@ -63,21 +62,12 @@ function TemplateCardDeck({ templates }) {
   );
 
   return (
-    <React.Fragment>
-      <Jumbotron className={`${styles.Jumbotron} bg-white py-4`}>
-        <h1>
-          Create a job script from a template
-        </h1>
-        <ul>
-          <li>Select a job script template from the list below.</li>
-          <li>Click "Create script".</li>
-          <li>Answer the questions.</li>
-          <li>Download your customized script.</li>
-          <li>Submit your script to the cluster's scheduler.</li>
-        </ul>
-      </Jumbotron>
+    <>
+      <p className="tagline centered-tagline mb-5">
+        Create a job script by selecting a template from the options below.
+      </p>
       {decks}
-    </React.Fragment>
+    </>
   );
 }
 
