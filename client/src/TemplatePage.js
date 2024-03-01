@@ -23,14 +23,14 @@ function TemplatePage() {
     if (error.name === "404") {
       return (
         <>
-          <BackLink link="templates"/>
+          <BackLink link="scripts"/>
           <NotFound />;
           </>
       );
     } else {
       return (
         <>
-          <BackLink link="templates"/>
+          <BackLink link="scripts"/>
           <DefaultErrorMessage />
           </>
       );
@@ -40,14 +40,14 @@ function TemplatePage() {
     if ( template == null) {
       return (
         <>
-          <BackLink link="templates"/>
+          <BackLink link="scripts"/>
           <DefaultErrorMessage />
           </>
       );
     } else {
       return (
         <>
-          <BackLink link="templates"/>
+          <BackLink link="scripts"/>
           <TemplateCard template={template} />
         </>
       );
