@@ -52,17 +52,17 @@ function ScriptPage() {
       return (
         <>
           <BackLink link="scripts"/>
-          <div className="d-flex mb-3">
+          <div className="d-flex flex-wrap wrapping-columns mb-3 ">
             <ScriptMetadataCard
-              className="mr-3 w-50"
+              className="flex-grow-1"
               script={script}
               onDeleted={() => history.push('/scripts')}
             />
             <ScriptNotesCard
-              className="w-50"
+              className="flex-grow-1"
               script={script} />
           </div>
-          <ScriptContentCard className="my-4" script={script} />
+          <ScriptContentCard className="my-3" script={script} />
         </>
       );
     }
