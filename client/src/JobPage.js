@@ -109,15 +109,13 @@ function Layout({ job, onCancelled }) {
 
   return (
     <>
-      <div className="d-flex mb-3">
+      <div className="wrapping-columns mb-3">
         <JobMetadataCard
-          className="mr-3 flex-grow-1"
           job={job}
           onCancelled={onCancelled}
           onDeleted={() => history.push('/jobs')}
         />
         <JobSessionCard
-          className="flex-grow-1"
           job={job}
         />
       </div>
