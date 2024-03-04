@@ -39,7 +39,7 @@ function DeleteScriptButton({
       acting={deleting}
       actingButtonText="Deleting..."
       buttonText="Delete"
-      className={className}
+      className={`button link white-text ${className}`}
       confirmationHeaderText="Confirm deletion"
       confirmationText={
         <p>

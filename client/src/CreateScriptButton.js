@@ -48,7 +48,7 @@ function CreateScriptButton({ answers, className, templateId }) {
     }
   }
 
-  const buttonText = loading ? 'SAVING...' : 'SAVE';
+  const buttonText = loading ? 'Saving...' : 'Save';
 
   return (
     <React.Fragment>

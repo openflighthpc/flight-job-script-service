@@ -37,8 +37,8 @@ function DeleteJobButton({
       act={deleteJob}
       acting={deleting}
       actingButtonText="Removing..."
-      buttonText="REMOVE"
-      className={className}
+      buttonText="Remove"
+      className={`button white-text link ${className}`}
       confirmationHeaderText="Confirm job removal"
       confirmationText={
         <>

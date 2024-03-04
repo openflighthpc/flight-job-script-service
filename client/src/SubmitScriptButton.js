@@ -31,7 +31,7 @@ function SubmitScriptButton({ answers, className, script }) {
     }
   };
 
-  const text = submitting ? 'SUBMITTING...' : 'SUBMIT';
+  const text = submitting ? 'Submitting...' : 'Submit';
 
   return (
     <Button
@@ -39,7 +39,7 @@ function SubmitScriptButton({ answers, className, script }) {
       onClick={submit}
       disabled={submitting}
     >
-      <span>{text}</span>
+      {text}
     </Button>
   );
 }

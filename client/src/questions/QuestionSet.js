@@ -18,7 +18,7 @@ function QuestionSet({ LayoutComponent=Layout, questions, SaveButton }) {
         className="button link cancel-button blue-text mr-2"
         onClick={onPrevious}
       >
-        BACK
+        Back
       </Button>
     );
     const rightButton = (
@@ -55,7 +55,7 @@ function QuestionSet({ LayoutComponent=Layout, questions, SaveButton }) {
           className="button link cancel-button blue-text mr-2"
           onClick={onPrevious}
         >
-          BACK
+          Back
         </Button>
       );
     const rightButton = (
@@ -63,7 +63,7 @@ function QuestionSet({ LayoutComponent=Layout, questions, SaveButton }) {
         className="button link white-text"
         onClick={onNext}
       >
-        { isLastQuestion ? 'FINISH' : 'NEXT' }
+        { isLastQuestion ? 'Finish' : 'Next' }
       </Button>
     );
 
