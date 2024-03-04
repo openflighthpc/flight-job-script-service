@@ -66,9 +66,9 @@ function Layout({ reloadScripts, scripts }) {
     <>
       <InfoRow scripts={scripts} />
       <div>
-        <Row>
+        <Row className="scripts-table-row">
           <Col
-            className="px-0"
+            className="table px-0"
           >
             <ScriptsTable
               onRowSelect={setSelectedScript}
@@ -76,7 +76,7 @@ function Layout({ reloadScripts, scripts }) {
             />
           </Col>
           <Col
-            className="col-5 pr-0 pl-3"
+            className="notes pr-0 pl-3"
             style={{ paddingTop: 'calc(38px + 16px)' }}
           >
             <ScriptSummary
