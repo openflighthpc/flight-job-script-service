@@ -80,8 +80,10 @@ function NewJobButton() {
         className="button link white-text"
         to="/scripts"
       >
-        <i className="fa fa-plus mr-2"></i>
-        <span>New Job</span>
+        <span>
+          <i className="fa fa-plus mr-2 mb-1"></i>
+          NEW JOB
+        </span>
       </Link>
     </>
   );

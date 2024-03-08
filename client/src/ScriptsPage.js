@@ -123,8 +123,10 @@ function NewScriptButton() {
         className="button link white-text"
         to="/templates"
       >
-        <i className="fa fa-plus mr-2"></i>
-        <span>Create new script</span>
+        <span>
+          <i className="fa fa-plus mr-2 mb-1"></i>
+          NEW SCRIPT
+        </span>
       </Link>
     </>
   );

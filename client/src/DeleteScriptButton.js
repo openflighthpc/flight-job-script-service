@@ -40,6 +40,7 @@ function DeleteScriptButton({
       actingButtonText="Deleting..."
       buttonText="Delete"
       className={`button link white-text ${className}`}
+      cancelButtonText={(<span>Cancel</span>)}
       confirmationHeaderText="Confirm deletion"
       confirmationText={
         <p>
@@ -57,7 +58,7 @@ function Disabled({ className }) {
       className={classNames(className)}
       disabled
     >
-      <span>DELETE</span>
+      <span>Delete</span>
     </Button>
   );
 }

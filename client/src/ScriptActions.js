@@ -11,12 +11,12 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
       className="button link white-text mr-2"
       to={`/scripts/${script.id}`}
     >
-      View
+      <span>View</span>
     </Link>
   );
 
   return (
-    <ButtonToolbar
+    <div
       className={`d-flex justify-content-center ${classNames(className)}`}
     >
       { includeLink ? link : null }
@@ -28,7 +28,7 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
         onDeleted={onDeleted}
         script={script}
       />
-    </ButtonToolbar>
+    </div>
   );
 }
 

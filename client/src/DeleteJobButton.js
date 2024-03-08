@@ -39,6 +39,7 @@ function DeleteJobButton({
       actingButtonText="Removing..."
       buttonText="Remove"
       className={`button white-text link ${className}`}
+      cancelButtonText={(<span>Cancel</span>)}
       confirmationHeaderText="Confirm job removal"
       confirmationText={
         <>

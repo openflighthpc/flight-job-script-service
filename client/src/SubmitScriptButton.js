@@ -39,7 +39,7 @@ function SubmitScriptButton({ answers, className, script }) {
       onClick={submit}
       disabled={submitting}
     >
-      {text}
+      <span>{text}</span>
     </Button>
   );
 }

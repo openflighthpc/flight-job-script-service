@@ -23,14 +23,12 @@ function TemplateCard({ className, template }) {
         </ReactMarkdown>
       </div>
       <CardFooter>
-        <div className="btn-toolbar justify-content-center">
-          <Link
-            className="button link white-text"
-            to={`/scripts/new/${template.id}`}
-          >
-            <span>Create script</span>
-          </Link>
-        </div>
+        <Link
+          className="button link white-text"
+          to={`/scripts/new/${template.id}`}
+        >
+          <span>Create script</span>
+        </Link>
       </CardFooter>
     </div>
   );

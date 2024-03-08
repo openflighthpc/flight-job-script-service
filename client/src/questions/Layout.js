@@ -20,7 +20,7 @@ function Layout({
         { children }
       </div>
       <CardFooter>
-        <div className="btn-toolbar justify-content-center">
+        <div className="d-flex justify-content-center">
           {leftButton}
           {rightButton}
         </div>
