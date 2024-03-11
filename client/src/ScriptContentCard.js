@@ -5,6 +5,7 @@ import { useState } from 'react';
 import {useSaveScriptContent} from './api';
 import { ScriptEditor } from './ScriptEditor';
 import { useToast } from './ToastContext';
+import {Link} from "react-router-dom";
 
 function buildContentResource(id, newContent) {
   return {
@@ -64,20 +65,18 @@ function ScriptContentCard({ className, script }) {
 }
 
 function EditSaveButton({ editing, onEdit, onSave, saving }) {
-  const color = editing ? 'success' : 'primary';
-  const text = editing ? saving ? 'Saving' : 'Save' : 'Edit';
   const icon = editing ? saving ? 'fa-spinner fa-spin' : 'fa-save' : 'fa-edit';
 
   return (
-    <Button
-      color={color}
+    <Link
+      className="link blue-text"
       disabled={saving}
-      size="sm"
       onClick={editing ? onSave : onEdit}
     >
-      <i className={`fa ${icon} mr-1`}></i>
-      { text }
-    </Button>
+      <h4 className="mb-0">
+        <i className={`fa ${icon}`}></i>
+      </h4>
+    </Link>
   );
 }
 

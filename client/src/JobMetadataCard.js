@@ -24,23 +24,18 @@ function JobMetadataCard({ className, job, onCancelled, onDeleted }) {
 
   return (
     <div
-      className={classNames("card", `border-${colour}`, className)}
+      className={classNames("card", className)}
     >
       <div className="card-header d-flex flex-row justify-content-between">
         <h4
           className="text-truncate mb-0"
           title={job.script ? job.script.attributes.name : 'Unknown'}
         >
-          <span>
-            Job <code>{job.id}</code>
-          </span>
-          <Badge className="ml-2" color={colour}>{jobState}</Badge>
+          Job <code>{job.id}</code>
         </h4>
-        <JobActions
-          job={job}
-          onCancelled={onCancelled}
-          onDeleted={onDeleted}
-        />
+        <h5>
+          <Badge className="ml-3 p-2" color={colour}>{jobState}</Badge>
+        </h5>
       </div>
       <div className="card-body">
         <dl>
@@ -115,6 +110,12 @@ function JobMetadataCard({ className, job, onCancelled, onDeleted }) {
             name="Completes"
           />
         </dl>
+        <JobActions
+          className="justify-content-center mt-3"
+          job={job}
+          onCancelled={onCancelled}
+          onDeleted={onDeleted}
+        />
       </div>
     </div>
   );

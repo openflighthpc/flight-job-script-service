@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import { Col, Row } from 'reactstrap';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
@@ -17,6 +16,7 @@ import SubmissionFailureOutputCard from './SubmissionFailureOutputCard';
 import { useFetchJob } from './api';
 import { useInterval } from './utils';
 import { useToast } from './ToastContext';
+import BackLink from "./BackLink";
 
 function JobPage() {
   const { id } = useParams();
@@ -25,17 +25,28 @@ function JobPage() {
 
   if (error) {
     if (error.name === "404") {
-      return <NotFound />;
+      return (
+        <>
+          <BackLink/>
+          <NotFound/>;
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink/>
+          <DefaultErrorMessage />;
+        </>
+      );
     }
   } else {
     const job = data == null ? null : data.data;
     return (
-      <React.Fragment>
+      <>
+        <BackLink/>
         { loading && <Loading /> }
         { job != null && <LayoutContainer job={job} loading={loading} /> }
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -98,24 +109,21 @@ function Layout({ job, onCancelled }) {
 
   return (
     <>
-    <Row>
-      <Col md={12} lg={5}>
+      <div className="wrapping-columns mb-3">
         <JobMetadataCard
-          className="mb-3"
           job={job}
           onCancelled={onCancelled}
           onDeleted={() => history.push('/jobs')}
         />
-        <JobSessionCard job={job} />
-      </Col>
-      <Col md={12} lg={7}>
-        {
-          submissionFailed ?
-            <SubmissionFailureOutputCard job={job} /> :
-            <JobOutputsCard job={job} />
-        }
-      </Col>
-    </Row>
+        <JobSessionCard
+          job={job}
+        />
+      </div>
+      {
+        submissionFailed ?
+          <SubmissionFailureOutputCard job={job} /> :
+          <JobOutputsCard job={job} />
+      }
     </>
   );
 }

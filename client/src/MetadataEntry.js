@@ -24,18 +24,18 @@ function MetadataEntry({ format, hide=false, hideWhenNull=false, name, value, va
 
   return (
     <>
-    <dt
-      className={classNames("text-truncate", styles.MetadataEntryDT)}
-      title={name}
-    >
-      {name}
-    </dt>
-    <dd
-      className={classNames("text-truncate", styles.MetadataEntryDD)}
-      title={titleForValue}
-    >
-      {formatted}
-    </dd>
+      <dt
+        className={classNames("text-truncate text-right mr-3", styles.MetadataEntryDT)}
+        title={name}
+      >
+        {name}
+      </dt>
+      <dd
+        className={classNames("text-truncate text-left", styles.MetadataEntryDD)}
+        title={titleForValue}
+      >
+        {formatted}
+      </dd>
     </>
   );
 }

@@ -166,7 +166,7 @@ function TableHeaders({ headerGroup }) {
             {
               column.render('Header')
             }
-            <span className="ml-1 float-right">
+            <span className="ml-1 float-right" style={{minWidth: 50}}>
               {
                 column.isSorted ?
                   column.isSortedDesc ?

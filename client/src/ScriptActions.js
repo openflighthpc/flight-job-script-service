@@ -8,15 +8,17 @@ import StartSubmissionButton from './StartSubmissionButton';
 function ScriptActions({ className, includeLink=true, onDeleted, script }) {
   const link = (
     <Link
-      className="btn btn-link btn-sm"
+      className="button link white-text mr-2"
       to={`/scripts/${script.id}`}
     >
-      View script
+      <span>View</span>
     </Link>
   );
 
   return (
-    <ButtonToolbar className={classNames(className)} >
+    <div
+      className={`d-flex justify-content-center ${classNames(className)}`}
+    >
       { includeLink ? link : null }
       <StartSubmissionButton
         className="mr-2"
@@ -26,14 +28,14 @@ function ScriptActions({ className, includeLink=true, onDeleted, script }) {
         onDeleted={onDeleted}
         script={script}
       />
-    </ButtonToolbar>
+    </div>
   );
 }
 
 function DisabledActions({ className, includeLink=true }) {
   const link = (
-    <Link className="btn btn-link btn-sm disabled">
-      View script
+    <Link className="button link white-text disabled mr-2">
+      View
     </Link>
   );
 

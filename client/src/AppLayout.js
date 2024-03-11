@@ -1,5 +1,5 @@
-import { useContext } from 'react';
-import { Redirect, Route, Switch, useLocation } from "react-router-dom";
+import React, {useContext} from 'react';
+import {Redirect, Route, Switch, useLocation} from "react-router-dom";
 
 import {
   AnimatedRouter,
@@ -9,45 +9,44 @@ import {
   Footer,
 } from 'flight-webapp-components';
 
-import NavItems from './NavItems';
 import styles from './AppLayout.module.css';
-import { routes, unconfiguredRoutes } from './routes';
+import {routes, unconfiguredRoutes} from './routes';
+import Blurb from "./Blurb";
 
 function AppLayout() {
-  const { unconfigured } = useContext(ConfigContext);
+  const {unconfigured} = useContext(ConfigContext);
 
   return (
     <>
-    <BrandBar
-      className="brandbar"
-      navItems={<NavItems includeHome={false} />}
-    />
-    <div
-      className="container-fluid"
-      id="main"
-    >
-      <div id="toast-portal" className={styles.ToastPortal}></div>
-      <div className="content">
-        <AnimatedRouter
-          AuthenticatedRoute={AuthenticatedRoute}
-          Redirect={Redirect}
-          Route={Route}
-          Switch={Switch}
-          exact={!unconfigured}
-          routes={unconfigured ? unconfiguredRoutes : routes}
-          sideNav={SideNav}
-          useLocation={useLocation}
-        />
+      <BrandBar
+        className="brandbar"
+        activeApp="Job"
+      />
+      <div
+        id="main"
+      >
+        <div id="toast-portal" className={styles.ToastPortal}></div>
+        <div className="content">
+          <div
+            className="centernav col-8"
+          >
+            <div className="narrow-container">
+              <Blurb/>
+            </div>
+            <AnimatedRouter
+              AuthenticatedRoute={AuthenticatedRoute}
+              Redirect={Redirect}
+              Route={Route}
+              Switch={Switch}
+              exact={!unconfigured}
+              routes={unconfigured ? unconfiguredRoutes : routes}
+              useLocation={useLocation}
+            />
+          </div>
+        </div>
       </div>
-    </div>
-    <Footer />
+      <Footer/>
     </>
-  );
-}
-
-function SideNav() {
-  return (
-    <div className="sidenav col-sm-2"></div>
   );
 }
 

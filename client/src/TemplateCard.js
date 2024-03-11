@@ -7,9 +7,9 @@ import { CardFooter } from './CardParts';
 function TemplateCard({ className, template }) {
 
   return (
-    <div className={classNames('card border-primary', className)}>
+    <div className={classNames('card', className)}>
       <h5
-        className="card-header bg-primary text-light text-truncate"
+        className="card-header text-truncate"
         title={template.attributes.name}
       >
         {template.attributes.name}
@@ -23,15 +23,12 @@ function TemplateCard({ className, template }) {
         </ReactMarkdown>
       </div>
       <CardFooter>
-        <div className="btn-toolbar justify-content-center">
-          <Link
-            className="btn btn-sm btn-primary"
-            to={`/scripts/new/${template.id}`}
-          >
-            <i className="fa fa-pencil-square-o mr-1"></i>
-            <span>Create script</span>
-          </Link>
-        </div>
+        <Link
+          className="button link white-text"
+          to={`/scripts/new/${template.id}`}
+        >
+          <span>Create script</span>
+        </Link>
       </CardFooter>
     </div>
   );

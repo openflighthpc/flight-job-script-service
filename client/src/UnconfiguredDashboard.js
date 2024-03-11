@@ -1,11 +1,8 @@
 import React from 'react';
 
-import { DashboardLogo } from 'flight-webapp-components';
-
 function UnconfiguredDashboard() {
   return (
     <div>
-      <DashboardLogo />
       <p>
         The Flight Job Script Service allows you to create customized job
         scripts from predefined templates by answering a few simple questions.

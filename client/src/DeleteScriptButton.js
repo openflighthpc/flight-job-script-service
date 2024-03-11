@@ -39,14 +39,14 @@ function DeleteScriptButton({
       acting={deleting}
       actingButtonText="Deleting..."
       buttonText="Delete"
-      className={className}
+      className={`button link white-text ${className}`}
+      cancelButtonText={(<span>Cancel</span>)}
       confirmationHeaderText="Confirm deletion"
       confirmationText={
         <p>
           Are you sure you want to delete this script?
         </p>
       }
-      icon="fa-trash"
       id={`delete-script-${script.id}`}
     />
   );
@@ -57,9 +57,7 @@ function Disabled({ className }) {
     <Button
       className={classNames(className)}
       disabled
-      size="sm"
     >
-      <i className={`fa fa-trash mr-1`}></i>
       <span>Delete</span>
     </Button>
   );

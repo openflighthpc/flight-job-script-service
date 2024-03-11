@@ -15,16 +15,14 @@ function QuestionSet({ LayoutComponent=Layout, questions, SaveButton }) {
     const { answers, flattenedAnswers, onPrevious, shouldAsk } = qs;
     const leftButton = (
       <Button
-        color="secondary"
+        className="button link cancel-button blue-text mr-2"
         onClick={onPrevious}
       >
-        <i className="fa fa-chevron-left mr-1" />
-        Back
+        <span>Back</span>
       </Button>
     );
     const rightButton = (
       <SaveButton
-        className="ml-2"
         answers={flattenedAnswers}
       />
     );
@@ -54,25 +52,18 @@ function QuestionSet({ LayoutComponent=Layout, questions, SaveButton }) {
       null :
       (
         <Button
-          color="secondary"
+          className="button link cancel-button blue-text mr-2"
           onClick={onPrevious}
         >
-          <i className="fa fa-chevron-left mr-1" />
-          Back
+          <span>Back</span>
         </Button>
       );
     const rightButton = (
       <Button
-        className="ml-2"
-        color="primary"
+        className="button link white-text"
         onClick={onNext}
       >
-        {
-          isLastQuestion ?
-            null :
-            <i className="fa fa-chevron-right mr-1" />
-        }
-        { isLastQuestion ? 'Finish' : 'Next' }
+        <span>{ isLastQuestion ? 'Finish' : 'Next' }</span>
       </Button>
     );
 

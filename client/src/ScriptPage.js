@@ -1,5 +1,5 @@
 import { Col, Row } from 'reactstrap';
-import { useHistory, useParams } from 'react-router-dom';
+import {Link, useHistory, useParams} from 'react-router-dom';
 import { useRef } from 'react';
 
 import {
@@ -13,6 +13,7 @@ import ScriptContentCard from './ScriptContentCard';
 import ScriptMetadataCard from './ScriptCard';
 import ScriptNotesCard from './ScriptNotesCard';
 import { useFetchScript } from './api';
+import BackLink from "./BackLink";
 
 function ScriptPage() {
   const { id } = useParams();
@@ -24,28 +25,43 @@ function ScriptPage() {
     return <Loading id={ref.current} />;
   } else if (error) {
     if (error.name === "404") {
-      return <NotFound />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <NotFound/>
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <DefaultErrorMessage/>
+        </>
+      );
     }
   } else {
     const script = data.data;
     if ( script == null) {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <DefaultErrorMessage/>
+        </>
+      );
     } else {
       return (
-        <Row>
-          <Col md={12} lg={6}>
+        <>
+          <BackLink link="scripts"/>
+          <div className="wrapping-columns mb-3 ">
             <ScriptMetadataCard
               script={script}
               onDeleted={() => history.push('/scripts')}
             />
-            <ScriptContentCard className="mt-4" script={script} />
-          </Col>
-          <Col md={12} lg={6}>
-            <ScriptNotesCard script={script} />
-          </Col>
-        </Row>
+            <ScriptNotesCard
+              script={script} />
+          </div>
+          <ScriptContentCard className="my-3" script={script} />
+        </>
       );
     }
   }

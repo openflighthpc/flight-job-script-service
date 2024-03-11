@@ -26,7 +26,7 @@ function Summary({ answers, shouldAsk }) {
       return (
         <React.Fragment key={idx}>
           <dt>{answer.question.attributes.text}</dt>
-          <dd className="mb-3 ml-3">{formattedAnswer}</dd>
+          <dd className="mb-3">{formattedAnswer}</dd>
         </React.Fragment>
       );
     } else {

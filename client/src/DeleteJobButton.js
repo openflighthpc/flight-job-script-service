@@ -38,7 +38,8 @@ function DeleteJobButton({
       acting={deleting}
       actingButtonText="Removing..."
       buttonText="Remove"
-      className={className}
+      className={`button white-text link ${className}`}
+      cancelButtonText={(<span>Cancel</span>)}
       confirmationHeaderText="Confirm job removal"
       confirmationText={
         <>
@@ -49,11 +50,10 @@ function DeleteJobButton({
           </p>
           <p>
             If a record is kept elsewhere such as the HPC scheduler's
-            accouting database, that record will not be affected.
+            accounting database, that record will not be affected.
           </p>
         </>
       }
-      icon="fa-trash"
       id={`delete-job-${job.id}`}
     />
   );
