@@ -31,17 +31,14 @@ function SubmitScriptButton({ answers, className, script }) {
     }
   };
 
-  const icon = submitting ? 'fa-spinner fa-spin' : 'fa-rocket';
   const text = submitting ? 'Submitting...' : 'Submit';
 
   return (
     <Button
-      color="primary"
+      className={`button link white-text ${className}`}
       onClick={submit}
-      className={classNames(className, { 'disabled': submitting })}
       disabled={submitting}
     >
-      <i className={`fa ${icon} mr-1`}></i>
       <span>{text}</span>
     </Button>
   );

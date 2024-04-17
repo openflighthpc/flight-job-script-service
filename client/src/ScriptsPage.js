@@ -13,22 +13,33 @@ import {
 
 import ScriptSummary from './ScriptSummary';
 import ScriptsTable from './ScriptsTable';
-import styles from './index.module.css';
 import { useFetchScripts } from './api';
+import BackLink from "./BackLink";
 
 function ScriptsPage() {
   const { data, error, loading, get } = useFetchScripts();
 
   if (error) {
     if (utils.errorCode(data) === 'Unauthorized') {
-      return <UnauthorizedError />;
+      return (
+        <>
+          <BackLink/>
+          <UnauthorizedError/>
+        </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink/>
+          <DefaultErrorMessage/>
+        </>
+      );
     }
   } else {
     const scripts = data == null ? null : data.data ;
     return (
-      <React.Fragment>
+      <>
+        <BackLink/>
         {
           loading && (
             <OverlayContainer>
@@ -39,7 +50,7 @@ function ScriptsPage() {
           )
         }
         { scripts != null && <Layout reloadScripts={get} scripts={scripts} /> }
-      </React.Fragment>
+      </>
     );
   }
 }
@@ -52,17 +63,22 @@ function Layout({ reloadScripts, scripts }) {
   }
 
   return (
-    <React.Fragment>
-      <IntroCard scripts={scripts} />
+    <>
+      <InfoRow scripts={scripts} />
       <div>
-        <Row>
-          <Col>
+        <Row className="scripts-table-row">
+          <Col
+            className="table px-0"
+          >
             <ScriptsTable
               onRowSelect={setSelectedScript}
               scripts={scripts}
             />
           </Col>
-          <Col style={{ paddingTop: 'calc(38px + 16px)' }}>
+          <Col
+            className="notes pr-0 pl-3"
+            style={{ paddingTop: 'calc(38px + 16px)' }}
+          >
             <ScriptSummary
               reloadScripts={reloadScripts}
               script={selectedScript}
@@ -70,7 +86,7 @@ function Layout({ reloadScripts, scripts }) {
           </Col>
         </Row>
       </div>
-    </React.Fragment>
+    </>
   );
 }
 
@@ -78,24 +94,41 @@ function NoScriptsFound() {
   return (
     <div>
       <p>
-        No scripts found.  You may want to <Link to="/templates">create a
-          new script</Link>.
+        No scripts found.
       </p>
+      <NewScriptButton/>
     </div>
   );
 }
 
-function IntroCard({ scripts }) {
+function InfoRow({ scripts }) {
   const scriptOrScripts = scripts.length === 1 ? 'script' : 'scripts';
 
   return (
-    <div className={`${styles.IntroCard} ${styles.ScriptsIntroCard} card card-body mb-4`}>
-      <p className={`${styles.IntroCardText} card-text`}>
-        You have {scripts.length} saved{' '}{scriptOrScripts}.  Select a
-        script from the table to view more details about it.
-      </p>
+    <div className={`row justify-content-between align-items-center mb-5`}>
+      <span className={`tagline mb-0`}>
+        You have {scripts.length} saved{' '}{scriptOrScripts}.
+      </span>
+      <div className="d-flex">
+        <NewScriptButton/>
+      </div>
     </div>
+  );
+}
 
+function NewScriptButton() {
+  return (
+    <>
+      <Link
+        className="button link white-text"
+        to="/templates"
+      >
+        <span>
+          <i className="fa fa-plus mr-2 mb-1"></i>
+          NEW SCRIPT
+        </span>
+      </Link>
+    </>
   );
 }
 

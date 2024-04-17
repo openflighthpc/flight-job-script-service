@@ -10,6 +10,7 @@ import {
 
 import TemplateCard from './TemplateCard';
 import { useFetchTemplate } from './api';
+import BackLink from "./BackLink";
 
 function TemplatePage() {
   const { id } = useParams();
@@ -20,17 +21,35 @@ function TemplatePage() {
     return <Loading id={ref.current} />;
   } else if (error) {
     if (error.name === "404") {
-      return <NotFound />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <NotFound />;
+          </>
+      );
     } else {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <DefaultErrorMessage />
+          </>
+      );
     }
   } else {
     const template = data.data;
     if ( template == null) {
-      return <DefaultErrorMessage />;
+      return (
+        <>
+          <BackLink link="scripts"/>
+          <DefaultErrorMessage />
+          </>
+      );
     } else {
       return (
-        <TemplateCard template={template} />
+        <>
+          <BackLink link="scripts"/>
+          <TemplateCard template={template} />
+        </>
       );
     }
   }

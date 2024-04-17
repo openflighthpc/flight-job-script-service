@@ -10,9 +10,7 @@ function Disabled({ className }) {
     <Button
       className={classNames(className)}
       disabled
-      size="sm"
     >
-      <i className={`fa fa-rocket mr-1`}></i>
       <span>Submit</span>
     </Button>
   );
@@ -27,12 +25,9 @@ function StartSubmissionButton({ className, script }) {
   return (
     <div>
       <Button
-        className={className}
-        color="primary"
-        size="sm"
+        className={`button link white-text ${className}`}
         onClick={toggle}
       >
-        <i className={`fa fa-rocket mr-1`}></i>
         <span>Submit</span>
       </Button>
       <QuestionSet.ModalContainer
